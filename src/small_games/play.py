@@ -11,6 +11,8 @@ Options: --seed N, --sticky 0.1, --speed 6 (steps per second), --greedy, --list
 Reproducibility: the episode with seed s depends only on s (the game, the
 sticky actions and the policy's sampling all restart from it), so R replays
 it exactly and `play <game> --seed s` shows episode s - seed0 of `evaluate`.
+The default seed is the game's seed0, so `play` opens on episode 0 of
+`evaluate` and E steps through episodes 1, 2, ...
 This holds while the same policy plays the whole episode with the same
 settings: switching who plays, G or S in the middle change what follows.
 
@@ -314,9 +316,10 @@ def main(argv=None):
     ap.add_argument("--list", action="store_true", help="descrive i giochi e le loro baseline ed esce")
     ap.add_argument("--weights", help="la rete da guardare: un file, o un nome in weights/<game>/")
     ap.add_argument("--baseline", help="una baseline da guardare (vedi sotto)")
-    ap.add_argument("--seed", type=int, default=0,
-                    help="seed del primo episodio; con lo stesso seed l'episodio si ripete identico "
-                         "(ed è l'episodio seed - seed0 di evaluate)")
+    ap.add_argument("--seed", type=int,
+                    help="seed del primo episodio (default: il seed0 del gioco, cioè l'episodio 0 di "
+                         "evaluate); con lo stesso seed l'episodio si ripete identico, ed è l'episodio "
+                         "seed - seed0 di evaluate")
     ap.add_argument("--sticky", type=float, help="probabilità di sticky action (default: quella del gioco)")
     ap.add_argument("--speed", type=float, default=6.0, help="passi al secondo in riproduzione")
     ap.add_argument("--greedy", action="store_true", help="argmax invece di campionare")
@@ -330,6 +333,8 @@ def main(argv=None):
     game = get_game(args.game)
     if args.sticky is None:
         args.sticky = game.protocol.sticky_prob
+    if args.seed is None:
+        args.seed = game.protocol.seed0
     known = baselines(game)
     if args.baseline and args.baseline not in known:
         ap.error(f"{game.name}: baseline sconosciuta {args.baseline!r}; disponibili: {', '.join(known)}")

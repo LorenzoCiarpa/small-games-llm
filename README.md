@@ -54,8 +54,9 @@ cui la policy campiona (`policy_rng`, lo stesso in `evaluate` e in `play`). Quin
 
 - lo stesso comando `evaluate` dà sempre gli stessi numeri, con qualsiasi `--workers`;
 - in `play`, `R` (o rilanciare con lo stesso `--seed`) ripete l'episodio identico;
-- `play <gioco> --seed s` mostra esattamente l'episodio `s - seed0` di `evaluate` (seed0 è 10000 per tutti i
-  giochi), per esempio `uv run play breakout --weights paper_astra --seed 10002`.
+- `play` parte dal seed0 del gioco (10000 per tutti), cioè dall'episodio 0 di `evaluate`, ed `E` passa agli
+  episodi 1, 2, ...; in generale `play <gioco> --seed s` mostra esattamente l'episodio `s - seed0`, per esempio
+  `uv run play breakout --weights paper_astra --seed 10002` è l'episodio 2.
 
 Vale finché la stessa policy gioca tutto l'episodio con le stesse impostazioni: cambiare chi gioca, `G` o `S`
 a metà partita cambia il seguito (e da quel momento non coincide più con `evaluate`).
