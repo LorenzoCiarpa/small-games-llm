@@ -106,6 +106,16 @@ Gli esperimenti su un solo gioco stanno in `experiments/<gioco>/`, quelli che co
 - [`experiments/low_tide/decode_gpt/`](experiments/low_tide/decode_gpt): la stessa analisi per `gpt.json`, con un
   confronto tra le due reti. `uv run python experiments/low_tide/decode_gpt/check.py`
 
+**Breakout, Seaquest, Asterix**: le reti di GPT-6 Astra dell'articolo (`paper_astra.json`), lette neurone per
+neurone come quelle di Low Tide, ognuna con un `check.py` che verifica la lettura contro la rete vera.
+
+- [`experiments/breakout/decode_astra/`](experiments/breakout/decode_astra): prevede la colonna in cui arriverà la
+  palla, da una tabella "cella → colonna d'arrivo" scritta nei pesi, e ci porta la racchetta.
+- [`experiments/seaquest/decode_astra/`](experiments/seaquest/decode_astra): il sottomarino resta nella colonna 5 e
+  sceglie solo la riga, in base a sub da salvare, bersagli nella linea di tiro e pericoli; emerge con poco ossigeno.
+- [`experiments/asterix/decode_astra/`](experiments/asterix/decode_astra): un "portiere" nella colonna 5 che
+  sceglie solo la riga, evitando i nemici in arrivo e andando verso i tesori.
+
 ## Struttura
 
 ```
