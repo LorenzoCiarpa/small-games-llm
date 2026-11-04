@@ -4,7 +4,7 @@ Verifica la lettura a mano di weights/low_tide/claude.json (vedi README.md).
 Per ogni stato visitato giocando con la rete ricalcola, direttamente dallo stato del gioco e senza usare i pesi,
 i 46 neuroni del primo strato e i 5 logit come li descrive il README, e li confronta con il forward pass vero.
 
-    uv run python experiments/decode_claude_low_tide/check.py [--episodes 200]
+    uv run python experiments/low_tide/decode_claude/check.py [--episodes 200]
 """
 
 import argparse
@@ -17,7 +17,7 @@ from small_games.core import get_game
 from small_games.games.low_tide.env import LowTideEnv
 from small_games.weights import load_weights
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 ACTIONS = ("fermo", "su", "giu", "sx", "dx")
 
 

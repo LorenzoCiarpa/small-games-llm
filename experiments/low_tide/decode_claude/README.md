@@ -10,8 +10,8 @@ trasforma in condizioni vere o false, l'ultimo le combina in una regola di prior
 La lettura è verificata contro la rete vera su 197.920 stati di gioco (vedi [Verifica](#7-verifica)):
 
 ```bash
-uv run python experiments/decode_claude_low_tide/check.py            # ~1 min
-uv run python experiments/decode_claude_low_tide/check.py --episodes 500
+uv run python experiments/low_tide/decode_claude/check.py            # ~1 min
+uv run python experiments/low_tide/decode_claude/check.py --episodes 500
 ```
 
 ## 1. Il gioco in breve
@@ -333,5 +333,5 @@ I pesi spiegano anche perché la rete fa 132 e non 164 come l'euristica.
     la marea aveva appena invertito e la rete aveva scelto su. L'agente resta stordito 3 passi a m = 0 e la marea sale
     prima che possa muoversi.
 
-La rete di GPT per lo stesso gioco è decodificata in [`decode_gpt_low_tide`](../decode_gpt_low_tide/README.md), con
+La rete di GPT per lo stesso gioco è decodificata in [`decode_gpt`](../decode_gpt/README.md), con
 un confronto tra le due.

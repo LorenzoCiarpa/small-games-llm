@@ -90,16 +90,21 @@ danno qui gli stessi punteggi dell'articolo, entro circa un errore standard:
 
 ## Esperimenti
 
-- [`experiments/decode_claude_low_tide/`](experiments/decode_claude_low_tide): come si legge la rete `claude.json`
-  di Low Tide, neurone per neurone, e quale algoritmo di gioco rappresenta. La lettura è verificata contro la rete
-  vera su ~200.000 stati. `uv run python experiments/decode_claude_low_tide/check.py`
-- [`experiments/decode_gpt_low_tide/`](experiments/decode_gpt_low_tide): la stessa analisi per `gpt.json`, con un
-  confronto tra le due reti. `uv run python experiments/decode_gpt_low_tide/check.py`
+Gli esperimenti su un solo gioco stanno in `experiments/<gioco>/`, quelli che confrontano più giochi direttamente in
+`experiments/`.
 
 - [`experiments/weight_distance/`](experiments/weight_distance): quanto sono lontane tra loro le reti scritte dagli
   LLM? Distanze strato per strato (grezze, dopo aver allineato i neuroni e contro un modello nullo), unità gemelle,
   CKA, azioni sugli stessi stati e cross-play tra giochi, con quattro reti addestrate con PPO come termine di
   paragone. `uv run --group analysis python experiments/weight_distance/analyze.py`
+
+**Low Tide**
+
+- [`experiments/low_tide/decode_claude/`](experiments/low_tide/decode_claude): come si legge la rete `claude.json`,
+  neurone per neurone, e quale algoritmo di gioco rappresenta. La lettura è verificata contro la rete vera su
+  ~200.000 stati. `uv run python experiments/low_tide/decode_claude/check.py`
+- [`experiments/low_tide/decode_gpt/`](experiments/low_tide/decode_gpt): la stessa analisi per `gpt.json`, con un
+  confronto tra le due reti. `uv run python experiments/low_tide/decode_gpt/check.py`
 
 ## Struttura
 
@@ -115,7 +120,8 @@ src/small_games/
     low_tide/        env.py (regole), baselines.py (euristica: NON darla al modello), render.py
     minatar_games.py Breakout, Seaquest, Asterix
 weights/<gioco>/<nome>.json
-experiments/<nome>/   esperimenti sui pesi (script, dati di riferimento, risultati)
+experiments/<gioco>/<nome>/   esperimenti sui pesi di un gioco (script, dati, risultati)
+experiments/<nome>/           esperimenti che confrontano più giochi
 ```
 
 ## Aggiungere un gioco

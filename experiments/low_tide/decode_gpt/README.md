@@ -5,7 +5,7 @@ codice. Fa 79.9 ± 1.0 punti su 500 episodi. Per confronto, `claude.json` ne fa 
 una policy casuale 2.0.
 
 Questa analisi la decodifica neurone per neurone, come
-[`decode_claude_low_tide`](../decode_claude_low_tide/README.md) fa per la rete di Claude. Anche questa è un
+[`decode_claude`](../decode_claude/README.md) fa per la rete di Claude. Anche questa è un
 algoritmo scritto in forma di pesi, ma è un algoritmo diverso, costruito con trucchi diversi:
 
 - **vista:** guarda le celle una per una, ma solo in una finestra di 6×4 celle;
@@ -16,14 +16,14 @@ La lettura è verificata contro la rete vera su 186.768 stati di gioco. La coinc
 arrotondamenti (vedi [Verifica](#7-verifica)):
 
 ```bash
-uv run python experiments/decode_gpt_low_tide/check.py            # ~1 min
-uv run python experiments/decode_gpt_low_tide/check.py --episodes 500
+uv run python experiments/low_tide/decode_gpt/check.py            # ~1 min
+uv run python experiments/low_tide/decode_gpt/check.py --episodes 500
 ```
 
 ## 1. Gioco e posizioni
 
 Gioco e osservazione sono descritti nelle sezioni 1 e 2 di
-[`decode_claude_low_tide`](../decode_claude_low_tide/README.md#2-come-si-leggono-le-posizioni). In breve:
+[`decode_claude`](../decode_claude/README.md#2-come-si-leggono-le-posizioni). In breve:
 
 ```
 indice = canale*100 + riga*10 + colonna       agente 0..99, acqua 100..199, conchiglie 200..299, meduse 300..399
