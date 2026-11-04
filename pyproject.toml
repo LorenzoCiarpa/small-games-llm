@@ -26,4 +26,17 @@ module-name = "small_games"
 [dependency-groups]
 analysis = [
     "scipy>=1.15.3",
+    "scikit-learn>=1.5",
 ]
+# PPO training (experiments/<game>/ppo/train.py): CPU-only PyTorch, the networks are tiny
+ppo = [
+    "torch>=2.5",
+]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

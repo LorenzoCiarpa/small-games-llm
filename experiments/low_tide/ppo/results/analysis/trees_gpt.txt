@@ -1,0 +1,90 @@
+=== profondità 1: accordo 49.3%, 2 foglie
+|--- rising <= 0.5
+|   |--- azione: 2 giù
+|--- rising >  0.5
+|   |--- azione: 1 su
+
+=== profondità 2: accordo 58.9%, 4 foglie, punteggio 12.59
+|--- rising <= 0.5
+|   |--- row <= 5.5
+|   |   |--- azione: 2 giù
+|   |--- row >  5.5
+|   |   |--- azione: 4 destra
+|--- rising >  0.5
+|   |--- margin <= 2.5
+|   |   |--- azione: 1 su
+|   |--- margin >  2.5
+|   |   |--- azione: 2 giù
+
+=== profondità 3: accordo 70.2%, 8 foglie
+|--- rising <= 0.5
+|   |--- row <= 5.5
+|   |   |--- shells_right <= 0.5
+|   |   |   |--- azione: 2 giù
+|   |   |--- shells_right >  0.5
+|   |   |   |--- azione: 4 destra
+|   |--- row >  5.5
+|   |   |--- shells_down <= 0.5
+|   |   |   |--- azione: 4 destra
+|   |   |--- shells_down >  0.5
+|   |   |   |--- azione: 2 giù
+|--- rising >  0.5
+|   |--- margin <= 2.5
+|   |   |--- col <= 7.5
+|   |   |   |--- azione: 4 destra
+|   |   |--- col >  7.5
+|   |   |   |--- azione: 3 sinistra
+|   |--- margin >  2.5
+|   |   |--- row <= 5.5
+|   |   |   |--- azione: 2 giù
+|   |   |--- row >  5.5
+|   |   |   |--- azione: 4 destra
+
+=== profondità 4: accordo 82.9%, 16 foglie, punteggio 49.19
+|--- rising <= 0.5
+|   |--- row <= 5.5
+|   |   |--- shells_right <= 0.5
+|   |   |   |--- jelly_down <= 0.5
+|   |   |   |   |--- azione: 2 giù
+|   |   |   |--- jelly_down >  0.5
+|   |   |   |   |--- azione: 3 sinistra
+|   |   |--- shells_right >  0.5
+|   |   |   |--- jelly_right <= 0.5
+|   |   |   |   |--- azione: 4 destra
+|   |   |   |--- jelly_right >  0.5
+|   |   |   |   |--- azione: 2 giù
+|   |--- row >  5.5
+|   |   |--- shells_down <= 0.5
+|   |   |   |--- col <= 7.5
+|   |   |   |   |--- azione: 4 destra
+|   |   |   |--- col >  7.5
+|   |   |   |   |--- azione: 3 sinistra
+|   |   |--- shells_down >  0.5
+|   |   |   |--- shell_dy <= 0.5
+|   |   |   |   |--- azione: 2 giù
+|   |   |   |--- shell_dy >  0.5
+|   |   |   |   |--- azione: 2 giù
+|--- rising >  0.5
+|   |--- margin <= 2.5
+|   |   |--- col <= 7.5
+|   |   |   |--- margin <= 1.5
+|   |   |   |   |--- azione: 1 su
+|   |   |   |--- margin >  1.5
+|   |   |   |   |--- azione: 4 destra
+|   |   |--- col >  7.5
+|   |   |   |--- row <= 3.5
+|   |   |   |   |--- azione: 3 sinistra
+|   |   |   |--- row >  3.5
+|   |   |   |   |--- azione: 1 su
+|   |--- margin >  2.5
+|   |   |--- row <= 5.5
+|   |   |   |--- jelly_down <= 0.5
+|   |   |   |   |--- azione: 2 giù
+|   |   |   |--- jelly_down >  0.5
+|   |   |   |   |--- azione: 4 destra
+|   |   |--- row >  5.5
+|   |   |   |--- col <= 7.5
+|   |   |   |   |--- azione: 4 destra
+|   |   |   |--- col >  7.5
+|   |   |   |   |--- azione: 1 su
+

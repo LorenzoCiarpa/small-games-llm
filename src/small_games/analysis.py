@@ -1,0 +1,473 @@
+"""
+Tools for asking whether the weights of a policy network can be read as an algorithm.
+
+The same measurements run on hand-written networks and on PPO-trained ones, so the two can be compared:
+
+  weights      sparsity, how many distinct values, how many inputs carry 90% of each first-layer unit's weight
+  pruning      score after keeping only the largest |w| of every layer
+  ablation     score after resampling one hidden unit (its value in a random other state): importance
+  probing      how well game features (features.py) explain each hidden unit: best single correlation, linear R^2
+  saturation   for tanh units, how often they sit at +-1 (i.e. work as booleans)
+  distillation decision trees on the game features that imitate the network's argmax: agreement on held-out
+               states and score when the tree plays the game (is the behaviour a short algorithm?)
+  fields       pictures of the first-layer weights of the most important units
+
+Needs the `analysis` dependency group (scikit-learn, matplotlib comes with minatar).
+"""
+
+from __future__ import annotations
+
+import json
+import math
+import time
+from pathlib import Path
+
+import numpy as np
+
+from .core import get_game
+from .evaluate import evaluate
+from .features import FEATURES
+from .policy import MLPPolicy, policy_rng, sample_action
+from .weights import ReferenceMLP, load_weights
+
+
+# ------------------------------------------------------------------------------------------------ basics
+def hidden_acts(layers, X):
+    """Post-activation outputs of every layer for a batch X (n, obs_dim); the last one is the logits."""
+    out, x = [], np.asarray(X, dtype=np.float64)
+    for W, b, act in layers:
+        x = x @ W.T + b
+        if act == "relu":
+            x = np.maximum(x, 0.0)
+        elif act == "tanh":
+            x = np.tanh(x)
+        out.append(x)
+    return out
+
+
+def collect(game, layers, episodes, seed0, max_states=200_000):
+    """Observations visited by the network's own (sampled) play, with the protocol's sticky actions."""
+    mlp = ReferenceMLP(layers)
+    proto = game.protocol
+    env = game.make_env(sticky_prob=proto.sticky_prob, max_steps=proto.max_steps)
+    per_ep = max(1, max_states // episodes)
+    X, ep_id = [], []
+    for k, seed in enumerate(range(seed0, seed0 + episodes)):
+        rng = policy_rng(seed)
+        obs, _ = env.reset(seed=seed)
+        done, n = False, 0
+        while not done and n < per_ep:
+            X.append(obs)
+            ep_id.append(k)
+            obs, _, term, trunc, _ = env.step(sample_action(mlp.logits(obs), rng))
+            done = term or trunc
+            n += 1
+    return np.asarray(X, dtype=np.float32), np.asarray(ep_id)
+
+
+def score(game, layers, episodes, seed0, workers):
+    s = evaluate(game, MLPPolicy(ReferenceMLP(layers)), episodes=episodes, seed0=seed0, workers=workers)
+    return s["mean_return"], s["stderr"]
+
+
+# ------------------------------------------------------------------------------------------------ weights
+def weight_stats(layers):
+    rows = []
+    for li, (W, b, act) in enumerate(layers):
+        nz = W[np.abs(W) > 1e-9]
+        absW = np.abs(W)
+        # inputs needed to reach 90% of each unit's total |w|
+        k90 = []
+        for w in absW:
+            s = np.sort(w)[::-1]
+            tot = s.sum()
+            k90.append(int(np.searchsorted(np.cumsum(s), 0.9 * tot) + 1) if tot > 0 else 0)
+        rows.append({
+            "layer": li, "shape": list(W.shape), "activation": act,
+            "params": int(W.size + b.size),
+            "nonzero_frac": float(len(nz) / W.size),
+            "distinct_values": int(len(np.unique(np.round(nz, 6)))),
+            "max_abs": float(absW.max()),
+            "inputs_for_90pct_median": float(np.median(k90)),
+            "inputs_for_90pct_frac": float(np.median(k90) / W.shape[1]),
+        })
+    return rows
+
+
+def prune(layers, keep):
+    """Keep the `keep` fraction of largest |w| in every weight matrix (biases untouched)."""
+    out = []
+    for W, b, act in layers:
+        W2 = W.copy()
+        k = int(math.ceil(keep * W.size))
+        if k < W.size:
+            thr = np.sort(np.abs(W).ravel())[::-1][k - 1]
+            W2[np.abs(W2) < thr] = 0.0
+        out.append((W2, b.copy(), act))
+    return out
+
+
+class ResamplePolicy:
+    """The network with hidden unit j of layer li replaced, at every step, by its value in a random other state.
+
+    Resample ablation keeps the unit's distribution (a rare-but-large unit stays rare-but-large) and only breaks
+    its link with the current state; replacing it with its mean would inject a value it almost never takes.
+    """
+
+    def __init__(self, layers, li, j, samples):
+        self.layers, self.li, self.j = layers, li, j
+        self.samples = np.asarray(samples, dtype=np.float64)
+
+    def __call__(self, obs, rng):
+        pick = rng.integers(len(self.samples))      # drawn even when li = -1, so the reference uses the rng alike
+        x = np.asarray(obs, dtype=np.float64)
+        for k, (W, b, act) in enumerate(self.layers):
+            x = W @ x + b
+            if act == "relu":
+                x = np.maximum(x, 0.0)
+            elif act == "tanh":
+                x = np.tanh(x)
+            if k == self.li:
+                x[self.j] = self.samples[pick]
+        return sample_action(x, rng)
+
+
+# ------------------------------------------------------------------------------------------------ probing
+def _linear_features(F):
+    """Features for linear regression: NONE (99) replaced by 0, plus an 'absent' indicator per such column."""
+    cols = []
+    for k in range(F.shape[1]):
+        f = F[:, k]
+        absent = f >= 98
+        if absent.any():
+            cols.append(np.where(absent, 0.0, f))
+            cols.append(absent.astype(float))
+        else:
+            cols.append(f)
+    return np.column_stack(cols)
+
+
+def probe(H, F, names):
+    """Per unit: best |Pearson r| with a single feature, which feature, linear R^2 on all features."""
+    Fl = _linear_features(F)
+    A = np.column_stack([Fl, np.ones(len(Fl))])
+    Fz = np.where(F >= 98, np.nan, F)
+    res = []
+    for j in range(H.shape[1]):
+        h = H[:, j]
+        if h.std() < 1e-6:
+            res.append({"unit": j, "constant": True, "best_feature": None, "best_r": 0.0, "r2": 0.0})
+            continue
+        best, best_r = None, 0.0
+        for k, name in enumerate(names):
+            f = Fz[:, k]
+            ok = ~np.isnan(f)
+            if ok.sum() < 100 or f[ok].std() < 1e-9:
+                continue
+            r = abs(np.corrcoef(h[ok], f[ok])[0, 1])
+            if r > best_r:
+                best, best_r = name, float(r)
+        coef, *_ = np.linalg.lstsq(A, h, rcond=None)
+        r2 = 1 - ((A @ coef - h) ** 2).sum() / ((h - h.mean()) ** 2).sum()
+        res.append({"unit": j, "constant": False, "best_feature": best, "best_r": best_r, "r2": float(r2)})
+    return res
+
+
+# ------------------------------------------------------------------------------------------------ distillation
+class TreePolicy:
+    """A decision tree on the game features, playing deterministically (picklable, fast traversal)."""
+
+    def __init__(self, tree, game_name):
+        t = tree.tree_
+        self.left, self.right = t.children_left.copy(), t.children_right.copy()
+        self.feature, self.threshold = t.feature.copy(), t.threshold.copy()
+        self.leaf_action = tree.classes_[np.argmax(t.value[:, 0, :], axis=1)].astype(int)
+        self.game_name = game_name
+
+    def __call__(self, obs, rng):
+        f = FEATURES[self.game_name][1](obs)
+        n = 0
+        while self.left[n] != -1:
+            n = self.left[n] if f[self.feature[n]] <= self.threshold[n] else self.right[n]
+        return int(self.leaf_action[n])
+
+
+def distill(F, y, ep_id, depths, seed=0):
+    """Trees of each depth trained on 70% of the episodes, agreement measured on the other 30%."""
+    from sklearn.tree import DecisionTreeClassifier
+
+    eps = np.unique(ep_id)
+    rng = np.random.default_rng(seed)
+    test_eps = set(rng.choice(eps, size=max(1, int(0.3 * len(eps))), replace=False).tolist())
+    test = np.array([e in test_eps for e in ep_id])
+    out = {}
+    for d in depths:
+        tree = DecisionTreeClassifier(max_depth=d, random_state=seed, min_samples_leaf=20)
+        tree.fit(F[~test], y[~test])
+        out[d] = (tree, float((tree.predict(F[test]) == y[test]).mean()))
+    return out
+
+
+def tree_text(tree, names, action_names):
+    from sklearn.tree import export_text
+
+    txt = export_text(tree, feature_names=list(names), decimals=1)
+    for k, a in enumerate(action_names):
+        txt = txt.replace(f"class: {k}\n", f"azione: {k} {a}\n")
+    return txt
+
+
+# ------------------------------------------------------------------------------------------------ figures
+def plot_fields(game, layers, units, path, title):
+    """First-layer weights of the given units as images, one panel per input plane."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    W = layers[0][0]
+    if game.grid is not None and game.name != "low_tide":
+        planes = [(game.grid.channels[c], (lambda w, c=c: w[:600].reshape(10, 10, 6)[:, :, c]))
+                  for c in range(6) if game.grid.labels[c] is not None]
+    else:
+        planes = [(n, (lambda w, c=c: w[c * 100:(c + 1) * 100].reshape(10, 10)))
+                  for c, n in enumerate(("agente", "acqua", "conchiglie", "meduse"))]
+        planes.append(("sale | countd. | stun", lambda w: w[400:403].reshape(1, 3)))
+    fig, axes = plt.subplots(len(units), len(planes), figsize=(1.9 * len(planes), 1.9 * len(units)),
+                             squeeze=False)
+    for i, (u, label) in enumerate(units):
+        w = W[u]
+        vmax = np.abs(w).max() or 1.0
+        for k, (name, get) in enumerate(planes):
+            ax = axes[i, k]
+            ax.imshow(get(w), cmap="RdBu_r", vmin=-vmax, vmax=vmax)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            if i == 0:
+                ax.set_title(name, fontsize=9)
+            if k == 0:
+                ax.set_ylabel(label, fontsize=8)
+    fig.suptitle(title, fontsize=10)
+    fig.tight_layout()
+    fig.savefig(path, dpi=110)
+    plt.close(fig)
+
+
+# ------------------------------------------------------------------------------------------------ driver
+def analyse(game_name, nets, out_dir: Path, *, score_episodes=200, ablation_episodes=100, collect_episodes=40,
+            seed0=None, workers=4, prune_keeps=(1.0, 0.5, 0.25, 0.1, 0.05, 0.02),
+            depths=(1, 2, 3, 4, 6, 8, 12), tree_score_depths=(2, 4, 8, 12), log=print):
+    """Run every measurement on each network {name: path} and write analysis.json, trees and figures."""
+    game = get_game(game_name)
+    seed0 = game.protocol.seed0 if seed0 is None else seed0
+    names, feat = FEATURES[game_name]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    settings = {"score_episodes": score_episodes, "ablation_episodes": ablation_episodes,
+                "collect_episodes": collect_episodes, "seed0": seed0}
+    report = {"game": game_name, "features": list(names), "settings": settings, "nets": {}}
+    prev = out_dir / "analysis.json"
+    if prev.is_file():                       # add to (or replace in) an earlier run with the same settings
+        old = json.loads(prev.read_text())
+        if old.get("settings") == settings and old.get("features") == list(names):
+            report["nets"] = old["nets"]
+
+    for net_name, path in nets.items():
+        t0 = time.time()
+        layers = load_weights(path, game)
+        r = report["nets"][net_name] = {"path": str(path)}
+        r["weights"] = weight_stats(layers)
+        base = score(game, layers, score_episodes, seed0, workers)
+        r["score"] = {"mean": base[0], "stderr": base[1]}
+        g = evaluate(game, MLPPolicy(ReferenceMLP(layers), greedy=True), episodes=score_episodes, seed0=seed0,
+                     workers=workers)
+        r["score_greedy"] = {"mean": g["mean_return"], "stderr": g["stderr"]}
+        log(f"[{net_name}] punteggio {base[0]:.2f} ± {base[1]:.2f} (greedy {g['mean_return']:.2f})")
+
+        r["pruning"] = []
+        for keep in prune_keeps:
+            m, se = score(game, prune(layers, keep), score_episodes, seed0, workers)
+            r["pruning"].append({"keep": keep, "mean": m, "stderr": se})
+            log(f"[{net_name}] pruning keep={keep}: {m:.2f}")
+
+        X, ep_id = collect(game, layers, collect_episodes, seed0 + 5000)
+        acts = hidden_acts(layers, X)
+        F = np.stack([feat(o) for o in X])
+        y = acts[-1].argmax(axis=1)
+        r["states"] = int(len(X))
+
+        r["layers"] = []
+        abl_all = []
+        for li in range(len(layers) - 1):
+            H = acts[li]
+            act = layers[li][2]
+            info = {"layer": li, "units": int(H.shape[1]), "activation": act}
+            if act == "tanh":
+                info["saturation"] = float((np.abs(H) > 0.95).mean())
+            info["constant_units"] = int((H.std(axis=0) < 1e-6).sum())
+            idx = np.random.default_rng(0).choice(len(H), size=min(len(H), 60_000), replace=False)
+            info["probe"] = probe(H[idx], F[idx], names)
+            abl = []
+            pick = np.random.default_rng(1).choice(len(H), size=min(len(H), 5000), replace=False)
+            for j in range(H.shape[1]):
+                if H[:, j].std() < 1e-9:     # a constant unit: resampling it changes nothing
+                    abl.append(None)
+                    continue
+                s = evaluate(game, ResamplePolicy(layers, li, j, H[pick, j]), episodes=ablation_episodes,
+                             seed0=seed0, workers=workers)
+                abl.append(s["mean_return"])
+            info["ablation"] = abl
+            abl_all += [(li, j, m) for j, m in enumerate(abl)]
+            r["layers"].append(info)
+            log(f"[{net_name}] strato {li}: ablazione fatta")
+        ref = evaluate(game, ResamplePolicy(layers, -1, 0, [0.0]), episodes=ablation_episodes, seed0=seed0,
+                       workers=workers)
+        r["ablation_reference"] = ref["mean_return"]
+        r["ablation_reference_stderr"] = ref["stderr"]
+
+        trees = distill(F, y, ep_id, depths)
+        r["distill"] = []
+        with open(out_dir / f"trees_{net_name}.txt", "w") as f:
+            for d, (tree, agree) in trees.items():
+                row = {"depth": d, "agreement": agree, "leaves": int(tree.get_n_leaves())}
+                if d in tree_score_depths:
+                    s = evaluate(game, TreePolicy(tree, game_name), episodes=score_episodes, seed0=seed0,
+                                 workers=workers)
+                    row["score"], row["stderr"] = s["mean_return"], s["stderr"]
+                r["distill"].append(row)
+                if d <= 4:
+                    f.write(f"=== profondità {d}: accordo {agree:.1%}, {row['leaves']} foglie"
+                            + (f", punteggio {row['score']:.2f}" if "score" in row else "") + "\n")
+                    f.write(tree_text(tree, names, game.action_names) + "\n")
+                log(f"[{net_name}] albero d={d}: accordo {agree:.1%}" +
+                    (f", punteggio {row['score']:.2f}" if "score" in row else ""))
+
+        top = sorted(((li, j, m) for li, j, m in abl_all if li == 0 and m is not None), key=lambda t: t[2])[:8]
+        probe0 = {p["unit"]: p for p in r["layers"][0]["probe"]}
+        units = [(j, f"u{j}  abl {m:.1f}\n{probe0[j]['best_feature']} r={probe0[j]['best_r']:.2f}")
+                 for _, j, m in top]
+        plot_fields(game, layers, units, out_dir / f"fields_{net_name}.png",
+                    f"{game_name} / {net_name}: primo strato, le 8 unità più importanti (ablazione)")
+        r["seconds"] = round(time.time() - t0, 1)
+        log(f"[{net_name}] fatto in {r['seconds']:.0f}s")
+        with open(out_dir / "analysis.json", "w") as f:
+            json.dump(report, f, indent=1)
+    return report
+
+
+# ------------------------------------------------------------------------------------------------ summary
+def summarize(report):
+    """One row of headline numbers per network (for the READMEs): see the keys below."""
+    rows = {}
+    for name, r in report["nets"].items():
+        base = r["score"]["mean"]
+        w0 = r["weights"]
+        prune_ok = [p["keep"] for p in r["pruning"] if p["mean"] >= 0.9 * base]
+        ref = r["ablation_reference"]
+        drops = [0.0 if m is None else ref - m for L in r["layers"] for m in L["ablation"]]
+        units = sum(L["units"] for L in r["layers"])
+        big = sum(d > 0.1 * abs(ref) for d in drops)
+        pos = sorted((d for d in drops if d > 0), reverse=True)
+        probes = [p for L in r["layers"] for p in L["probe"] if not p["constant"]]
+        trees = {d["depth"]: d for d in r["distill"]}
+        rows[name] = {
+            "score": base, "score_greedy": r["score_greedy"]["mean"],
+            "nonzero_frac": sum(L["nonzero_frac"] * (L["params"] - L["shape"][0]) for L in w0)
+                            / sum(L["params"] - L["shape"][0] for L in w0),
+            "distinct_values_l0": w0[0]["distinct_values"],
+            "inputs_for_90pct_l0": w0[0]["inputs_for_90pct_median"],
+            "min_keep_90pct_score": min(prune_ok) if prune_ok else None,
+            "saturation": [L.get("saturation") for L in r["layers"]],
+            "constant_units": sum(L["constant_units"] for L in r["layers"]),
+            "units": units,
+            "units_drop_10pct": big,
+            "top5_share_of_drop": (sum(pos[:5]) / sum(pos)) if pos else None,
+            "probe_r08_frac": sum(p["best_r"] >= 0.8 for p in probes) / max(1, len(probes)),
+            "probe_r2_mean": float(np.mean([p["r2"] for p in probes])) if probes else None,
+            "tree_agreement": {d: round(t["agreement"], 3) for d, t in trees.items()},
+            "tree_score": {d: round(t["score"], 2) for d, t in trees.items() if "score" in t},
+            "tree_leaves": {d: t["leaves"] for d, t in trees.items()},
+        }
+    return rows
+
+
+# ------------------------------------------------------------------------------------------------ key quantities
+def _col(F, names, name):
+    return F[:, list(names).index(name)]
+
+
+def _within(F, names, name, d):
+    """1 if the feature (a distance, NONE if absent) is at most d."""
+    return (_col(F, names, name) <= d).astype(float)
+
+
+# The quantities the hand-written algorithms compute (from the decode_* analyses), as functions of the features.
+KEY_QUANTITIES = {
+    "low_tide": {
+        "margine (righe asciutte sotto l'agente)": lambda F, n: _col(F, n, "margin"),
+        "pericolo (sale e margine ≤ 2)": lambda F, n: _col(F, n, "rising") * np.maximum(0, 3 - _col(F, n, "margin")),
+        "conchiglia a destra nella riga": lambda F, n: (_col(F, n, "shells_right") > 0).astype(float),
+        "conchiglia a sinistra nella riga": lambda F, n: (_col(F, n, "shells_left") > 0).astype(float),
+    },
+    "breakout": {
+        "colonna d'arrivo − racchetta": lambda F, n: _col(F, n, "landing_rel_x"),
+        "palla − racchetta (colonne)": lambda F, n: _col(F, n, "ball_rel_x"),
+        "la palla scende": lambda F, n: (_col(F, n, "ball_dy") > 0).astype(float),
+    },
+    "asterix": {
+        "nemico in arrivo nella mia riga (≤ 3)": lambda F, n: _within(F, n, "enemy_eta_same", 3),
+        "nemico in arrivo nella riga sotto (≤ 2)": lambda F, n: _within(F, n, "enemy_eta_down1", 2),
+        "nemico in arrivo nella riga sopra (≤ 2)": lambda F, n: _within(F, n, "enemy_eta_up1", 2),
+        "tesoro in arrivo nella mia riga": lambda F, n: _within(F, n, "gold_eta_same", 9),
+    },
+    "seaquest": {
+        "ossigeno basso (< 60)": lambda F, n: (_col(F, n, "oxygen") < 3).astype(float),
+        "almeno un sub a bordo": lambda F, n: (_col(F, n, "divers") >= 1).astype(float),
+        "nemico vicino nella mia riga (≤ 2)": lambda F, n: _within(F, n, "enemy_near_same", 2),
+        "sub da salvare nella mia riga": lambda F, n: _within(F, n, "diver_near_same", 9),
+    },
+}
+
+
+def key_quantities(game_name, nets, out_dir: Path, collect_episodes=40, seed0=None, log=print):
+    """For each network and hidden layer: best single unit |r| and linear (all units) R^2 of each key quantity.
+
+    Answers "does the network compute the intermediate quantities of the hand-written algorithm?": one unit that
+    *is* the quantity (r ~ 1), the quantity spread over many units (high R^2, low r), or not there (both low).
+    Added to analysis.json under nets[name]["key_quantities"]. The R^2 is measured on held-out episodes.
+    """
+    game = get_game(game_name)
+    seed0 = game.protocol.seed0 if seed0 is None else seed0
+    names, feat = FEATURES[game_name]
+    path = out_dir / "analysis.json"
+    report = json.loads(path.read_text())
+    for net_name, wpath in nets.items():
+        layers = load_weights(wpath, game)
+        X, ep = collect(game, layers, collect_episodes, seed0 + 5000)
+        F = np.stack([feat(o) for o in X])
+        acts = hidden_acts(layers, X)
+        test = ep >= int(0.7 * collect_episodes)
+        res = {}
+        for qname, fn in KEY_QUANTITIES[game_name].items():
+            y = fn(F, names)
+            rows = []
+            for li in range(len(layers) - 1):
+                H = acts[li]
+                ok = H.std(axis=0) > 1e-9
+                if y.std() < 1e-9 or not ok.any():
+                    rows.append({"layer": li, "best_unit": None, "best_r": 0.0, "linear_r2": 0.0})
+                    continue
+                r = np.zeros(H.shape[1])
+                r[ok] = [abs(np.corrcoef(H[:, j], y)[0, 1]) for j in np.flatnonzero(ok)]
+                A = np.column_stack([H[:, ok], np.ones(len(H))])
+                coef, *_ = np.linalg.lstsq(A[~test], y[~test], rcond=None)
+                pred = A[test] @ coef
+                yt = y[test]
+                r2 = 1 - ((pred - yt) ** 2).sum() / max(((yt - yt.mean()) ** 2).sum(), 1e-12)
+                rows.append({"layer": li, "best_unit": int(r.argmax()), "best_r": float(r.max()),
+                             "linear_r2": float(r2)})
+            res[qname] = rows
+            log(f"[{net_name}] {qname}: " + "  ".join(
+                f"strato {x['layer']}: r {x['best_r']:.2f}, R² {x['linear_r2']:.2f}" for x in rows))
+        report["nets"].setdefault(net_name, {})["key_quantities"] = res
+    path.write_text(json.dumps(report, indent=1))
+    return report

@@ -1,0 +1,90 @@
+=== profondità 1: accordo 46.1%, 2 foglie
+|--- row <= 4.5
+|   |--- azione: 4 destra
+|--- row >  4.5
+|   |--- azione: 3 sinistra
+
+=== profondità 2: accordo 53.0%, 4 foglie, punteggio 0.93
+|--- row <= 4.5
+|   |--- row <= 2.5
+|   |   |--- azione: 2 giù
+|   |--- row >  2.5
+|   |   |--- azione: 4 destra
+|--- row >  4.5
+|   |--- col <= 0.5
+|   |   |--- azione: 1 su
+|   |--- col >  0.5
+|   |   |--- azione: 3 sinistra
+
+=== profondità 3: accordo 59.0%, 8 foglie
+|--- row <= 4.5
+|   |--- row <= 2.5
+|   |   |--- rising <= 0.5
+|   |   |   |--- azione: 2 giù
+|   |   |--- rising >  0.5
+|   |   |   |--- azione: 1 su
+|   |--- row >  2.5
+|   |   |--- col <= 8.5
+|   |   |   |--- azione: 4 destra
+|   |   |--- col >  8.5
+|   |   |   |--- azione: 2 giù
+|--- row >  4.5
+|   |--- col <= 0.5
+|   |   |--- row <= 5.5
+|   |   |   |--- azione: 4 destra
+|   |   |--- row >  5.5
+|   |   |   |--- azione: 1 su
+|   |--- col >  0.5
+|   |   |--- stun <= 1.5
+|   |   |   |--- azione: 3 sinistra
+|   |   |--- stun >  1.5
+|   |   |   |--- azione: 2 giù
+
+=== profondità 4: accordo 59.9%, 16 foglie, punteggio 4.71
+|--- row <= 4.5
+|   |--- row <= 2.5
+|   |   |--- rising <= 0.5
+|   |   |   |--- col <= 1.5
+|   |   |   |   |--- azione: 2 giù
+|   |   |   |--- col >  1.5
+|   |   |   |   |--- azione: 2 giù
+|   |   |--- rising >  0.5
+|   |   |   |--- level <= 5.5
+|   |   |   |   |--- azione: 0 fermo
+|   |   |   |--- level >  5.5
+|   |   |   |   |--- azione: 1 su
+|   |--- row >  2.5
+|   |   |--- col <= 8.5
+|   |   |   |--- rising <= 0.5
+|   |   |   |   |--- azione: 4 destra
+|   |   |   |--- rising >  0.5
+|   |   |   |   |--- azione: 4 destra
+|   |   |--- col >  8.5
+|   |   |   |--- rising <= 0.5
+|   |   |   |   |--- azione: 2 giù
+|   |   |   |--- rising >  0.5
+|   |   |   |   |--- azione: 3 sinistra
+|--- row >  4.5
+|   |--- col <= 0.5
+|   |   |--- row <= 5.5
+|   |   |   |--- shells_right <= 0.5
+|   |   |   |   |--- azione: 1 su
+|   |   |   |--- shells_right >  0.5
+|   |   |   |   |--- azione: 4 destra
+|   |   |--- row >  5.5
+|   |   |   |--- rising <= 0.5
+|   |   |   |   |--- azione: 2 giù
+|   |   |   |--- rising >  0.5
+|   |   |   |   |--- azione: 1 su
+|   |--- col >  0.5
+|   |   |--- stun <= 1.5
+|   |   |   |--- rising <= 0.5
+|   |   |   |   |--- azione: 3 sinistra
+|   |   |   |--- rising >  0.5
+|   |   |   |   |--- azione: 3 sinistra
+|   |   |--- stun >  1.5
+|   |   |   |--- level <= 0.5
+|   |   |   |   |--- azione: 3 sinistra
+|   |   |   |--- level >  0.5
+|   |   |   |   |--- azione: 2 giù
+
