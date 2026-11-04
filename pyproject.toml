@@ -1,0 +1,24 @@
+[project]
+name = "small-games-llm"
+version = "0.1.0"
+description = "Small RL games for testing MLP policies whose weights are written by hand by an LLM (weight-space programming)."
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "numpy>=1.26",
+    "pygame>=2.6",
+    # The games of the article (Breakout, Seaquest, Asterix), at the exact
+    # version the article scored on.
+    "minatar==1.0.15",
+]
+
+[project.scripts]
+evaluate = "small_games.evaluate:main"
+play = "small_games.play:main"
+
+[build-system]
+requires = ["uv_build>=0.11,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "small_games"
