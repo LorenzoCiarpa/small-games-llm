@@ -68,6 +68,9 @@ a metà partita cambia il seguito (e da quel momento non coincide più con `eval
 | `low_tide` | 403 = 4 piani 10×10 + 3 scalari | 5 | ≤ 3 strati nascosti da ≤ 64 unità, relu/tanh/linear | 500 episodi, seed 10000.., sticky 0.1, 1000 passi |
 | `breakout`, `seaquest`, `asterix` | 600 = griglia 10×10 × 6 canali | 6 | ≤ 2 strati nascosti da ≤ 32 unità, tanh (l'articolo: 600-32-32-6) | 1000 episodi, seed 10000.., sticky 0.1, 10000 passi |
 
+Cosa rappresentano i 403 ingressi di Low Tide, e quali valori possono avere, è spiegato in
+[`docs/low_tide_observation.md`](docs/low_tide_observation.md).
+
 I giochi MinAtar sono quelli ufficiali del pacchetto `minatar==1.0.15` (la versione usata dall'articolo), non una
 reimplementazione. L'osservazione è quella dell'articolo: indice `(riga * 10 + colonna) * 6 + canale`, canali
 player, danger, reward, projectile, trail, gauge, ciascuno l'OR di alcuni canali del gioco, con la stessa mappatura
@@ -85,6 +88,19 @@ danno qui gli stessi punteggi dell'articolo, entro circa un errore standard:
 
 **Low Tide** (500 episodi): euristica 164.0 ± 1.5, `claude` 132.3 ± 0.9, `gpt` 79.9 ± 1.0, casuale 2.0, `safe` 0.
 
+## Esperimenti
+
+- [`experiments/decode_claude_low_tide/`](experiments/decode_claude_low_tide): come si legge la rete `claude.json`
+  di Low Tide, neurone per neurone, e quale algoritmo di gioco rappresenta. La lettura è verificata contro la rete
+  vera su ~200.000 stati. `uv run python experiments/decode_claude_low_tide/check.py`
+- [`experiments/decode_gpt_low_tide/`](experiments/decode_gpt_low_tide): la stessa analisi per `gpt.json`, con un
+  confronto tra le due reti. `uv run python experiments/decode_gpt_low_tide/check.py`
+
+- [`experiments/weight_distance/`](experiments/weight_distance): quanto sono lontane tra loro le reti scritte dagli
+  LLM? Distanze strato per strato (grezze, dopo aver allineato i neuroni e contro un modello nullo), unità gemelle,
+  CKA, azioni sugli stessi stati e cross-play tra giochi, con quattro reti addestrate con PPO come termine di
+  paragone. `uv run --group analysis python experiments/weight_distance/analyze.py`
+
 ## Struttura
 
 ```
@@ -99,6 +115,7 @@ src/small_games/
     low_tide/        env.py (regole), baselines.py (euristica: NON darla al modello), render.py
     minatar_games.py Breakout, Seaquest, Asterix
 weights/<gioco>/<nome>.json
+experiments/<nome>/   esperimenti sui pesi (script, dati di riferimento, risultati)
 ```
 
 ## Aggiungere un gioco

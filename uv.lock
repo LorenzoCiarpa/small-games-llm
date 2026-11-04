@@ -1169,12 +1169,22 @@ dependencies = [
     { name = "pygame" },
 ]
 
+[package.dev-dependencies]
+analysis = [
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "minatar", specifier = "==1.0.15" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "pygame", specifier = ">=2.6" },
 ]
+
+[package.metadata.requires-dev]
+analysis = [{ name = "scipy", specifier = ">=1.15.3" }]
 
 [[package]]
 name = "tzdata"
