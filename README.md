@@ -105,6 +105,11 @@ Gli esperimenti su un solo gioco stanno in `experiments/<gioco>/`, quelli che co
   ~200.000 stati. `uv run python experiments/low_tide/decode_claude/check.py`
 - [`experiments/low_tide/decode_gpt/`](experiments/low_tide/decode_gpt): la stessa analisi per `gpt.json`, con un
   confronto tra le due reti. `uv run python experiments/low_tide/decode_gpt/check.py`
+- [`experiments/low_tide/ppo/`](experiments/low_tide/ppo): una rete addestrata con PPO (403-64-64-5) gioca bene
+  quanto quella di Claude, ma i suoi pesi non si leggono come un algoritmo. Le stesse misure sulle tre reti: pesi,
+  pruning, ablazione, quantità dell'algoritmo di Claude nei neuroni, distillazione in alberi di decisione.
+  `uv run --group ppo python experiments/low_tide/ppo/train.py`, poi `uv run --group analysis python
+  experiments/low_tide/ppo/analyze.py`
 
 **Breakout, Seaquest, Asterix**: le reti di GPT-6 Astra dell'articolo (`paper_astra.json`), lette neurone per
 neurone come quelle di Low Tide, ognuna con un `check.py` che verifica la lettura contro la rete vera.

@@ -1,0 +1,90 @@
+=== profondità 1: accordo 44.7%, 2 foglie
+|--- paddle_x <= 4.5
+|   |--- azione: 5 fuoco
+|--- paddle_x >  4.5
+|   |--- azione: 0 fermo
+
+=== profondità 2: accordo 43.6%, 4 foglie, punteggio 0.53
+|--- paddle_x <= 4.5
+|   |--- ball_rel_x <= 3.5
+|   |   |--- azione: 5 fuoco
+|   |--- ball_rel_x >  3.5
+|   |   |--- azione: 0 fermo
+|--- paddle_x >  4.5
+|   |--- ball_dx <= 0.5
+|   |   |--- azione: 0 fermo
+|   |--- ball_dx >  0.5
+|   |   |--- azione: 5 fuoco
+
+=== profondità 3: accordo 55.7%, 8 foglie
+|--- paddle_x <= 4.5
+|   |--- ball_rel_x <= 3.5
+|   |   |--- ball_dy <= 0.5
+|   |   |   |--- azione: 4 giù
+|   |   |--- ball_dy >  0.5
+|   |   |   |--- azione: 5 fuoco
+|   |--- ball_rel_x >  3.5
+|   |   |--- paddle_x <= 3.5
+|   |   |   |--- azione: 5 fuoco
+|   |   |--- paddle_x >  3.5
+|   |   |   |--- azione: 0 fermo
+|--- paddle_x >  4.5
+|   |--- ball_dx <= 0.5
+|   |   |--- ball_x <= 4.5
+|   |   |   |--- azione: 1 sinistra
+|   |   |--- ball_x >  4.5
+|   |   |   |--- azione: 0 fermo
+|   |--- ball_dx >  0.5
+|   |   |--- bricks <= 25.5
+|   |   |   |--- azione: 0 fermo
+|   |   |--- bricks >  25.5
+|   |   |   |--- azione: 5 fuoco
+
+=== profondità 4: accordo 60.0%, 16 foglie, punteggio 1.50
+|--- paddle_x <= 4.5
+|   |--- ball_rel_x <= 3.5
+|   |   |--- ball_dy <= 0.5
+|   |   |   |--- ball_y <= 6.5
+|   |   |   |   |--- azione: 3 destra
+|   |   |   |--- ball_y >  6.5
+|   |   |   |   |--- azione: 4 giù
+|   |   |--- ball_dy >  0.5
+|   |   |   |--- bricks <= 24.5
+|   |   |   |   |--- azione: 3 destra
+|   |   |   |--- bricks >  24.5
+|   |   |   |   |--- azione: 5 fuoco
+|   |--- ball_rel_x >  3.5
+|   |   |--- paddle_x <= 3.5
+|   |   |   |--- ball_x <= 7.5
+|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |--- ball_x >  7.5
+|   |   |   |   |--- azione: 5 fuoco
+|   |   |--- paddle_x >  3.5
+|   |   |   |--- bricks <= 29.0
+|   |   |   |   |--- azione: 0 fermo
+|   |   |   |--- bricks >  29.0
+|   |   |   |   |--- azione: 5 fuoco
+|--- paddle_x >  4.5
+|   |--- ball_dx <= 0.5
+|   |   |--- ball_x <= 4.5
+|   |   |   |--- landing_rel_x <= 1.5
+|   |   |   |   |--- azione: 0 fermo
+|   |   |   |--- landing_rel_x >  1.5
+|   |   |   |   |--- azione: 1 sinistra
+|   |   |--- ball_x >  4.5
+|   |   |   |--- paddle_x <= 5.5
+|   |   |   |   |--- azione: 0 fermo
+|   |   |   |--- paddle_x >  5.5
+|   |   |   |   |--- azione: 0 fermo
+|   |--- ball_dx >  0.5
+|   |   |--- bricks <= 25.5
+|   |   |   |--- paddle_x <= 5.5
+|   |   |   |   |--- azione: 0 fermo
+|   |   |   |--- paddle_x >  5.5
+|   |   |   |   |--- azione: 0 fermo
+|   |   |--- bricks >  25.5
+|   |   |   |--- ball_rel_x <= -1.5
+|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |--- ball_rel_x >  -1.5
+|   |   |   |   |--- azione: 5 fuoco
+

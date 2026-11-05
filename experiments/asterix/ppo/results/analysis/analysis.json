@@ -1,0 +1,1494 @@
+{
+ "game": "asterix",
+ "features": [
+  "player_x",
+  "player_y",
+  "enemy_eta_up2",
+  "enemy_eta_up1",
+  "enemy_eta_same",
+  "enemy_eta_down1",
+  "enemy_eta_down2",
+  "gold_eta_up2",
+  "gold_eta_up1",
+  "gold_eta_same",
+  "gold_eta_down1",
+  "gold_eta_down2",
+  "gold_dx",
+  "gold_dy",
+  "enemies"
+ ],
+ "settings": {
+  "score_episodes": 200,
+  "ablation_episodes": 100,
+  "collect_episodes": 40,
+  "seed0": 10000
+ },
+ "nets": {
+  "paper_astra": {
+   "path": "/home/ciarpa/Desktop/github/projects/small-games-llm/weights/asterix/paper_astra.json",
+   "weights": [
+    {
+     "layer": 0,
+     "shape": [
+      32,
+      600
+     ],
+     "activation": "tanh",
+     "params": 19232,
+     "nonzero_frac": 0.024375,
+     "distinct_values": 33,
+     "max_abs": 24.0,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 10.5,
+     "inputs_for_90pct_frac": 0.0175
+    },
+    {
+     "layer": 1,
+     "shape": [
+      32,
+      32
+     ],
+     "activation": "tanh",
+     "params": 1056,
+     "nonzero_frac": 0.0517578125,
+     "distinct_values": 3,
+     "max_abs": 24.0,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 1.0,
+     "inputs_for_90pct_frac": 0.03125
+    },
+    {
+     "layer": 2,
+     "shape": [
+      6,
+      32
+     ],
+     "activation": "linear",
+     "params": 198,
+     "nonzero_frac": 0.23958333333333334,
+     "distinct_values": 5,
+     "max_abs": 80.0,
+     "zero_units": 3,
+     "inputs_for_90pct_median": 13.0,
+     "inputs_for_90pct_frac": 0.40625
+    }
+   ],
+   "score": {
+    "mean": 54.53,
+    "stderr": 2.479310469063939
+   },
+   "score_greedy": {
+    "mean": 65.11,
+    "stderr": 2.116194911751423
+   },
+   "pruning": [
+    {
+     "keep": 1.0,
+     "mean": 54.53,
+     "stderr": 2.479310469063939
+    },
+    {
+     "keep": 0.5,
+     "mean": 54.53,
+     "stderr": 2.479310469063939
+    },
+    {
+     "keep": 0.25,
+     "mean": 54.53,
+     "stderr": 2.479310469063939
+    },
+    {
+     "keep": 0.1,
+     "mean": 54.53,
+     "stderr": 2.479310469063939
+    },
+    {
+     "keep": 0.05,
+     "mean": 30.185,
+     "stderr": 1.4376676655551917
+    },
+    {
+     "keep": 0.02,
+     "mean": 0.48,
+     "stderr": 0.06378355358979862
+    }
+   ],
+   "states": 33275,
+   "layers": [
+    {
+     "layer": 0,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.9542374154770848,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.4765870117290468,
+       "r2": 0.31014987453408605
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "enemy_eta_up2",
+       "best_r": 0.16651935545717986,
+       "r2": 0.1464142688537663
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "enemy_eta_up2",
+       "best_r": 0.2186317736188441,
+       "r2": 0.14142737669129812
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "enemy_eta_up2",
+       "best_r": 0.20602770564892678,
+       "r2": 0.12878779044867972
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.2331690373643385,
+       "r2": 0.16470482607526749
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.28383387915482927,
+       "r2": 0.19107591830841986
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "enemy_eta_up1",
+       "best_r": 0.26625634662323605,
+       "r2": 0.1755860558311665
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.1273135597251962,
+       "r2": 0.046805431892031124
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.13204241615675041,
+       "r2": 0.05166501562451131
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.30508191650551164,
+       "r2": 0.21414989652226446
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.2709550687809215,
+       "r2": 0.17185259352535687
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "enemy_eta_down2",
+       "best_r": 0.228918405716539,
+       "r2": 0.17112073092181979
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "enemy_eta_down2",
+       "best_r": 0.20633293406191558,
+       "r2": 0.14072705151317755
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "enemy_eta_down2",
+       "best_r": 0.19152595172782336,
+       "r2": 0.1242683782396975
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "enemy_eta_down2",
+       "best_r": 0.19652486023074983,
+       "r2": 0.15150378920661123
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.4628691005528334,
+       "r2": 0.29287070219451894
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.27349741620438217,
+       "r2": 0.1519911858933033
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.25095008773247107,
+       "r2": 0.11077698825249827
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.2801782292886268,
+       "r2": 0.12956264667755624
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.2569957867617252,
+       "r2": 0.11697753918252518
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.295243896926372,
+       "r2": 0.136652592072678
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.2838122335835852,
+       "r2": 0.1258968605220423
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.22364421043155291,
+       "r2": 0.09575042847307724
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.2657332259302587,
+       "r2": 0.14317599873720355
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.29142830252488344,
+       "r2": 0.17517828504270072
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.25129517945338864,
+       "r2": 0.15167214209171664
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.18128050329341788,
+       "r2": 0.11516340687057225
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.11185580465871044,
+       "r2": 0.11237876308039985
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.13859133421927944,
+       "r2": 0.13062564177839808
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.21773400500930865,
+       "r2": 0.17007392026301904
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.25715363390502577,
+       "r2": 0.16585175989361856
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.3161198718295338,
+       "r2": 0.20153791530416543
+      }
+     ],
+     "ablation": [
+      12.45,
+      17.01,
+      19.13,
+      18.02,
+      23.12,
+      31.68,
+      40.54,
+      55.51,
+      52.73,
+      41.65,
+      27.4,
+      19.59,
+      18.62,
+      18.3,
+      16.0,
+      16.19,
+      33.71,
+      34.55,
+      42.76,
+      38.71,
+      41.12,
+      41.89,
+      34.25,
+      41.43,
+      45.35,
+      51.09,
+      47.77,
+      50.7,
+      44.27,
+      44.66,
+      51.69,
+      53.29
+     ]
+    },
+    {
+     "layer": 1,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.8974474079639368,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "enemy_eta_up2",
+       "best_r": 0.8160876766271894,
+       "r2": 0.8012472097079447
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "enemy_eta_down2",
+       "best_r": 0.8172142233301575,
+       "r2": 0.8086254092464958
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.6751053686787402,
+       "r2": 0.5898231839750017
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.2509526907683841,
+       "r2": 0.19169255603022906
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.2992738027697382,
+       "r2": 0.1556815032123634
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.3187245894697707,
+       "r2": 0.15994768874342846
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.2028715674971402,
+       "r2": 0.1604789913764979
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.21053374604288042,
+       "r2": 0.1533585663367415
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.2604033561334679,
+       "r2": 0.16040439880722301
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.2822132069964161,
+       "r2": 0.13444510999623183
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.12581677028551874,
+       "r2": 0.12975157859527398
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.1475141854868982,
+       "r2": 0.1222480961194653
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.1941871834816816,
+       "r2": 0.12019789699556371
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.21048664098206293,
+       "r2": 0.09138298929760902
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.12018488946678356,
+       "r2": 0.11665691176320725
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.10881218454000291,
+       "r2": 0.11372454954208
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.13497310727681544,
+       "r2": 0.11321318847204365
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.1559956879190791,
+       "r2": 0.060621646846338084
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.1214989949471505,
+       "r2": 0.12414904971574758
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.12441985747605253,
+       "r2": 0.12813980268933844
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.1407108392007603,
+       "r2": 0.12495607535864695
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.13140234909210477,
+       "r2": 0.06888141699795225
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.17332728293695662,
+       "r2": 0.1836405164138747
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.2134690820255077,
+       "r2": 0.16696500044578355
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.13886435470693703,
+       "r2": 0.12306114473432095
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.09957353456552755,
+       "r2": 0.09714469704592477
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.23476663964411587,
+       "r2": 0.18413540516267124
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.2542502064627735,
+       "r2": 0.15888447013108375
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.09305834020719149,
+       "r2": 0.06253276474845526
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.09305824835324447,
+       "r2": 0.06253274090875616
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.31261647310811147,
+       "r2": 0.21859233783207777
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.3077520220104108,
+       "r2": 0.1889905477150562
+      }
+     ],
+     "ablation": [
+      4.68,
+      4.29,
+      26.92,
+      48.29,
+      46.76,
+      53.34,
+      50.27,
+      46.51,
+      46.48,
+      49.23,
+      51.2,
+      52.15,
+      47.88,
+      52.24,
+      49.86,
+      44.02,
+      44.58,
+      51.58,
+      52.67,
+      49.45,
+      48.6,
+      53.76,
+      51.59,
+      48.79,
+      47.04,
+      52.23,
+      50.84,
+      53.43,
+      53.8,
+      52.06,
+      54.49,
+      55.34
+     ]
+    }
+   ],
+   "ablation_reference": 54.97,
+   "ablation_reference_stderr": 3.4682238635469838,
+   "distill": [
+    {
+     "depth": 1,
+     "agreement": 0.7869665309013636,
+     "leaves": 2
+    },
+    {
+     "depth": 2,
+     "agreement": 0.8259252700548964,
+     "leaves": 4,
+     "score": 2.175,
+     "stderr": 0.11913370302303164
+    },
+    {
+     "depth": 3,
+     "agreement": 0.8605454223481495,
+     "leaves": 8
+    },
+    {
+     "depth": 4,
+     "agreement": 0.8843633787851957,
+     "leaves": 16,
+     "score": 3.285,
+     "stderr": 0.17798107007918754
+    },
+    {
+     "depth": 6,
+     "agreement": 0.9211970958030813,
+     "leaves": 40
+    },
+    {
+     "depth": 8,
+     "agreement": 0.9379316451213033,
+     "leaves": 68,
+     "score": 36.315,
+     "stderr": 1.4880018894865616
+    },
+    {
+     "depth": 12,
+     "agreement": 0.9591818664777758,
+     "leaves": 112,
+     "score": 42.52,
+     "stderr": 1.4500382944172139
+    }
+   ],
+   "seconds": 314.6,
+   "key_quantities": {
+    "nemico in arrivo nella mia riga (\u2264 3)": [
+     {
+      "layer": 0,
+      "best_unit": 19,
+      "best_r": 0.28868636745677473,
+      "linear_r2": 0.6007147055199247
+     },
+     {
+      "layer": 1,
+      "best_unit": 2,
+      "best_r": 0.6678443530243525,
+      "linear_r2": 0.44956081568588324
+     }
+    ],
+    "nemico in arrivo nella riga sotto (\u2264 2)": [
+     {
+      "layer": 0,
+      "best_unit": 9,
+      "best_r": 0.3999752610451163,
+      "linear_r2": 0.5199187689679694
+     },
+     {
+      "layer": 1,
+      "best_unit": 1,
+      "best_r": 0.641245029142334,
+      "linear_r2": 0.42530800781762823
+     }
+    ],
+    "nemico in arrivo nella riga sopra (\u2264 2)": [
+     {
+      "layer": 0,
+      "best_unit": 6,
+      "best_r": 0.3517369182351801,
+      "linear_r2": 0.5511471482710659
+     },
+     {
+      "layer": 1,
+      "best_unit": 0,
+      "best_r": 0.6508024361161621,
+      "linear_r2": 0.4764765050560841
+     }
+    ],
+    "tesoro in arrivo nella mia riga": [
+     {
+      "layer": 0,
+      "best_unit": 29,
+      "best_r": 0.25875643715170576,
+      "linear_r2": 0.37375135320884123
+     },
+     {
+      "layer": 1,
+      "best_unit": 23,
+      "best_r": 0.30297272300020806,
+      "linear_r2": 0.9999999999176936
+     }
+    ]
+   }
+  },
+  "ppo_v1": {
+   "path": "/home/ciarpa/Desktop/github/projects/small-games-llm/weights/asterix/ppo_v1.json",
+   "weights": [
+    {
+     "layer": 0,
+     "shape": [
+      32,
+      600
+     ],
+     "activation": "tanh",
+     "params": 19232,
+     "nonzero_frac": 1.0,
+     "distinct_values": 18609,
+     "max_abs": 0.948874,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 345.0,
+     "inputs_for_90pct_frac": 0.575
+    },
+    {
+     "layer": 1,
+     "shape": [
+      32,
+      32
+     ],
+     "activation": "tanh",
+     "params": 1056,
+     "nonzero_frac": 1.0,
+     "distinct_values": 1024,
+     "max_abs": 1.41271,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 22.0,
+     "inputs_for_90pct_frac": 0.6875
+    },
+    {
+     "layer": 2,
+     "shape": [
+      6,
+      32
+     ],
+     "activation": "linear",
+     "params": 198,
+     "nonzero_frac": 1.0,
+     "distinct_values": 192,
+     "max_abs": 1.74627,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 22.5,
+     "inputs_for_90pct_frac": 0.703125
+    }
+   ],
+   "score": {
+    "mean": 9.01,
+    "stderr": 0.5252417485999773
+   },
+   "score_greedy": {
+    "mean": 10.24,
+    "stderr": 0.5636492726089184
+   },
+   "pruning": [
+    {
+     "keep": 1.0,
+     "mean": 9.01,
+     "stderr": 0.5252417485999773
+    },
+    {
+     "keep": 0.5,
+     "mean": 9.08,
+     "stderr": 0.5477390715041801
+    },
+    {
+     "keep": 0.25,
+     "mean": 5.605,
+     "stderr": 0.3974097982419324
+    },
+    {
+     "keep": 0.1,
+     "mean": 1.62,
+     "stderr": 0.14381031616395215
+    },
+    {
+     "keep": 0.05,
+     "mean": 0.715,
+     "stderr": 0.08000549604236527
+    },
+    {
+     "keep": 0.02,
+     "mean": 0.57,
+     "stderr": 0.06119004090150322
+    }
+   ],
+   "states": 12014,
+   "layers": [
+    {
+     "layer": 0,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 1.3005660063259531e-05,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.3269362773415236,
+       "r2": 0.1324129367468886
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.35246307852638203,
+       "r2": 0.17820196904989472
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.5174429312785882,
+       "r2": 0.20869172501872646
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.32486017468535583,
+       "r2": 0.16837855425539816
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.42903014425222086,
+       "r2": 0.3486281161638789
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.3461060682717416,
+       "r2": 0.1608176376985676
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.3823931930791113,
+       "r2": 0.2751388887076628
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.5026656596332791,
+       "r2": 0.20118179035061667
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.4104209041025476,
+       "r2": 0.28978734559788
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.5201353030051349,
+       "r2": 0.27552271069179934
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "gold_dx",
+       "best_r": 0.27380553680178427,
+       "r2": 0.14563706582626634
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.46797784534032766,
+       "r2": 0.20126721171220285
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.42184710237732254,
+       "r2": 0.2214221812733984
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.3472355746132994,
+       "r2": 0.21827970954980003
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "gold_dx",
+       "best_r": 0.23266370237814288,
+       "r2": 0.14558091149059416
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.33978544490513607,
+       "r2": 0.18299456681777926
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.4322844281798634,
+       "r2": 0.18654512989517935
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.2784676269313025,
+       "r2": 0.22228460101020098
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.30585163578655206,
+       "r2": 0.2030421588560728
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.40952978129575063,
+       "r2": 0.1712192434848271
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.4203279286173105,
+       "r2": 0.2349110266629385
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.40110847703713376,
+       "r2": 0.2710449453648899
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.39733779155876486,
+       "r2": 0.13683216701868972
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "gold_dx",
+       "best_r": 0.3781458050042169,
+       "r2": 0.21596673050297865
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.4918429423410978,
+       "r2": 0.1941026242464544
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.39835712255673916,
+       "r2": 0.18642404501668075
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.37920027773044,
+       "r2": 0.2575305357190264
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.30360487276562415,
+       "r2": 0.20889220186498236
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.3081499843436221,
+       "r2": 0.14095658923115983
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "gold_dx",
+       "best_r": 0.432314052402246,
+       "r2": 0.20783514932973424
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.3230373243547364,
+       "r2": 0.17385466548759532
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.41089869948210384,
+       "r2": 0.2012287998268285
+      }
+     ],
+     "ablation": [
+      8.61,
+      9.37,
+      8.45,
+      8.67,
+      9.15,
+      8.03,
+      8.62,
+      9.59,
+      9.04,
+      8.81,
+      7.52,
+      8.55,
+      8.84,
+      8.81,
+      8.25,
+      8.25,
+      8.06,
+      8.65,
+      9.27,
+      8.84,
+      8.91,
+      7.99,
+      7.86,
+      8.58,
+      8.55,
+      8.77,
+      8.78,
+      8.91,
+      8.21,
+      8.06,
+      8.75,
+      8.48
+     ]
+    },
+    {
+     "layer": 1,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.20778362743465956,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.5472783392798499,
+       "r2": 0.31948748449371156
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.577234653567385,
+       "r2": 0.3055260287135234
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.5413196227812934,
+       "r2": 0.27032503736897073
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.5357882854643411,
+       "r2": 0.32352069026602215
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.42744650746252605,
+       "r2": 0.33887084317226746
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.3438365807533474,
+       "r2": 0.2577280943891681
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.4906336669249436,
+       "r2": 0.2696945810554212
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.3879909299260726,
+       "r2": 0.26067393557968155
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.5463314238582391,
+       "r2": 0.2915093687988276
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.41538266005190166,
+       "r2": 0.28838522877888817
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.5008119081869521,
+       "r2": 0.26413942326556017
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.556440979573396,
+       "r2": 0.32424129168839666
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.454387482467912,
+       "r2": 0.2958942144624883
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.43350120012594595,
+       "r2": 0.3178881861504119
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.4362607013664972,
+       "r2": 0.35205619246557107
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.4544237326379813,
+       "r2": 0.2846719427152904
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.3816339263033599,
+       "r2": 0.17469578616888526
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "gold_dx",
+       "best_r": 0.4238067036776937,
+       "r2": 0.27112829910586234
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.5225287235521648,
+       "r2": 0.31245962105863667
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.4039818524769594,
+       "r2": 0.3117117721776096
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.4701209059725182,
+       "r2": 0.23081766383039004
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.47227034995336037,
+       "r2": 0.24618839611168486
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.45508228775940046,
+       "r2": 0.3119852011195866
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.5141900131575674,
+       "r2": 0.28928947168075403
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "gold_eta_up1",
+       "best_r": 0.577857462251373,
+       "r2": 0.32048576381111016
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.39189952383027626,
+       "r2": 0.3149470788977974
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.3815954643728177,
+       "r2": 0.25933208795221907
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.4983508944335873,
+       "r2": 0.2715231524066489
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "gold_dx",
+       "best_r": 0.4316410851451263,
+       "r2": 0.19130251989043834
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.37248243686647914,
+       "r2": 0.29859061754135763
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.4268331148324217,
+       "r2": 0.231339097172779
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "gold_dx",
+       "best_r": 0.3503845596245822,
+       "r2": 0.18119876795091117
+      }
+     ],
+     "ablation": [
+      8.51,
+      8.15,
+      8.26,
+      9.81,
+      9.04,
+      8.12,
+      8.63,
+      9.22,
+      8.21,
+      8.21,
+      8.48,
+      8.16,
+      9.37,
+      8.25,
+      9.02,
+      9.41,
+      9.66,
+      8.71,
+      8.49,
+      9.59,
+      8.12,
+      7.28,
+      8.75,
+      8.74,
+      8.59,
+      8.46,
+      8.92,
+      7.84,
+      8.76,
+      9.08,
+      8.39,
+      8.29
+     ]
+    }
+   ],
+   "ablation_reference": 8.99,
+   "ablation_reference_stderr": 0.6811302253155294,
+   "distill": [
+    {
+     "depth": 1,
+     "agreement": 0.34150076569678406,
+     "leaves": 2
+    },
+    {
+     "depth": 2,
+     "agreement": 0.40336906584992344,
+     "leaves": 4,
+     "score": 0.705,
+     "stderr": 0.06566149679076788
+    },
+    {
+     "depth": 3,
+     "agreement": 0.4373660030627871,
+     "leaves": 8
+    },
+    {
+     "depth": 4,
+     "agreement": 0.4986217457886677,
+     "leaves": 16,
+     "score": 2.76,
+     "stderr": 0.18020647008167182
+    },
+    {
+     "depth": 6,
+     "agreement": 0.5228177641653905,
+     "leaves": 48
+    },
+    {
+     "depth": 8,
+     "agreement": 0.5666156202143952,
+     "leaves": 98,
+     "score": 3.215,
+     "stderr": 0.22076585518161623
+    },
+    {
+     "depth": 12,
+     "agreement": 0.5767228177641653,
+     "leaves": 182,
+     "score": 3.535,
+     "stderr": 0.2641833439033958
+    }
+   ],
+   "seconds": 219.5,
+   "key_quantities": {
+    "nemico in arrivo nella mia riga (\u2264 3)": [
+     {
+      "layer": 0,
+      "best_unit": 13,
+      "best_r": 0.08367109347686387,
+      "linear_r2": 0.03606187151668305
+     },
+     {
+      "layer": 1,
+      "best_unit": 23,
+      "best_r": 0.10379037282498838,
+      "linear_r2": 0.03725464637458786
+     }
+    ],
+    "nemico in arrivo nella riga sotto (\u2264 2)": [
+     {
+      "layer": 0,
+      "best_unit": 5,
+      "best_r": 0.11302754567996928,
+      "linear_r2": 0.049848987255890265
+     },
+     {
+      "layer": 1,
+      "best_unit": 5,
+      "best_r": 0.10293556732663989,
+      "linear_r2": 0.05535526048478534
+     }
+    ],
+    "nemico in arrivo nella riga sopra (\u2264 2)": [
+     {
+      "layer": 0,
+      "best_unit": 9,
+      "best_r": 0.11993763684430117,
+      "linear_r2": 0.056480931230717624
+     },
+     {
+      "layer": 1,
+      "best_unit": 24,
+      "best_r": 0.08588772564855858,
+      "linear_r2": 0.042222023056200486
+     }
+    ],
+    "tesoro in arrivo nella mia riga": [
+     {
+      "layer": 0,
+      "best_unit": 25,
+      "best_r": 0.13264258869666629,
+      "linear_r2": 0.08078425992042071
+     },
+     {
+      "layer": 1,
+      "best_unit": 5,
+      "best_r": 0.15373449789515015,
+      "linear_r2": 0.0772520629346215
+     }
+    ]
+   }
+  }
+ }
+}

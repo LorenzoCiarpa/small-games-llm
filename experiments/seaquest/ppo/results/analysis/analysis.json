@@ -1,0 +1,1533 @@
+{
+ "game": "seaquest",
+ "features": [
+  "sub_x",
+  "sub_y",
+  "facing",
+  "oxygen",
+  "divers",
+  "enemy_eta_up2",
+  "enemy_eta_up1",
+  "enemy_eta_same",
+  "enemy_eta_down1",
+  "enemy_eta_down2",
+  "enemy_near_up2",
+  "enemy_near_up1",
+  "enemy_near_same",
+  "enemy_near_down1",
+  "enemy_near_down2",
+  "diver_near_up2",
+  "diver_near_up1",
+  "diver_near_same",
+  "diver_near_down1",
+  "diver_near_down2",
+  "target_ahead",
+  "bullet_near",
+  "diver_dx",
+  "diver_dy",
+  "torpedo_same_row",
+  "enemies"
+ ],
+ "settings": {
+  "score_episodes": 200,
+  "ablation_episodes": 100,
+  "collect_episodes": 40,
+  "seed0": 10000
+ },
+ "nets": {
+  "paper_astra": {
+   "path": "/home/ciarpa/Desktop/github/projects/small-games-llm/weights/seaquest/paper_astra.json",
+   "weights": [
+    {
+     "layer": 0,
+     "shape": [
+      32,
+      600
+     ],
+     "activation": "tanh",
+     "params": 19232,
+     "nonzero_frac": 0.018958333333333334,
+     "distinct_values": 12,
+     "max_abs": 8.0,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 9.0,
+     "inputs_for_90pct_frac": 0.015
+    },
+    {
+     "layer": 1,
+     "shape": [
+      32,
+      32
+     ],
+     "activation": "tanh",
+     "params": 1056,
+     "nonzero_frac": 0.341796875,
+     "distinct_values": 19,
+     "max_abs": 10.0,
+     "zero_units": 6,
+     "inputs_for_90pct_median": 6.0,
+     "inputs_for_90pct_frac": 0.1875
+    },
+    {
+     "layer": 2,
+     "shape": [
+      6,
+      32
+     ],
+     "activation": "linear",
+     "params": 198,
+     "nonzero_frac": 0.13541666666666666,
+     "distinct_values": 4,
+     "max_abs": 40.0,
+     "zero_units": 3,
+     "inputs_for_90pct_median": 8.0,
+     "inputs_for_90pct_frac": 0.25
+    }
+   ],
+   "score": {
+    "mean": 48.335,
+    "stderr": 2.9373635112094862
+   },
+   "score_greedy": {
+    "mean": 53.865,
+    "stderr": 3.0781175927135833
+   },
+   "pruning": [
+    {
+     "keep": 1.0,
+     "mean": 48.335,
+     "stderr": 2.9373635112094862
+    },
+    {
+     "keep": 0.5,
+     "mean": 48.335,
+     "stderr": 2.9373635112094862
+    },
+    {
+     "keep": 0.25,
+     "mean": 49.775,
+     "stderr": 2.845303257675832
+    },
+    {
+     "keep": 0.1,
+     "mean": 1.015,
+     "stderr": 0.0681697187376024
+    },
+    {
+     "keep": 0.05,
+     "mean": 1.035,
+     "stderr": 0.06776307380022155
+    },
+    {
+     "keep": 0.02,
+     "mean": 0.745,
+     "stderr": 0.06573798302397406
+    }
+   ],
+   "states": 61554,
+   "layers": [
+    {
+     "layer": 0,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.993186368879358,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.22164496559194308,
+       "r2": 0.10091849626972493
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.25535228278144195,
+       "r2": 0.12447009647293517
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5450185215977531,
+       "r2": 0.3741505435411334
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.3553912956883924,
+       "r2": 0.1869487810852486
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.14565632277864168,
+       "r2": 0.03644991268546027
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "diver_near_up2",
+       "best_r": 0.08117589594561136,
+       "r2": 0.036978705754583174
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2822398664275608,
+       "r2": 0.10314619660481239
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.4357037098756169,
+       "r2": 0.21537906193950118
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5425659515596694,
+       "r2": 0.33919750713585206
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2817012172184855,
+       "r2": 0.20580346501752067
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.21339004929985966,
+       "r2": 0.12316479586165663
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "bullet_near",
+       "best_r": 0.13339843151056238,
+       "r2": 0.0758251307972383
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "diver_dy",
+       "best_r": 0.07466958240953055,
+       "r2": 0.054490500588173174
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "diver_dy",
+       "best_r": 0.14978116277980766,
+       "r2": 0.08307782581042356
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "diver_dy",
+       "best_r": 0.20933087080323845,
+       "r2": 0.15253695264261047
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "diver_dy",
+       "best_r": 0.262782801597049,
+       "r2": 0.23460692679446216
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.17278322227088144,
+       "r2": 0.062474041895890786
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.19278429105304332,
+       "r2": 0.06489268318812424
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "enemy_eta_up2",
+       "best_r": 0.17895840880440453,
+       "r2": 0.07071128628732637
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.17063224159037577,
+       "r2": 0.0706383812045972
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.18389009170845763,
+       "r2": 0.07770400433589875
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.18381630440117946,
+       "r2": 0.07131543290474895
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.2042680055677055,
+       "r2": 0.07661959568586996
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.16331839677737633,
+       "r2": 0.06405948628734293
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "oxygen",
+       "best_r": 0.48824368851984423,
+       "r2": 0.41791330999587784
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.21462699916089434,
+       "r2": 0.07654969784454468
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.2108164119563607,
+       "r2": 0.07706725844013729
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.21184761943309283,
+       "r2": 0.08064667139459702
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.21315163855646002,
+       "r2": 0.07906614733902873
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.21627529277920227,
+       "r2": 0.07443554609022762
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.21776682090290386,
+       "r2": 0.07767389180631146
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "enemies",
+       "best_r": 0.18915200539000326,
+       "r2": 0.06850049653873858
+      }
+     ],
+     "ablation": [
+      41.42,
+      11.55,
+      11.95,
+      13.3,
+      17.79,
+      14.41,
+      17.08,
+      20.62,
+      24.26,
+      49.59,
+      51.32,
+      52.18,
+      55.68,
+      50.25,
+      53.43,
+      50.36,
+      27.47,
+      16.48,
+      15.75,
+      15.15,
+      17.03,
+      13.62,
+      15.91,
+      27.63,
+      3.6,
+      48.15,
+      42.38,
+      46.38,
+      42.82,
+      44.18,
+      47.89,
+      50.31
+     ]
+    },
+    {
+     "layer": 1,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.7325021525814732,
+     "constant_units": 6,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2337822949951323,
+       "r2": 0.10505324521157355
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.49261423236096663,
+       "r2": 0.34317953194426143
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.3253286883450741,
+       "r2": 0.16306754023112036
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "bullet_near",
+       "best_r": 0.1728078719903641,
+       "r2": 0.05086830886853877
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "bullet_near",
+       "best_r": 0.16441929842612732,
+       "r2": 0.05028970145771938
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2624645608273721,
+       "r2": 0.10910202242036149
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.40662010850215957,
+       "r2": 0.21715798317598367
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.49824619245004276,
+       "r2": 0.31013862290610505
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "oxygen",
+       "best_r": 0.16452575544162187,
+       "r2": 0.06374437385380538
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.30227755979465676,
+       "r2": 0.14761226178556486
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "enemy_eta_up1",
+       "best_r": 0.21444692174536575,
+       "r2": 0.04540040715899396
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "enemy_eta_up1",
+       "best_r": 0.22469418721245374,
+       "r2": 0.054007117143806904
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.24374351522547458,
+       "r2": 0.10554734165244861
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.3821908061520201,
+       "r2": 0.2008841292979867
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.47309397465571545,
+       "r2": 0.2947651997544066
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "enemy_near_up1",
+       "best_r": 0.17297406988738262,
+       "r2": 0.081308970326744
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.18884808237039385,
+       "r2": 0.08081350686606481
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.20791894908965286,
+       "r2": 0.09494757848715407
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.45494062303714405,
+       "r2": 0.3074344672168793
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.30469132064832033,
+       "r2": 0.15438957931413366
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.28851500243026657,
+       "r2": 0.05723781291134167
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.25094033698579876,
+       "r2": 0.056282913793945566
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2453286112746552,
+       "r2": 0.10634388451332932
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.38382180298840807,
+       "r2": 0.20437847183651825
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.569669110969035,
+       "r2": 0.4025859011492172
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2068252165932338,
+       "r2": 0.08019478838044503
+      },
+      {
+       "unit": 26,
+       "constant": true,
+       "best_feature": null,
+       "best_r": 0.0,
+       "r2": 0.0
+      },
+      {
+       "unit": 27,
+       "constant": true,
+       "best_feature": null,
+       "best_r": 0.0,
+       "r2": 0.0
+      },
+      {
+       "unit": 28,
+       "constant": true,
+       "best_feature": null,
+       "best_r": 0.0,
+       "r2": 0.0
+      },
+      {
+       "unit": 29,
+       "constant": true,
+       "best_feature": null,
+       "best_r": 0.0,
+       "r2": 0.0
+      },
+      {
+       "unit": 30,
+       "constant": true,
+       "best_feature": null,
+       "best_r": 0.0,
+       "r2": 0.0
+      },
+      {
+       "unit": 31,
+       "constant": true,
+       "best_feature": null,
+       "best_r": 0.0,
+       "r2": 0.0
+      }
+     ],
+     "ablation": [
+      47.31,
+      26.5,
+      37.34,
+      35.62,
+      40.93,
+      36.19,
+      35.22,
+      30.29,
+      10.19,
+      6.82,
+      7.46,
+      7.87,
+      9.27,
+      8.25,
+      11.31,
+      14.98,
+      40.49,
+      19.42,
+      9.14,
+      9.35,
+      10.55,
+      9.7,
+      12.66,
+      11.49,
+      50.77,
+      55.45,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ],
+   "ablation_reference": 45.72,
+   "ablation_reference_stderr": 3.9482531618809644,
+   "distill": [
+    {
+     "depth": 1,
+     "agreement": 0.8419592763033474,
+     "leaves": 2
+    },
+    {
+     "depth": 2,
+     "agreement": 0.8512261236840446,
+     "leaves": 4,
+     "score": 0.0,
+     "stderr": 0.0
+    },
+    {
+     "depth": 3,
+     "agreement": 0.869948937779739,
+     "leaves": 8
+    },
+    {
+     "depth": 4,
+     "agreement": 0.8717140515665385,
+     "leaves": 16,
+     "score": 0.705,
+     "stderr": 0.07427962245163737
+    },
+    {
+     "depth": 6,
+     "agreement": 0.8708314946731387,
+     "leaves": 45
+    },
+    {
+     "depth": 8,
+     "agreement": 0.9088444808674273,
+     "leaves": 106,
+     "score": 3.265,
+     "stderr": 0.28894866612997444
+    },
+    {
+     "depth": 12,
+     "agreement": 0.9304671247557209,
+     "leaves": 326,
+     "score": 9.12,
+     "stderr": 0.7423837742985151
+    }
+   ],
+   "seconds": 424.4,
+   "key_quantities": {
+    "ossigeno basso (< 60)": [
+     {
+      "layer": 0,
+      "best_unit": 24,
+      "best_r": 0.9793136058449204,
+      "linear_r2": 0.9266458232438018
+     },
+     {
+      "layer": 1,
+      "best_unit": 8,
+      "best_r": 0.3301061458723285,
+      "linear_r2": 0.20905411491244796
+     }
+    ],
+    "almeno un sub a bordo": [
+     {
+      "layer": 0,
+      "best_unit": 24,
+      "best_r": 0.09918221682245904,
+      "linear_r2": 0.0016035750584429964
+     },
+     {
+      "layer": 1,
+      "best_unit": 0,
+      "best_r": 0.046573228578832095,
+      "linear_r2": 0.0007192959758191009
+     }
+    ],
+    "ora di emergere (ossigeno < 60 e almeno un sub)": [
+     {
+      "layer": 0,
+      "best_unit": 24,
+      "best_r": 0.999993171574659,
+      "linear_r2": 0.999985897136344
+     },
+     {
+      "layer": 1,
+      "best_unit": 8,
+      "best_r": 0.3370818542900907,
+      "linear_r2": 0.22888762236111582
+     }
+    ],
+    "nemico vicino nella mia riga (\u2264 2)": [
+     {
+      "layer": 0,
+      "best_unit": 27,
+      "best_r": 0.07379117249256074,
+      "linear_r2": 0.03236877409820227
+     },
+     {
+      "layer": 1,
+      "best_unit": 15,
+      "best_r": 0.03853893137791432,
+      "linear_r2": 0.01760509811978861
+     }
+    ],
+    "sub da salvare nella mia riga": [
+     {
+      "layer": 0,
+      "best_unit": 11,
+      "best_r": 0.13979346431867287,
+      "linear_r2": 0.2627132981161513
+     },
+     {
+      "layer": 1,
+      "best_unit": 7,
+      "best_r": 0.14919723552415498,
+      "linear_r2": 0.4450609619593563
+     }
+    ]
+   }
+  },
+  "ppo_v1": {
+   "path": "/home/ciarpa/Desktop/github/projects/small-games-llm/weights/seaquest/ppo_v1.json",
+   "weights": [
+    {
+     "layer": 0,
+     "shape": [
+      32,
+      600
+     ],
+     "activation": "tanh",
+     "params": 19232,
+     "nonzero_frac": 1.0,
+     "distinct_values": 18735,
+     "max_abs": 1.40965,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 354.0,
+     "inputs_for_90pct_frac": 0.59
+    },
+    {
+     "layer": 1,
+     "shape": [
+      32,
+      32
+     ],
+     "activation": "tanh",
+     "params": 1056,
+     "nonzero_frac": 1.0,
+     "distinct_values": 1024,
+     "max_abs": 1.33277,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 21.5,
+     "inputs_for_90pct_frac": 0.671875
+    },
+    {
+     "layer": 2,
+     "shape": [
+      6,
+      32
+     ],
+     "activation": "linear",
+     "params": 198,
+     "nonzero_frac": 1.0,
+     "distinct_values": 192,
+     "max_abs": 1.33139,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 20.5,
+     "inputs_for_90pct_frac": 0.640625
+    }
+   ],
+   "score": {
+    "mean": 5.365,
+    "stderr": 0.12322661642264984
+   },
+   "score_greedy": {
+    "mean": 5.42,
+    "stderr": 0.11126499673072138
+   },
+   "pruning": [
+    {
+     "keep": 1.0,
+     "mean": 5.365,
+     "stderr": 0.12322661642264984
+    },
+    {
+     "keep": 0.5,
+     "mean": 5.22,
+     "stderr": 0.1274331039404577
+    },
+    {
+     "keep": 0.25,
+     "mean": 5.075,
+     "stderr": 0.1241933773390287
+    },
+    {
+     "keep": 0.1,
+     "mean": 1.175,
+     "stderr": 0.11892261323944447
+    },
+    {
+     "keep": 0.05,
+     "mean": 0.23,
+     "stderr": 0.05195185246816875
+    },
+    {
+     "keep": 0.02,
+     "mean": 0.045,
+     "stderr": 0.014695399751940973
+    }
+   ],
+   "states": 7923,
+   "layers": [
+    {
+     "layer": 0,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.012609649122807017,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "enemy_eta_up2",
+       "best_r": 0.2961280899299698,
+       "r2": 0.2866430663774522
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.33125463839236247,
+       "r2": 0.32775179830204526
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.4207615294948926,
+       "r2": 0.3421741889839677
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "enemy_near_up1",
+       "best_r": 0.26652065031652555,
+       "r2": 0.2872015685485435
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.4674128000837374,
+       "r2": 0.41143995504987396
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5388617948785813,
+       "r2": 0.44887613522456626
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.3360021550339937,
+       "r2": 0.21556026931445604
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.28174058834352855,
+       "r2": 0.22486088409443628
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.40980105010180173,
+       "r2": 0.26344044305273784
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.35905543167620746,
+       "r2": 0.2505166731606623
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.32105727824715746,
+       "r2": 0.2261912376062123
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.4779260767279493,
+       "r2": 0.42839702235700106
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2799890690928103,
+       "r2": 0.27572147172520634
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.3209919840840012,
+       "r2": 0.2143162609066448
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.43585407427052913,
+       "r2": 0.3390742402227537
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.46499134531188807,
+       "r2": 0.3187594039323324
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2980000956556606,
+       "r2": 0.25803428271951656
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.5176065236376888,
+       "r2": 0.3785770398362892
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.43111891105188516,
+       "r2": 0.4648211093596559
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.548625687590691,
+       "r2": 0.4618881966559836
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.2692341605163155,
+       "r2": 0.3004455997476977
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.48151855470132027,
+       "r2": 0.4181314542878073
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "target_ahead",
+       "best_r": 0.32993946928306933,
+       "r2": 0.18704888979553402
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "facing",
+       "best_r": 0.34841078316307417,
+       "r2": 0.25761822813765844
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.4863882218319381,
+       "r2": 0.3255710685876714
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "enemy_eta_up1",
+       "best_r": 0.4722357458600046,
+       "r2": 0.23881529306341376
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "facing",
+       "best_r": 0.44507862880715376,
+       "r2": 0.32142203543464976
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.20267663850329248,
+       "r2": 0.17720178451650892
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.25267770150176183,
+       "r2": 0.2747512031943198
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5558118393384291,
+       "r2": 0.405058864607196
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.34919351866549997,
+       "r2": 0.2714265007249692
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.3313506145421478,
+       "r2": 0.38517140324967647
+      }
+     ],
+     "ablation": [
+      5.41,
+      5.38,
+      5.38,
+      5.29,
+      5.39,
+      5.35,
+      5.42,
+      5.37,
+      5.39,
+      5.35,
+      5.47,
+      5.4,
+      5.29,
+      5.33,
+      5.44,
+      5.49,
+      5.38,
+      5.4,
+      5.4,
+      5.43,
+      5.35,
+      5.31,
+      5.4,
+      5.3,
+      5.31,
+      5.43,
+      5.25,
+      5.37,
+      5.44,
+      5.37,
+      5.4,
+      5.33
+     ]
+    },
+    {
+     "layer": 1,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.3214139214943834,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5169219480393719,
+       "r2": 0.44905926176945465
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.4589045406974517,
+       "r2": 0.35710843976300055
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.4859176390457328,
+       "r2": 0.3916407948594527
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.44700513627577615,
+       "r2": 0.4213475327957644
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.4326532035575001,
+       "r2": 0.37092327523130664
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.42805192753735194,
+       "r2": 0.44623591139522867
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.3651954883551594,
+       "r2": 0.4430730930431649
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.5547287672510972,
+       "r2": 0.3147212186110683
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.507062389304531,
+       "r2": 0.43236190415225517
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.5610588121857979,
+       "r2": 0.4271933238909448
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.44813345794119885,
+       "r2": 0.3137808764065274
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.44226639984021804,
+       "r2": 0.4386548096432248
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5012190526806151,
+       "r2": 0.38033278042778684
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.4975682760620453,
+       "r2": 0.37253692909003
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.3616366475564261,
+       "r2": 0.23755302167927772
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5543163256580659,
+       "r2": 0.48006518172643886
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.4750918214259562,
+       "r2": 0.3935818202871677
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.43965546698503366,
+       "r2": 0.3966047557902107
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "facing",
+       "best_r": 0.376986908177412,
+       "r2": 0.35092807487053246
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.5110411129559324,
+       "r2": 0.46232472661507196
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5124503174008279,
+       "r2": 0.44653891417693903
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "enemy_eta_up1",
+       "best_r": 0.1988636323827266,
+       "r2": 0.22606232212233024
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.5032874012946433,
+       "r2": 0.46992406341707704
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "enemy_near_down1",
+       "best_r": 0.509616587810565,
+       "r2": 0.29308408433950073
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.3646112142300775,
+       "r2": 0.2879760594178613
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "enemy_near_down1",
+       "best_r": 0.5464643819531968,
+       "r2": 0.3794082636979489
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.552321201328906,
+       "r2": 0.4120785202782087
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.5249460367396556,
+       "r2": 0.43399916303701946
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.4089806301457345,
+       "r2": 0.4105446230634332
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "sub_x",
+       "best_r": 0.3983937111619777,
+       "r2": 0.3690609451294743
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "sub_y",
+       "best_r": 0.36296816158993,
+       "r2": 0.4499253172840688
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "enemy_eta_down1",
+       "best_r": 0.4752733050161563,
+       "r2": 0.4080852969773041
+      }
+     ],
+     "ablation": [
+      5.36,
+      5.36,
+      5.35,
+      5.46,
+      5.31,
+      5.4,
+      5.4,
+      5.53,
+      5.41,
+      5.43,
+      5.27,
+      5.4,
+      5.36,
+      5.33,
+      5.43,
+      5.37,
+      5.4,
+      5.3,
+      5.41,
+      5.34,
+      5.4,
+      5.45,
+      5.28,
+      5.5,
+      5.4,
+      5.45,
+      5.41,
+      5.43,
+      5.41,
+      5.45,
+      5.34,
+      5.45
+     ]
+    }
+   ],
+   "ablation_reference": 5.44,
+   "ablation_reference_stderr": 0.15590725033516148,
+   "distill": [
+    {
+     "depth": 1,
+     "agreement": 0.3623248145094806,
+     "leaves": 2
+    },
+    {
+     "depth": 2,
+     "agreement": 0.44187963726298435,
+     "leaves": 4,
+     "score": 1.14,
+     "stderr": 0.09189244313613411
+    },
+    {
+     "depth": 3,
+     "agreement": 0.4525968672712284,
+     "leaves": 8
+    },
+    {
+     "depth": 4,
+     "agreement": 0.460840890354493,
+     "leaves": 16,
+     "score": 0.835,
+     "stderr": 0.06937535368192699
+    },
+    {
+     "depth": 6,
+     "agreement": 0.5065952184666117,
+     "leaves": 37
+    },
+    {
+     "depth": 8,
+     "agreement": 0.5292662819455894,
+     "leaves": 67,
+     "score": 1.75,
+     "stderr": 0.11269873568556849
+    },
+    {
+     "depth": 12,
+     "agreement": 0.533800494641385,
+     "leaves": 120,
+     "score": 1.625,
+     "stderr": 0.1054870255662471
+    }
+   ],
+   "seconds": 178.1,
+   "key_quantities": {
+    "ossigeno basso (< 60)": [
+     {
+      "layer": 0,
+      "best_unit": 22,
+      "best_r": 0.1973487208175073,
+      "linear_r2": 0.47771755696080553
+     },
+     {
+      "layer": 1,
+      "best_unit": 22,
+      "best_r": 0.08295175069269965,
+      "linear_r2": 0.23826400707841155
+     }
+    ],
+    "almeno un sub a bordo": [
+     {
+      "layer": 0,
+      "best_unit": 4,
+      "best_r": 0.22777973169025031,
+      "linear_r2": 0.20982450002443698
+     },
+     {
+      "layer": 1,
+      "best_unit": 4,
+      "best_r": 0.08440110617076514,
+      "linear_r2": 0.0527298340219049
+     }
+    ],
+    "ora di emergere (ossigeno < 60 e almeno un sub)": [
+     {
+      "layer": 0,
+      "best_unit": 22,
+      "best_r": 0.17148573656880897,
+      "linear_r2": 0.3904867079769634
+     },
+     {
+      "layer": 1,
+      "best_unit": 4,
+      "best_r": 0.07616373148664654,
+      "linear_r2": 0.1997651383259157
+     }
+    ],
+    "nemico vicino nella mia riga (\u2264 2)": [
+     {
+      "layer": 0,
+      "best_unit": 9,
+      "best_r": 0.1373829248131171,
+      "linear_r2": -0.021084252978524676
+     },
+     {
+      "layer": 1,
+      "best_unit": 17,
+      "best_r": 0.11120515764825414,
+      "linear_r2": 0.0008314636554760391
+     }
+    ],
+    "sub da salvare nella mia riga": [
+     {
+      "layer": 0,
+      "best_unit": 0,
+      "best_r": 0.13510852693343048,
+      "linear_r2": 0.02788140335356104
+     },
+     {
+      "layer": 1,
+      "best_unit": 21,
+      "best_r": 0.10805784324913974,
+      "linear_r2": -0.005058248992951597
+     }
+    ]
+   }
+  }
+ }
+}

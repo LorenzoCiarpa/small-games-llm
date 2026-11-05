@@ -40,6 +40,7 @@
      "nonzero_frac": 0.039594346747221926,
      "distinct_values": 34,
      "max_abs": 1023.0,
+     "zero_units": 0,
      "inputs_for_90pct_median": 9.0,
      "inputs_for_90pct_frac": 0.022332506203473945
     },
@@ -54,6 +55,7 @@
      "nonzero_frac": 0.06521739130434782,
      "distinct_values": 10,
      "max_abs": 5120.0,
+     "zero_units": 0,
      "inputs_for_90pct_median": 2.0,
      "inputs_for_90pct_frac": 0.043478260869565216
     },
@@ -68,6 +70,7 @@
      "nonzero_frac": 0.2,
      "distinct_values": 9,
      "max_abs": 20.0,
+     "zero_units": 1,
      "inputs_for_90pct_median": 9.0,
      "inputs_for_90pct_frac": 0.25
     }
@@ -913,6 +916,7 @@
      "nonzero_frac": 0.026949044953546077,
      "distinct_values": 9,
      "max_abs": 10.0,
+     "zero_units": 0,
      "inputs_for_90pct_median": 2.0,
      "inputs_for_90pct_frac": 0.004962779156327543
     },
@@ -927,6 +931,7 @@
      "nonzero_frac": 0.10255432710636675,
      "distinct_values": 5,
      "max_abs": 32.0,
+     "zero_units": 0,
      "inputs_for_90pct_median": 2.0,
      "inputs_for_90pct_frac": 0.046511627906976744
     },
@@ -941,6 +946,7 @@
      "nonzero_frac": 0.08506031549644293,
      "distinct_values": 3,
      "max_abs": 64.0,
+     "zero_units": 0,
      "inputs_for_90pct_median": 2.0,
      "inputs_for_90pct_frac": 0.03278688524590164
     },
@@ -955,8 +961,9 @@
      "nonzero_frac": 0.22641509433962265,
      "distinct_values": 9,
      "max_abs": 1000.0,
-     "inputs_for_90pct_median": 5.0,
-     "inputs_for_90pct_frac": 0.09433962264150944
+     "zero_units": 1,
+     "inputs_for_90pct_median": 5.5,
+     "inputs_for_90pct_frac": 0.10377358490566038
     }
    ],
    "score": {
@@ -2433,6 +2440,7 @@
      "nonzero_frac": 1.0,
      "distinct_values": 25004,
      "max_abs": 1.25163,
+     "zero_units": 0,
      "inputs_for_90pct_median": 240.0,
      "inputs_for_90pct_frac": 0.5955334987593052
     },
@@ -2447,6 +2455,7 @@
      "nonzero_frac": 1.0,
      "distinct_values": 4085,
      "max_abs": 1.02479,
+     "zero_units": 0,
      "inputs_for_90pct_median": 42.0,
      "inputs_for_90pct_frac": 0.65625
     },
@@ -2461,6 +2470,7 @@
      "nonzero_frac": 1.0,
      "distinct_values": 320,
      "max_abs": 0.951787,
+     "zero_units": 0,
      "inputs_for_90pct_median": 44.0,
      "inputs_for_90pct_frac": 0.6875
     }

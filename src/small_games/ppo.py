@@ -57,6 +57,7 @@ class PPOConfig:
     ent_coef: float = 0.01
     vf_coef: float = 0.5
     max_grad_norm: float = 0.5
+    sticky: float | None = None              # sticky actions during training (None: the protocol's)
     seed: int = 0
     train_seed0: int = 1_000_000             # env seeds for training (the protocol uses 10_000..)
     threads: int = 1
@@ -142,7 +143,8 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path):
     _check_spec(cfg, game)
     proto = game.protocol
 
-    envs = [game.make_env(sticky_prob=proto.sticky_prob, max_steps=proto.max_steps) for _ in range(cfg.n_envs)]
+    sticky = proto.sticky_prob if cfg.sticky is None else cfg.sticky
+    envs = [game.make_env(sticky_prob=sticky, max_steps=proto.max_steps) for _ in range(cfg.n_envs)]
     obs = np.stack([e.reset(seed=cfg.train_seed0 + i)[0] for i, e in enumerate(envs)]).astype(np.float32)
 
     actor = _mlp((game.obs_dim, *cfg.hidden, game.n_actions), cfg.activation, 0.01)
@@ -278,6 +280,29 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path):
     return time.time() - t0
 
 
+def _parse_sets(cfg: PPOConfig, items):
+    """--set field=value pairs, each value cast like the field's current value (tuples: comma-separated)."""
+    out = {}
+    for item in items:
+        key, _, val = item.partition("=")
+        if not hasattr(cfg, key):
+            raise SystemExit(f"--set: PPOConfig has no field {key!r}")
+        cur = getattr(cfg, key)
+        if val.lower() == "none":
+            out[key] = None
+        elif isinstance(cur, bool):
+            out[key] = val.lower() in ("1", "true", "yes")
+        elif isinstance(cur, tuple) or key == "actions":
+            out[key] = tuple(int(x) if x.lstrip("-").isdigit() else float(x) for x in val.split(","))
+        elif isinstance(cur, int):
+            out[key] = int(val)
+        elif isinstance(cur, float) or cur is None:
+            out[key] = float(val)
+        else:
+            out[key] = val
+    return out
+
+
 def main(cfg: PPOConfig, here: Path):
     """The CLI of experiments/<game>/ppo/train.py: train, export, score with the game's protocol."""
     ap = argparse.ArgumentParser(description=f"PPO on {cfg.game}: trains the policy, writes "
@@ -287,8 +312,11 @@ def main(cfg: PPOConfig, here: Path):
     ap.add_argument("--name", default="ppo", help="weight file name in weights/<game>/ (default: ppo)")
     ap.add_argument("--eval-workers", type=int, default=4)
     ap.add_argument("--no-eval", action="store_true")
+    ap.add_argument("--set", action="append", default=[], metavar="CAMPO=VALORE",
+                    help="change a PPOConfig field, e.g. --set ent_coef=0.05 --set sticky=0.0 (repeatable)")
     args = ap.parse_args()
-    cfg = replace(cfg, total_steps=args.total_steps, seed=args.seed)
+    cfg = replace(cfg, total_steps=args.total_steps, seed=args.seed, **_parse_sets(cfg, args.set))
+    print(f"[{cfg.game}] config: {json.dumps(asdict(cfg))}", flush=True)
 
     root = here.resolve().parents[2]
     weights_out = root / "weights" / cfg.game / f"{args.name}.json"
