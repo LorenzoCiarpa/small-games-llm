@@ -1,3 +1,7 @@
 __pycache__/
 *.pyc
 .venv/
+# PPO: full training state (resume) and pid of running jobs, see experiments/ppo_runs.py
+experiments/**/state.pt
+experiments/**/state.tmp
+experiments/**/pid

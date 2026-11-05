@@ -1,5 +1,8 @@
 # Da dove riprendere (stato al 5 novembre 2026, notte)
 
+**In breve:** gli addestramenti PPO girano su `buitre-gpu` (sezione 4); domani si sceglie la corsa migliore per
+gioco, si analizza e si scrivono i README (sezione 5).
+
 Questa cartella esiste solo per passare il lavoro da un PC all'altro: quando gli addestramenti PPO della sezione 3
 saranno finiti e analizzati, va cancellata.
 
@@ -10,12 +13,13 @@ saranno finiti e analizzati, va cancellata.
 | esperimenti divisi per gioco | `experiments/<gioco>/<nome>/` (`weight_distance` resta in `experiments/`) | fatto |
 | decodifica delle reti di Claude e GPT per Low Tide | `experiments/low_tide/decode_{claude,gpt}/` | fatto |
 | decodifica delle reti di Astra (articolo) | `experiments/{breakout,seaquest,asterix}/decode_astra/` | fatto, verificate con `check.py` |
-| trainer PPO | `src/small_games/ppo.py`, gruppo di dipendenze `ppo` (PyTorch CPU) | fatto |
+| trainer PPO, con salvataggi ogni 5M passi e ripresa esatta (`--resume`) | `src/small_games/ppo.py`, gruppo di dipendenze `ppo` (PyTorch CPU) | fatto |
+| lanciatore delle corse in background | `experiments/ppo_runs.py` | fatto |
 | strumenti di analisi dei pesi | `src/small_games/analysis.py`, `features.py` | fatto |
 | PPO su Low Tide, addestramento e analisi | `experiments/low_tide/ppo/` (con README) | **fatto** |
 | PPO sui giochi MinAtar, primo tentativo (`ppo_v1`) | `weights/<gioco>/ppo_v1.json`, `experiments/<gioco>/ppo/results/ppo_v1/` | fatto, ma la rete gioca male |
 | analisi di Astra e `ppo_v1` sui giochi MinAtar | `experiments/<gioco>/ppo/results/analysis/` | fatto |
-| PPO sui giochi MinAtar, versione finale (`ppo`) | | **da rifare: interrotto, vedi sezione 3** |
+| PPO sui giochi MinAtar, versione finale (`ppo`) | `buitre-gpu`, vedi sezione 4 | **in corsa** |
 | README delle cartelle `experiments/<gioco>/ppo/` per MinAtar | | **da scrivere** |
 
 ## 2. Risultati finora
@@ -83,67 +87,60 @@ uguali a `ppo_v1`.
 Un attore 256-256 fuori regole fa 6.8 dopo 6M passi (`experiments/breakout/ppo/control_big.py`): la taglia della
 rete non c'entra. Il problema è l'esplorazione, e l'entropia più alta è la prima cosa che aiuta.
 
-## 4. Piano per domani
+## 4. Corse lanciate su `buitre-gpu` (5 novembre, notte)
 
-### 4.1 Preparare l'altro PC
+Le corse girano nella copia della repo sul PC con la RTX 5080, in `~/Desktop/github/projects/small-games-llm`.
+Sono 10 corse in parallelo sugli 8 core: per ogni gioco MinAtar tre coefficienti di entropia (0.01, 0.05, 0.1) da
+200M passi, più Low Tide da 100M. La GPU non serve, perché le reti sono minuscole e il tempo va nei giochi Python;
+servono i core.
 
-```bash
-git pull
-uv sync --group ppo --group analysis
-uv run --group ppo python -c "import torch; print(torch.__version__)"
-```
+| corsa | configurazione |
+|---|---|
+| `breakout/ppo_ent01`, `ppo_ent05`, `ppo_ent10` | minimal action set (fermo, sinistra, destra), ent_coef 0.01 / 0.05 / 0.1, 200M passi |
+| `seaquest/ppo_ent01`, `ppo_ent05`, `ppo_ent10` | tutte le azioni, ent_coef 0.01 / 0.05 / 0.1, 200M passi |
+| `asterix/ppo_ent01`, `ppo_ent05`, `ppo_ent10` | tutte tranne fuoco, ent_coef 0.01 / 0.05 / 0.1, 200M passi |
+| `low_tide/ppo_100m` | come `ppo.json` (403-64-64-5), ma 100M passi invece di 20M |
 
-**Sulla GPU.** Il `pyproject.toml` installa PyTorch **solo CPU** (indice `pytorch-cpu` in `[tool.uv.sources]`).
-Una RTX 5080 qui aiuta poco:
+### Controllare, fermare, riprendere
 
-- le reti sono minuscole (600-32-32-6);
-- il tempo va quasi tutto nei giochi MinAtar, che sono Python e girano su CPU: ~100k passi/s per core il solo gioco,
-  ~20k passi/s il trainer con 64 ambienti su un core.
-
-Quello che accelera davvero è **usare più core per gli ambienti**:
-
-- **Ambienti su più processi.** Il trainer oggi fa girare i 64 ambienti in un solo processo. Da fare all'inizio
-  della sessione: un vettore di ambienti su N processi (stile `SubprocVecEnv`), opzione `n_workers` in
-  `PPOConfig`. Con 8 processi per gioco ci si aspetta 3-5 volte più passi al secondo.
-- **Riprendere a metà.** Da aggiungere insieme: un checkpoint completo ogni N aggiornamenti (attore, critico,
-  ottimizzatore, numero di aggiornamento, stato dei generatori) e un'opzione `--resume`, così un addestramento lungo
-  si può interrompere.
-- **Solo se serve.** Passare a giochi su GPU (pgx o gymnax hanno MinAtar in JAX) sarebbe molto più veloce, ma non
-  sono il pacchetto ufficiale `minatar==1.0.15` usato dall'articolo e dalla valutazione. Si addestrerebbe su un gioco
-  leggermente diverso da quello su cui si valuta.
-
-### 4.2 Addestrare
-
-Prima una prova breve dell'entropia alta su tutti e tre i giochi, poi la corsa lunga con la configurazione migliore:
+Sul PC con la GPU, dalla cartella della repo (`uv` è in `~/.local/bin`):
 
 ```bash
-# prove da 20M passi, nome diverso per non sovrascrivere
-for g in breakout seaquest asterix; do
-  uv run --group ppo python experiments/$g/ppo/train.py --total-steps 20000000 --set ent_coef=0.05 --name prova_ent05 &
-done; wait
-# poi, con la configurazione migliore (se ent_coef 0.05 vince, metterlo nel CONFIG di train.py):
-uv run --group ppo python experiments/<gioco>/ppo/train.py            # 100M passi, scrive weights/<gioco>/ppo.json
+uv run python experiments/ppo_runs.py status     # a che punto è ogni corsa (ultima riga del suo log)
+uv run python experiments/ppo_runs.py stop       # le ferma: salvano lo stato ed escono
+uv run python experiments/ppo_runs.py start      # riprende quelle non finite da dove erano
 ```
 
-`--set campo=valore` cambia qualsiasi campo di `PPOConfig` (`ent_coef`, `sticky`, `n_envs`, `lr`, ...). Le prove con
-nome diverso finiscono in `weights/<gioco>/<nome>.json` e `results/<nome>/`: cancellarle (o non committarle) se non
-servono.
+- **Salvataggi:** ogni corsa salva lo stato completo ogni 5M passi (`results/<nome>/state.pt`, non committato) e i
+  pesi (`results/<nome>/checkpoint_<N>M.json`). Un riavvio della macchina perde al massimo 5M passi; poi `start`.
+- **Ripresa esatta:** è verificata. Una corsa fermata con SIGTERM e ripresa dà pesi identici bit per bit a una mai
+  interrotta.
+- **A fine corsa:** escono `weights/<gioco>/<nome>.json`, `results/<nome>/final.pt` e `results/<nome>/eval.json`
+  (1000 episodi del protocollo).
 
-### 4.3 Analizzare e scrivere
+## 5. Piano per domani
 
-```bash
-uv run --group analysis python experiments/<gioco>/ppo/analyze.py --nets ppo --workers 4   # si aggiunge ad analysis.json
-```
+1. **Stato delle corse:** sul PC con la GPU, `uv run python experiments/ppo_runs.py status`. Se qualcuna non è
+   finita, aspettare o fermarla e usare l'ultimo checkpoint.
+2. **Scelta:** per ogni gioco scegliere la corsa migliore, da `eval.json` e dalla curva in `train_log.csv`. Copiarla
+   come versione finale:
 
-- **README di ogni gioco MinAtar:** scrivere `experiments/<gioco>/ppo/README.md` come
-  `experiments/low_tide/ppo/README.md`. Le tabelle si generano con `small_games.analysis.markdown_tables(report)`.
-  - Per Breakout includere la storia del plateau: `ppo_v1` che non si muove quasi mai, `follow_ball.py` 8.4, il
-    controllo 256-256 e le varianti di questa cartella.
-- **README principale:** aggiungere una voce per ogni `experiments/<gioco>/ppo/` e una tabella riassuntiva tra i
-  giochi.
-- **Chiusura:** commit, poi cancellare `tmp/`.
+   ```bash
+   cp weights/<gioco>/ppo_entXX.json weights/<gioco>/ppo.json
+   cp -r experiments/<gioco>/ppo/results/ppo_entXX experiments/<gioco>/ppo/results/ppo
+   ```
 
-## 5. Cose da sapere
+   Per Low Tide decidere se `ppo_100m` sostituisce `ppo.json` (20M passi, già analizzata).
+3. **Analisi:** `uv run --group analysis python experiments/<gioco>/ppo/analyze.py --nets ppo --workers 6`. Si
+   aggiunge ad `analysis.json` accanto ad Astra e `ppo_v1`.
+4. **README:** scrivere `experiments/<gioco>/ppo/README.md` per i tre giochi MinAtar, come
+   `experiments/low_tide/ppo/README.md`. Le tabelle si generano con `small_games.analysis.markdown_tables`.
+   - Per Breakout raccontare il plateau: `ppo_v1` che non si muove quasi mai, `follow_ball.py` 8.4, il controllo
+     256-256, le varianti di entropia.
+   - Nel README principale aggiungere una voce per ogni `experiments/<gioco>/ppo/` e una tabella tra i giochi.
+5. **Chiusura:** commit dal PC con la GPU, senza `state.pt` (ignorati da `.gitignore`), push, poi cancellare `tmp/`.
+
+## 6. Cose da sapere
 
 - **Nomi dei pesi:** `weights/<gioco>/ppo_v1.json` è il primo tentativo MinAtar (tutte e 6 le azioni, 30M passi);
   `ppo.json` sarà la versione finale. `analyze.py` include `ppo` da solo quando il file esiste.
