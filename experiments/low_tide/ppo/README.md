@@ -21,6 +21,8 @@ queste misure, dei pesi che *sono* un algoritmo.
 - **L'unica traccia leggibile:** i neuroni più importanti del primo strato pesano soprattutto la **riga
   dell'agente** combinata con la **direzione della marea**. È una versione sfumata del "pericolo" che la rete di
   Claude calcola esattamente.
+- **Con 100M passi invece di 20M** (`ppo_100m.json`, sezione 7): 162.7 punti, quanto l'euristica BFS (164.0), e 169
+  greedy. I pesi restano densi e illeggibili, e reggono il pruning ancora meno.
 
 ```bash
 uv run --group ppo python experiments/low_tide/ppo/train.py          # ~16 min su un core
@@ -81,6 +83,19 @@ stesse condizioni, mai.
 Ogni neurone del primo strato scritto a mano guarda pochi ingressi scelti, con valori tondi e spesso enormi: potenze
 di 2, ±1000. Ogni neurone PPO guarda più di metà dell'osservazione, con pesi piccoli e tutti diversi.
 
+**Gli ingressi vivi.** 91 ingressi su 403 sono zero in tutti gli stati giocati dalle quattro reti: le righe 0-2 dei
+piani acqua, conchiglie e meduse (la marea non sale mai fin lì, e non ci lascia niente) e una cella del piano
+dell'agente. PPO non riceve gradiente sui loro pesi, che
+restano quelli dell'inizializzazione casuale: piccoli, ma diversi da zero e tutti diversi. Ristretto agli ingressi
+vivi il quadro non cambia:
+
+| primo strato, solo i 312 ingressi vivi su 403 | `claude` | `gpt` | `ppo` | `ppo_100m` |
+|---|---|---|---|---|
+| pesi diversi da zero | 5.1% | 3.4% | 100.0% | 100.0% |
+| valori diversi | 34 | 9 | 19.582 | 19.731 |
+| ingressi che fanno il 90% del peso di un neurone (mediana, su 312) | 9 | 2 | 186 | 172 |
+| \|w\| medio sugli ingressi morti / vivi | 0.530 / 11.021 | 0.007 / 0.083 | 0.057 / 0.128 | 0.060 / 0.231 |
+
 Le immagini mostrano i pesi del primo strato degli 8 neuroni più importanti (quelli la cui ablazione fa perdere più
 punti, sezione 4): una riga per neurone, un pannello per piano dell'osservazione (rosso positivo, blu negativo).
 
@@ -112,6 +127,16 @@ giocare. Sono 200 episodi.
 
 Le reti scritte a mano sono già sparse: togliere il 75% dei pesi più piccoli toglie solo zeri. La rete PPO perde
 già con metà dei pesi, e con un quarto non gioca più. La sua informazione è spalmata su tutti i pesi.
+
+Lo stesso solo sul primo strato, e solo sugli ingressi vivi: i pesi degli ingressi morti a zero, poi si tiene la
+frazione indicata dei pesi vivi più grandi; gli altri strati restano interi.
+
+| pesi vivi del primo strato tenuti | 100% | 50% | 25% | 10% | 5% |
+|---|---|---|---|---|---|
+| `claude` | 131.9 | 131.9 | 131.9 | 131.9 | 131.9 |
+| `gpt` | 79.7 | 79.7 | 79.7 | 79.7 | 79.7 |
+| `ppo` | 125.5 | 94.9 | 14.0 | 8.9 | 3.0 |
+| `ppo_100m` | 155.2 | 18.4 | 4.3 | 2.3 | 1.5 |
 
 ## 4. Quanto conta ogni neurone (ablazione)
 
@@ -196,7 +221,50 @@ degli episodi e si misura l'accordo sul restante 30%. Poi l'albero gioca da solo
 
 Gli alberi di profondità 2-4 sono in `results/analysis/trees_<rete>.txt`.
 
-## 7. Conclusione
+## 7. Con cinque volte più passi: `ppo_100m`
+
+La curva della sezione 1 saliva ancora a 20M passi. `ppo_100m` è la stessa configurazione portata a 100M passi
+(`experiments/ppo_runs.py`, 55 minuti), salvata in `weights/low_tide/ppo_100m.json`.
+
+| passi | 10M | 20M | 50M | 75M | 100M |
+|---|---|---|---|---|---|
+| ritorno in addestramento | 99 | 117 | 124 | 141 | 160 |
+
+Sui 500 episodi del protocollo fa **162.7 ± 2.6**, quanto l'euristica BFS (164.0), e 169 giocando greedy. Raccoglie
+173 conchiglie per episodio, contro le 154 di Claude, e prende metà delle punture (10.6), ma annega ancora nel 32%
+degli episodi: rischia di più, e gli conviene.
+
+Le stesse misure, accanto alla rete da 20M passi (le tabelle complete sono nelle sezioni precedenti e in
+`results/analysis/analysis.json`):
+
+| | `ppo` (20M) | `ppo_100m` |
+|---|---|---|
+| punteggio (200 episodi) / greedy | 125.5 / 138.7 | 155.5 / 169.1 |
+| ingressi vivi che fanno il 90% del peso di un neurone (mediana, su 312) | 186 | 172 |
+| tutti gli strati, 50% dei pesi | 103.9 | 29.6 |
+| primo strato, 50% dei pesi vivi | 94.9 | 18.4 |
+| neuroni che fanno perdere più del 10% / perdita massima | 0 / 11.8 | 7 / 24.8 |
+| margine dall'acqua (r / R²) | 0.33 / 0.48 | 0.37 / 0.62 |
+| pericolo (r / R²) | 0.77 / 0.70 | 0.75 / 0.75 |
+| conchiglia a destra / a sinistra (r) | 0.29 / 0.45 | 0.30 / 0.46 |
+| neuroni tanh saturi, primo / secondo strato | 3% / 24% | 16% / 44% |
+| albero di profondità 6: accordo | 64.2% | 64.5% |
+| albero di profondità 12: accordo / foglie / punti | 77.0% / 442 / 112.3 | 74.5% / 516 / 136.1 |
+
+Più addestramento non rende la rete più leggibile:
+
+- **pruning:** regge ancora meno. Con metà dei pesi la rete da 20M fa 104, quella da 100M 30: ha imparato a usarne di
+  più;
+- **neuroni:** qualcuno in più conta (7 sopra il 10%, il peggiore 25 punti su 152), e sono ancora quelli legati
+  alla marea che sale (|r| 0.29-0.49 con "sale");
+- **quantità di Claude:** il margine dall'acqua si ricostruisce un po' meglio da tutto lo strato (R² 0.62), ma
+  nessun neurone lo calcola; le altre non cambiano;
+- **regola:** l'albero la imita meno di prima.
+
+L'immagine del primo strato (`results/analysis/fields_ppo_100m.png`) è come quella da 20M: nel piano dell'agente i
+pesi dipendono soprattutto dalla riga, insieme al peso su "la marea sale"; gli altri piani sono rumore.
+
+## 8. Conclusione
 
 - **Le reti scritte a mano:** i pesi sono il programma. Ogni neurone ha un nome ("margine", "conchiglia a destra
   nella riga 5"), pochi neuroni portano tutta la strategia e il comportamento è una regola corta sulle quantità del
@@ -221,6 +289,7 @@ quantità con un nome.
   - `checkpoint_*.json`: i pesi al 10, 25 e 50% dell'addestramento;
   - `eval.json`: le valutazioni;
   - `final.pt`: attore e critico in formato PyTorch.
+- `results/ppo_100m/`: la corsa da 100M passi, con gli stessi file e `checkpoint_*M.json` ogni 5M passi.
 - `results/analysis/`:
   - `analysis.json`: tutti i numeri;
   - `trees_*.txt`: gli alberi;

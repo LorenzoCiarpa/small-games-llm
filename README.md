@@ -97,6 +97,12 @@ Gli esperimenti su un solo gioco stanno in `experiments/<gioco>/`, quelli che co
   LLM? Distanze strato per strato (grezze, dopo aver allineato i neuroni e contro un modello nullo), unità gemelle,
   CKA, azioni sugli stessi stati e cross-play tra giochi, con quattro reti addestrate con PPO come termine di
   paragone. `uv run --group analysis python experiments/weight_distance/analyze.py`
+- [`experiments/ppo_over_training/`](experiments/ppo_over_training): le reti PPO diventano più sparse o più
+  leggibili andando avanti con l'addestramento, o con un'altra entropia? No: le misure principali su tutte le corse
+  e su tutti i checkpoint, accanto alle reti scritte a mano.
+  `uv run --group analysis python experiments/ppo_over_training/analyze.py`
+- [`experiments/ppo_runs.py`](experiments/ppo_runs.py): lancia, controlla e ferma in background tutti gli
+  addestramenti PPO (10 corse, ~2 ore su 8 core).
 
 **Low Tide**
 
@@ -106,8 +112,9 @@ Gli esperimenti su un solo gioco stanno in `experiments/<gioco>/`, quelli che co
 - [`experiments/low_tide/decode_gpt/`](experiments/low_tide/decode_gpt): la stessa analisi per `gpt.json`, con un
   confronto tra le due reti. `uv run python experiments/low_tide/decode_gpt/check.py`
 - [`experiments/low_tide/ppo/`](experiments/low_tide/ppo): una rete addestrata con PPO (403-64-64-5) gioca bene
-  quanto quella di Claude, ma i suoi pesi non si leggono come un algoritmo. Le stesse misure sulle tre reti: pesi,
-  pruning, ablazione, quantità dell'algoritmo di Claude nei neuroni, distillazione in alberi di decisione.
+  quanto quella di Claude, e con 100M passi (`ppo_100m.json`) quanto l'euristica, ma i suoi pesi non si leggono come
+  un algoritmo. Le stesse misure sulle reti: pesi, pruning, ablazione, quantità dell'algoritmo di Claude nei
+  neuroni, distillazione in alberi di decisione.
   `uv run --group ppo python experiments/low_tide/ppo/train.py`, poi `uv run --group analysis python
   experiments/low_tide/ppo/analyze.py`
 
@@ -121,6 +128,51 @@ neurone come quelle di Low Tide, ognuna con un `check.py` che verifica la lettur
 - [`experiments/asterix/decode_astra/`](experiments/asterix/decode_astra): un "portiere" nella colonna 5 che
   sceglie solo la riga, evitando i nemici in arrivo e andando verso i tesori.
 
+E le reti PPO con la stessa architettura (600-32-32-6), confrontate con quelle di Astra con le misure di Low Tide.
+`uv run --group ppo python experiments/<gioco>/ppo/train.py`, poi `uv run --group analysis python
+experiments/<gioco>/ppo/analyze.py`.
+
+- [`experiments/breakout/ppo/`](experiments/breakout/ppo): PPO esce dal plateau a ~6 punti solo con più entropia
+  e arriva a 63, contro i 512 di Astra.
+- [`experiments/seaquest/ppo/`](experiments/seaquest/ppo): PPO gioca meglio di Astra (55.9 contro 51.4), ma in un
+  altro modo: si muove in orizzontale invece di restare nella colonna 5.
+- [`experiments/asterix/ppo/`](experiments/asterix/ppo): PPO arriva a 24.6, metà di Astra, ancora in salita.
+
+### PPO trova reti sparse e leggibili come quelle scritte a mano?
+
+No, in nessuno dei quattro giochi. Anche dove gioca bene quanto o meglio delle reti scritte a mano (Low Tide,
+Seaquest), PPO trova pesi densi, che servono quasi tutti, e neuroni senza un nome. Le misure sul primo strato sono
+ristrette agli ingressi vivi, quelli che non sono sempre zero (sugli altri PPO lascia i pesi iniziali):
+
+| gioco | rete | punteggio | pesi vivi ≠ 0 | valori diversi | ingressi per il 90% del peso di un neurone | punteggio con il 25% dei pesi vivi | neuroni che da soli tolgono > 50% | quantità chiave: miglior \|r\| | albero di prof. 6: accordo |
+|---|---|---|---|---|---|---|---|---|---|
+| Low Tide | `claude` (a mano) | 132.1 | 5% | 34 | 9 su 312 | 131.9 (100%) | 3 | 0.97 | 100% |
+| | `gpt` (a mano) | 79.7 | 3% | 9 | 2 su 312 | 79.7 (100%) | 12 | 0.67 | 92% |
+| | `ppo` (20M passi) | 125.5 | 100% | 19.582 | 186 su 312 | 14.0 (11%) | 0 | 0.47 | 64% |
+| | `ppo_100m` | 155.5 | 100% | 19.731 | 172 su 312 | 4.3 (3%) | 0 | 0.47 | 64% |
+| Breakout | `paper_astra` (a mano) | 512.7 | 10% | 53 | 77 su 220 | 512.7 (100%) | 14 | 0.73 | 89% |
+| | `ppo` | 62.4 | 100% | 7.027 | 136 su 220 | 0.4 (1%) | 10 | 0.34 | 72% |
+| Seaquest | `paper_astra` (a mano) | 48.3 | 3% | 12 | 9 su 425 | 48.3 (100%) | 29 | 0.46 | 87% |
+| | `ppo` | 56.0 | 100% | 13.526 | 240 su 425 | 1.7 (3%) | 14 | 0.22 | 65% |
+| Asterix | `paper_astra` (a mano) | 54.5 | 5% | 33 | 10 su 315 | 54.5 (100%) | 14 | 0.57 | 92% |
+| | `ppo` | 26.8 | 100% | 10.029 | 167 su 315 | 7.3 (27%) | 2 | 0.11 | 49% |
+
+Punteggi su 200 episodi; "valori diversi" e "ingressi" sono del primo strato; il pruning tiene il 25% dei pesi vivi
+più grandi del primo strato; le quantità chiave sono quelle dell'algoritmo scritto a mano (media sulle quantità del
+gioco); l'albero imita la mossa più probabile della rete usando le grandezze del gioco.
+
+- **Le reti scritte a mano** sono sparse (3-10% dei pesi), con pochi valori tondi, e il pruning toglie solo zeri. I
+  neuroni sono le quantità e le condizioni dell'algoritmo, e il comportamento si scrive come un albero corto.
+- **Le reti PPO** usano ogni ingresso vivo con un peso diverso, non reggono il pruning, e nessun neurone calcola le
+  quantità dell'algoritmo scritto a mano, nemmeno come combinazione lineare. Su Low Tide nessun neurone conta da
+  solo; nei giochi MinAtar, con 32 unità per strato, molti contano, ma nessuno ha un significato riconoscibile.
+- **Le tracce leggibili** in PPO sono codifiche di posizione: la riga dell'agente insieme alla marea su Low Tide, la
+  colonna della racchetta su Breakout, macchie di posizione del sottomarino e del giocatore su Seaquest e Asterix.
+- **Con più addestramento o un'altra entropia** il quadro non cambia: la rete migliora usando più pesi, non meno
+  ([`experiments/ppo_over_training/`](experiments/ppo_over_training)).
+- **Anche il comportamento** è diverso: in Seaquest e Asterix Astra riduce il gioco a una dimensione (fermo nella
+  colonna 5, sceglie la riga), PPO no.
+
 ## Struttura
 
 ```
@@ -131,6 +183,9 @@ src/small_games/
   evaluate.py        CLI `evaluate`
   play.py            CLI `play` (pygame)
   render.py          disegno comune: pannello, renderer generico per griglie a canali
+  ppo.py             PPO per qualsiasi gioco registrato, con salvataggi e ripresa esatta (gruppo `ppo`)
+  analysis.py        misure sui pesi: sparsità, pruning, ablazione, probe, alberi (gruppo `analysis`)
+  features.py        le grandezze di ogni gioco (il vocabolario per probe e alberi)
   games/
     low_tide/        env.py (regole), baselines.py (euristica: NON darla al modello), render.py
     minatar_games.py Breakout, Seaquest, Asterix

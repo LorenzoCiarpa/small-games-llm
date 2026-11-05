@@ -703,41 +703,41 @@
      {
       "layer": 0,
       "best_unit": 19,
-      "best_r": 0.28868636745677473,
-      "linear_r2": 0.6007147055199247
+      "best_r": 0.28868636745677595,
+      "linear_r2": 0.6007147055199245
      },
      {
       "layer": 1,
       "best_unit": 2,
-      "best_r": 0.6678443530243525,
-      "linear_r2": 0.44956081568588324
+      "best_r": 0.6678443530243544,
+      "linear_r2": 0.44956081568588335
      }
     ],
     "nemico in arrivo nella riga sotto (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 9,
-      "best_r": 0.3999752610451163,
-      "linear_r2": 0.5199187689679694
+      "best_r": 0.3999752610451175,
+      "linear_r2": 0.5199187689679692
      },
      {
       "layer": 1,
       "best_unit": 1,
-      "best_r": 0.641245029142334,
-      "linear_r2": 0.42530800781762823
+      "best_r": 0.6412450291423353,
+      "linear_r2": 0.4253080078176281
      }
     ],
     "nemico in arrivo nella riga sopra (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 6,
-      "best_r": 0.3517369182351801,
+      "best_r": 0.35173691823517905,
       "linear_r2": 0.5511471482710659
      },
      {
       "layer": 1,
       "best_unit": 0,
-      "best_r": 0.6508024361161621,
+      "best_r": 0.6508024361161605,
       "linear_r2": 0.4764765050560841
      }
     ],
@@ -745,14 +745,51 @@
      {
       "layer": 0,
       "best_unit": 29,
-      "best_r": 0.25875643715170576,
-      "linear_r2": 0.37375135320884123
+      "best_r": 0.2587564371517061,
+      "linear_r2": 0.37375135320884134
      },
      {
       "layer": 1,
       "best_unit": 23,
-      "best_r": 0.30297272300020806,
+      "best_r": 0.3029727230002091,
       "linear_r2": 0.9999999999176936
+     }
+    ]
+   },
+   "live": {
+    "inputs": 315,
+    "of": 600,
+    "nonzero_frac": 0.04642857142857143,
+    "distinct_values": 33,
+    "inputs_for_90pct_median": 10.5,
+    "inputs_for_90pct_frac": 0.03333333333333333,
+    "mean_abs_live": 0.37410714285714286,
+    "mean_abs_dead": 0.0,
+    "pruning_first_layer": [
+     {
+      "keep": 1.0,
+      "mean": 54.53,
+      "stderr": 2.479310469063939
+     },
+     {
+      "keep": 0.5,
+      "mean": 54.53,
+      "stderr": 2.479310469063939
+     },
+     {
+      "keep": 0.25,
+      "mean": 54.53,
+      "stderr": 2.479310469063939
+     },
+     {
+      "keep": 0.1,
+      "mean": 54.53,
+      "stderr": 2.479310469063939
+     },
+     {
+      "keep": 0.05,
+      "mean": 54.53,
+      "stderr": 2.479310469063939
      }
     ]
    }
@@ -1436,13 +1473,13 @@
      {
       "layer": 0,
       "best_unit": 13,
-      "best_r": 0.08367109347686387,
+      "best_r": 0.08367109347686386,
       "linear_r2": 0.03606187151668305
      },
      {
       "layer": 1,
       "best_unit": 23,
-      "best_r": 0.10379037282498838,
+      "best_r": 0.10379037282498833,
       "linear_r2": 0.03725464637458786
      }
     ],
@@ -1450,13 +1487,13 @@
      {
       "layer": 0,
       "best_unit": 5,
-      "best_r": 0.11302754567996928,
-      "linear_r2": 0.049848987255890265
+      "best_r": 0.1130275456799695,
+      "linear_r2": 0.04984898725589049
      },
      {
       "layer": 1,
       "best_unit": 5,
-      "best_r": 0.10293556732663989,
+      "best_r": 0.10293556732664005,
       "linear_r2": 0.05535526048478534
      }
     ],
@@ -1464,13 +1501,13 @@
      {
       "layer": 0,
       "best_unit": 9,
-      "best_r": 0.11993763684430117,
+      "best_r": 0.11993763684430124,
       "linear_r2": 0.056480931230717624
      },
      {
       "layer": 1,
       "best_unit": 24,
-      "best_r": 0.08588772564855858,
+      "best_r": 0.08588772564855869,
       "linear_r2": 0.042222023056200486
      }
     ],
@@ -1478,17 +1515,1141 @@
      {
       "layer": 0,
       "best_unit": 25,
-      "best_r": 0.13264258869666629,
+      "best_r": 0.1326425886966658,
       "linear_r2": 0.08078425992042071
      },
      {
       "layer": 1,
       "best_unit": 5,
-      "best_r": 0.15373449789515015,
-      "linear_r2": 0.0772520629346215
+      "best_r": 0.15373449789514954,
+      "linear_r2": 0.07725206293462161
+     }
+    ]
+   },
+   "live": {
+    "inputs": 315,
+    "of": 600,
+    "nonzero_frac": 1.0,
+    "distinct_values": 9961,
+    "inputs_for_90pct_median": 183.0,
+    "inputs_for_90pct_frac": 0.580952380952381,
+    "mean_abs_live": 0.13223538097734125,
+    "mean_abs_dead": 0.04970223106199123,
+    "pruning_first_layer": [
+     {
+      "keep": 1.0,
+      "mean": 9.01,
+      "stderr": 0.5252417485999773
+     },
+     {
+      "keep": 0.5,
+      "mean": 8.74,
+      "stderr": 0.50491255026696
+     },
+     {
+      "keep": 0.25,
+      "mean": 6.01,
+      "stderr": 0.35957750193733967
+     },
+     {
+      "keep": 0.1,
+      "mean": 1.79,
+      "stderr": 0.14205774181666497
+     },
+     {
+      "keep": 0.05,
+      "mean": 1.155,
+      "stderr": 0.09901461746813854
+     }
+    ]
+   }
+  },
+  "ppo": {
+   "path": "/home/ciarpa/Desktop/github/projects/small-games-llm/weights/asterix/ppo.json",
+   "weights": [
+    {
+     "layer": 0,
+     "shape": [
+      32,
+      600
+     ],
+     "activation": "tanh",
+     "params": 19232,
+     "nonzero_frac": 1.0,
+     "distinct_values": 18757,
+     "max_abs": 3.95326,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 282.5,
+     "inputs_for_90pct_frac": 0.4708333333333333
+    },
+    {
+     "layer": 1,
+     "shape": [
+      32,
+      32
+     ],
+     "activation": "tanh",
+     "params": 1056,
+     "nonzero_frac": 1.0,
+     "distinct_values": 1024,
+     "max_abs": 2.4619,
+     "zero_units": 0,
+     "inputs_for_90pct_median": 21.0,
+     "inputs_for_90pct_frac": 0.65625
+    },
+    {
+     "layer": 2,
+     "shape": [
+      6,
+      32
+     ],
+     "activation": "linear",
+     "params": 198,
+     "nonzero_frac": 0.8333333333333334,
+     "distinct_values": 160,
+     "max_abs": 1.98037,
+     "zero_units": 1,
+     "inputs_for_90pct_median": 23.0,
+     "inputs_for_90pct_frac": 0.71875
+    }
+   ],
+   "score": {
+    "mean": 26.81,
+    "stderr": 1.1789696123029076
+   },
+   "score_greedy": {
+    "mean": 45.775,
+    "stderr": 1.0753388504169652
+   },
+   "pruning": [
+    {
+     "keep": 1.0,
+     "mean": 26.81,
+     "stderr": 1.1789696123029076
+    },
+    {
+     "keep": 0.5,
+     "mean": 17.435,
+     "stderr": 0.9366243649430785
+    },
+    {
+     "keep": 0.25,
+     "mean": 0.635,
+     "stderr": 0.07706210378127488
+    },
+    {
+     "keep": 0.1,
+     "mean": 0.39,
+     "stderr": 0.05342067805841765
+    },
+    {
+     "keep": 0.05,
+     "mean": 0.475,
+     "stderr": 0.05349000752030806
+    },
+    {
+     "keep": 0.02,
+     "mean": 0.495,
+     "stderr": 0.06649800692218615
+    }
+   ],
+   "states": 20466,
+   "layers": [
+    {
+     "layer": 0,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.122399650640086,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.4655883116986092,
+       "r2": 0.3717302907241211
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.5859937374571973,
+       "r2": 0.4487733945758543
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.42729690621330235,
+       "r2": 0.3870668319171632
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.45905571705231807,
+       "r2": 0.25967834145317203
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.39503325356905566,
+       "r2": 0.1725478237960001
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.3144730989974953,
+       "r2": 0.15871097672256684
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.4598025074198013,
+       "r2": 0.3179946796292621
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.44074437791394455,
+       "r2": 0.2717785275119704
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.39778904437690277,
+       "r2": 0.2328519053399718
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.7000356101817898,
+       "r2": 0.5152264296584357
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.47908480063354747,
+       "r2": 0.30070182454838534
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.6133219953327,
+       "r2": 0.4588144052798848
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "enemy_eta_down2",
+       "best_r": 0.1922689549435712,
+       "r2": 0.07454401918532705
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.29182641777011953,
+       "r2": 0.17814645574493237
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.30023474032458014,
+       "r2": 0.06668686724674255
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.40608547052482163,
+       "r2": 0.20161988243917628
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.29132175523411163,
+       "r2": 0.18512414288496082
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6832974593503734,
+       "r2": 0.5065875678454632
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "enemy_eta_up2",
+       "best_r": 0.21230197361351028,
+       "r2": 0.06630812970204802
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6145958812259464,
+       "r2": 0.47590300109857486
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6428415132952628,
+       "r2": 0.48946356819720804
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.34403520375378027,
+       "r2": 0.16483034499594673
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.504930419261836,
+       "r2": 0.29308828340339343
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.5068855175895446,
+       "r2": 0.29689415261262087
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.4768514710803165,
+       "r2": 0.2933411960750356
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.42085986619600524,
+       "r2": 0.297238366294696
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.3873910790138913,
+       "r2": 0.28581067529065185
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.3570957145677725,
+       "r2": 0.14591249619387836
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.5603859887738218,
+       "r2": 0.38432044415611555
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "enemy_eta_up1",
+       "best_r": 0.20305882477357692,
+       "r2": 0.09060904440545559
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.3414900145309277,
+       "r2": 0.2201746907138724
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.5444119715072581,
+       "r2": 0.4727557037083854
+      }
+     ],
+     "ablation": [
+      15.07,
+      24.5,
+      14.78,
+      24.19,
+      21.11,
+      22.91,
+      23.14,
+      16.83,
+      20.79,
+      15.89,
+      14.7,
+      23.58,
+      16.86,
+      21.19,
+      16.25,
+      19.35,
+      17.21,
+      14.52,
+      19.13,
+      18.44,
+      18.56,
+      21.05,
+      19.15,
+      19.74,
+      20.89,
+      20.81,
+      20.54,
+      21.43,
+      22.47,
+      18.35,
+      15.32,
+      14.86
+     ]
+    },
+    {
+     "layer": 1,
+     "units": 32,
+     "activation": "tanh",
+     "saturation": 0.5752940853122251,
+     "constant_units": 0,
+     "probe": [
+      {
+       "unit": 0,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.6870398757157091,
+       "r2": 0.5022812983690137
+      },
+      {
+       "unit": 1,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.5022830922812989,
+       "r2": 0.3183904015133002
+      },
+      {
+       "unit": 2,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.6128499843520863,
+       "r2": 0.5236936431270314
+      },
+      {
+       "unit": 3,
+       "constant": false,
+       "best_feature": "gold_eta_down1",
+       "best_r": 0.2968397724515101,
+       "r2": 0.16252027837113514
+      },
+      {
+       "unit": 4,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6663401154894693,
+       "r2": 0.5235845226715883
+      },
+      {
+       "unit": 5,
+       "constant": false,
+       "best_feature": "gold_dy",
+       "best_r": 0.5378460448046081,
+       "r2": 0.3231943883075101
+      },
+      {
+       "unit": 6,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6204538853077064,
+       "r2": 0.49272934585037675
+      },
+      {
+       "unit": 7,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.7012279182098782,
+       "r2": 0.5579217330939785
+      },
+      {
+       "unit": 8,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6181986040822979,
+       "r2": 0.4462437731949589
+      },
+      {
+       "unit": 9,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6082463109683337,
+       "r2": 0.4249582509384455
+      },
+      {
+       "unit": 10,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6846247336238042,
+       "r2": 0.5451661065814262
+      },
+      {
+       "unit": 11,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6670845190161668,
+       "r2": 0.5201483244731109
+      },
+      {
+       "unit": 12,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6564172272773949,
+       "r2": 0.52587773048995
+      },
+      {
+       "unit": 13,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6873024774541413,
+       "r2": 0.5159378358024049
+      },
+      {
+       "unit": 14,
+       "constant": false,
+       "best_feature": "gold_eta_up2",
+       "best_r": 0.26432680764470984,
+       "r2": 0.129872331746122
+      },
+      {
+       "unit": 15,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6384154363871047,
+       "r2": 0.5295181292546547
+      },
+      {
+       "unit": 16,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.4212984500642207,
+       "r2": 0.2560072790980157
+      },
+      {
+       "unit": 17,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6685637297978574,
+       "r2": 0.5149674938327959
+      },
+      {
+       "unit": 18,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.5002567324865431,
+       "r2": 0.35768631221026104
+      },
+      {
+       "unit": 19,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.21874146813024153,
+       "r2": 0.07806803739736956
+      },
+      {
+       "unit": 20,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.42892752560527775,
+       "r2": 0.38398032290164175
+      },
+      {
+       "unit": 21,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.5132473031572237,
+       "r2": 0.37867485859695715
+      },
+      {
+       "unit": 22,
+       "constant": false,
+       "best_feature": "enemy_eta_same",
+       "best_r": 0.12958504138903892,
+       "r2": 0.03176429356974697
+      },
+      {
+       "unit": 23,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6135561103562934,
+       "r2": 0.46033405743952094
+      },
+      {
+       "unit": 24,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.3959503814938041,
+       "r2": 0.2605969905013469
+      },
+      {
+       "unit": 25,
+       "constant": false,
+       "best_feature": "gold_eta_down1",
+       "best_r": 0.28901386846092286,
+       "r2": 0.1723359072458136
+      },
+      {
+       "unit": 26,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.38865365582872907,
+       "r2": 0.3190924111766672
+      },
+      {
+       "unit": 27,
+       "constant": false,
+       "best_feature": "player_x",
+       "best_r": 0.2903038903820152,
+       "r2": 0.15359097106447983
+      },
+      {
+       "unit": 28,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.16142539169187622,
+       "r2": 0.06843894177413712
+      },
+      {
+       "unit": 29,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6064456685107298,
+       "r2": 0.46175685026741686
+      },
+      {
+       "unit": 30,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.6355063077880034,
+       "r2": 0.49659520925495104
+      },
+      {
+       "unit": 31,
+       "constant": false,
+       "best_feature": "player_y",
+       "best_r": 0.5142778569280687,
+       "r2": 0.282822740774093
+      }
+     ],
+     "ablation": [
+      22.48,
+      18.28,
+      10.99,
+      20.6,
+      20.97,
+      22.09,
+      14.22,
+      19.12,
+      20.75,
+      19.46,
+      17.52,
+      16.18,
+      14.72,
+      15.9,
+      22.52,
+      22.4,
+      19.7,
+      19.51,
+      22.28,
+      22.82,
+      18.59,
+      20.56,
+      21.28,
+      16.88,
+      23.21,
+      21.05,
+      15.91,
+      18.71,
+      21.41,
+      22.72,
+      12.06,
+      20.47
+     ]
+    }
+   ],
+   "ablation_reference": 26.7,
+   "ablation_reference_stderr": 1.6539820330513162,
+   "distill": [
+    {
+     "depth": 1,
+     "agreement": 0.30997939358257287,
+     "leaves": 2
+    },
+    {
+     "depth": 2,
+     "agreement": 0.37238740064763026,
+     "leaves": 4,
+     "score": 1.295,
+     "stderr": 0.09100154617936543
+    },
+    {
+     "depth": 3,
+     "agreement": 0.3896084780688843,
+     "leaves": 8
+    },
+    {
+     "depth": 4,
+     "agreement": 0.43818074771857524,
+     "leaves": 16,
+     "score": 2.305,
+     "stderr": 0.18636937171533263
+    },
+    {
+     "depth": 6,
+     "agreement": 0.4899911686782455,
+     "leaves": 54
+    },
+    {
+     "depth": 8,
+     "agreement": 0.5092728878422137,
+     "leaves": 127,
+     "score": 4.705,
+     "stderr": 0.31968872266156795
+    },
+    {
+     "depth": 12,
+     "agreement": 0.5378274948483956,
+     "leaves": 337,
+     "score": 6.7,
+     "stderr": 0.5515624221496948
+    }
+   ],
+   "seconds": 78.2,
+   "key_quantities": {
+    "nemico in arrivo nella mia riga (\u2264 3)": [
+     {
+      "layer": 0,
+      "best_unit": 10,
+      "best_r": 0.054260034294396305,
+      "linear_r2": 0.01424898272267816
+     },
+     {
+      "layer": 1,
+      "best_unit": 27,
+      "best_r": 0.0762178369085708,
+      "linear_r2": 0.06353512713396137
+     }
+    ],
+    "nemico in arrivo nella riga sotto (\u2264 2)": [
+     {
+      "layer": 0,
+      "best_unit": 12,
+      "best_r": 0.13020607463405118,
+      "linear_r2": 0.041934974087866284
+     },
+     {
+      "layer": 1,
+      "best_unit": 16,
+      "best_r": 0.14018649706916317,
+      "linear_r2": 0.15810294229429023
+     }
+    ],
+    "nemico in arrivo nella riga sopra (\u2264 2)": [
+     {
+      "layer": 0,
+      "best_unit": 29,
+      "best_r": 0.09759111671248479,
+      "linear_r2": 0.050769523523738536
+     },
+     {
+      "layer": 1,
+      "best_unit": 3,
+      "best_r": 0.13317180748626917,
+      "linear_r2": 0.10983527157033757
+     }
+    ],
+    "tesoro in arrivo nella mia riga": [
+     {
+      "layer": 0,
+      "best_unit": 25,
+      "best_r": 0.09596505190224319,
+      "linear_r2": 0.026947954063340607
+     },
+     {
+      "layer": 1,
+      "best_unit": 30,
+      "best_r": 0.10375419106473661,
+      "linear_r2": 0.1610956953038727
+     }
+    ]
+   },
+   "live": {
+    "inputs": 315,
+    "of": 600,
+    "nonzero_frac": 1.0,
+    "distinct_values": 10029,
+    "inputs_for_90pct_median": 167.0,
+    "inputs_for_90pct_frac": 0.5301587301587302,
+    "mean_abs_live": 0.29258681913036705,
+    "mean_abs_dead": 0.054351645544164474,
+    "pruning_first_layer": [
+     {
+      "keep": 1.0,
+      "mean": 26.79,
+      "stderr": 1.1779718111821262
+     },
+     {
+      "keep": 0.5,
+      "mean": 19.63,
+      "stderr": 0.9931754565217497
+     },
+     {
+      "keep": 0.25,
+      "mean": 7.28,
+      "stderr": 0.5203960609973018
+     },
+     {
+      "keep": 0.1,
+      "mean": 1.55,
+      "stderr": 0.14349373596539514
+     },
+     {
+      "keep": 0.05,
+      "mean": 0.875,
+      "stderr": 0.09375942163712744
      }
     ]
    }
   }
- }
+ },
+ "live_inputs": [
+  61,
+  62,
+  64,
+  66,
+  67,
+  68,
+  70,
+  72,
+  73,
+  74,
+  76,
+  78,
+  79,
+  80,
+  82,
+  84,
+  85,
+  86,
+  88,
+  90,
+  91,
+  92,
+  94,
+  96,
+  97,
+  98,
+  100,
+  102,
+  103,
+  104,
+  106,
+  108,
+  109,
+  110,
+  112,
+  115,
+  116,
+  118,
+  121,
+  122,
+  124,
+  126,
+  127,
+  128,
+  130,
+  132,
+  133,
+  134,
+  136,
+  138,
+  139,
+  140,
+  142,
+  144,
+  145,
+  146,
+  148,
+  150,
+  151,
+  152,
+  154,
+  156,
+  157,
+  158,
+  160,
+  162,
+  163,
+  164,
+  166,
+  168,
+  169,
+  170,
+  172,
+  175,
+  176,
+  178,
+  180,
+  181,
+  182,
+  184,
+  186,
+  187,
+  188,
+  190,
+  192,
+  193,
+  194,
+  196,
+  198,
+  199,
+  200,
+  202,
+  204,
+  205,
+  206,
+  208,
+  210,
+  211,
+  212,
+  214,
+  216,
+  217,
+  218,
+  220,
+  222,
+  223,
+  224,
+  226,
+  228,
+  229,
+  230,
+  232,
+  234,
+  235,
+  236,
+  238,
+  240,
+  241,
+  242,
+  244,
+  246,
+  247,
+  248,
+  250,
+  252,
+  253,
+  254,
+  256,
+  258,
+  259,
+  260,
+  262,
+  264,
+  265,
+  266,
+  268,
+  270,
+  271,
+  272,
+  274,
+  276,
+  277,
+  278,
+  280,
+  282,
+  283,
+  284,
+  286,
+  288,
+  289,
+  290,
+  292,
+  294,
+  295,
+  296,
+  298,
+  300,
+  301,
+  302,
+  304,
+  306,
+  307,
+  308,
+  310,
+  312,
+  313,
+  314,
+  316,
+  318,
+  319,
+  320,
+  322,
+  324,
+  325,
+  326,
+  328,
+  330,
+  331,
+  332,
+  334,
+  336,
+  337,
+  338,
+  340,
+  342,
+  343,
+  344,
+  346,
+  348,
+  349,
+  350,
+  352,
+  354,
+  355,
+  356,
+  358,
+  360,
+  361,
+  362,
+  364,
+  366,
+  367,
+  368,
+  370,
+  372,
+  373,
+  374,
+  376,
+  378,
+  379,
+  380,
+  382,
+  384,
+  385,
+  386,
+  388,
+  390,
+  391,
+  392,
+  394,
+  396,
+  397,
+  398,
+  400,
+  402,
+  403,
+  404,
+  406,
+  408,
+  409,
+  410,
+  412,
+  414,
+  415,
+  416,
+  418,
+  420,
+  421,
+  422,
+  424,
+  426,
+  427,
+  428,
+  430,
+  432,
+  433,
+  434,
+  436,
+  438,
+  439,
+  440,
+  442,
+  444,
+  445,
+  446,
+  448,
+  450,
+  451,
+  452,
+  454,
+  456,
+  457,
+  458,
+  460,
+  462,
+  463,
+  464,
+  466,
+  468,
+  469,
+  470,
+  472,
+  474,
+  475,
+  476,
+  478,
+  480,
+  481,
+  482,
+  484,
+  486,
+  487,
+  488,
+  490,
+  492,
+  493,
+  494,
+  496,
+  498,
+  499,
+  500,
+  502,
+  504,
+  505,
+  506,
+  508,
+  510,
+  511,
+  512,
+  514,
+  516,
+  517,
+  518,
+  520,
+  522,
+  523,
+  524,
+  526,
+  528,
+  529,
+  530,
+  532,
+  535,
+  536,
+  538
+ ]
 }

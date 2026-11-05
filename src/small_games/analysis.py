@@ -11,6 +11,8 @@ The same measurements run on hand-written networks and on PPO-trained ones, so t
   distillation decision trees on the game features that imitate the network's argmax: agreement on held-out
                states and score when the tree plays the game (is the behaviour a short algorithm?)
   fields       pictures of the first-layer weights of the most important units
+  live inputs  the first layer restricted to the inputs that are ever non-zero (on the others a trained network keeps
+               its random initial weights), and pruning of that layer alone
 
 Needs the `analysis` dependency group (scikit-learn, matplotlib comes with minatar).
 """
@@ -108,6 +110,33 @@ def prune(layers, keep):
             W2[np.abs(W2) < thr] = 0.0
         out.append((W2, b.copy(), act))
     return out
+
+
+def live_inputs(game, nets_layers, episodes=40, seed0=None):
+    """Inputs that are non-zero in at least one state visited by any of the networks (`nets_layers`: parsed layers).
+
+    The others never reach a unit. A trained network gets no gradient on their weights, which keep their random
+    initial values (small, but non-zero and all different); a hand-written one leaves them at zero. Weight statistics
+    restricted to the live inputs compare the two fairly.
+    """
+    seed0 = game.protocol.seed0 + 5000 if seed0 is None else seed0
+    live = np.zeros(game.obs_dim, dtype=bool)
+    for layers in nets_layers:
+        X, _ = collect(game, layers, episodes, seed0)
+        live |= (X != 0).any(axis=0)
+    return live
+
+
+def prune_first_layer(layers, keep, live):
+    """Zero the first-layer weights of the dead inputs, then keep the `keep` fraction of the largest |w| among the
+    live ones; the other layers stay as they are."""
+    W, b, act = layers[0]
+    W2 = np.where(live[None, :], W, 0.0)
+    k = int(math.ceil(keep * W2[:, live].size))
+    if k < W2[:, live].size:
+        thr = np.sort(np.abs(W2[:, live]).ravel())[::-1][k - 1]
+        W2[np.abs(W2) < thr] = 0.0
+    return [(W2, b.copy(), act)] + [(W_.copy(), b_.copy(), a) for W_, b_, a in layers[1:]]
 
 
 class ResamplePolicy:
@@ -443,6 +472,25 @@ KEY_QUANTITIES = {
 }
 
 
+def key_fit(acts, y, test):
+    """Per hidden layer: best single unit |r| with y, and linear R^2 of y from all units (fit on ~test, scored on test)."""
+    rows = []
+    for li, H in enumerate(acts[:-1]):
+        ok = H.std(axis=0) > 1e-9
+        if y.std() < 1e-9 or not ok.any():
+            rows.append({"layer": li, "best_unit": None, "best_r": 0.0, "linear_r2": 0.0})
+            continue
+        r = np.zeros(H.shape[1])
+        r[ok] = [abs(np.corrcoef(H[:, j], y)[0, 1]) for j in np.flatnonzero(ok)]
+        A = np.column_stack([H[:, ok], np.ones(len(H))])
+        coef, *_ = np.linalg.lstsq(A[~test], y[~test], rcond=None)
+        pred = A[test] @ coef
+        yt = y[test]
+        r2 = 1 - ((pred - yt) ** 2).sum() / max(((yt - yt.mean()) ** 2).sum(), 1e-12)
+        rows.append({"layer": li, "best_unit": int(r.argmax()), "best_r": float(r.max()), "linear_r2": float(r2)})
+    return rows
+
+
 def key_quantities(game_name, nets, out_dir: Path, collect_episodes=40, seed0=None, log=print):
     """For each network and hidden layer: best single unit |r| and linear (all units) R^2 of each key quantity.
 
@@ -465,27 +513,48 @@ def key_quantities(game_name, nets, out_dir: Path, collect_episodes=40, seed0=No
         test = ep >= int(0.7 * collect_episodes)
         res = {}
         for qname, fn in KEY_QUANTITIES[game_name].items():
-            y = fn(F, names)
-            rows = []
-            for li in range(len(layers) - 1):
-                H = acts[li]
-                ok = H.std(axis=0) > 1e-9
-                if y.std() < 1e-9 or not ok.any():
-                    rows.append({"layer": li, "best_unit": None, "best_r": 0.0, "linear_r2": 0.0})
-                    continue
-                r = np.zeros(H.shape[1])
-                r[ok] = [abs(np.corrcoef(H[:, j], y)[0, 1]) for j in np.flatnonzero(ok)]
-                A = np.column_stack([H[:, ok], np.ones(len(H))])
-                coef, *_ = np.linalg.lstsq(A[~test], y[~test], rcond=None)
-                pred = A[test] @ coef
-                yt = y[test]
-                r2 = 1 - ((pred - yt) ** 2).sum() / max(((yt - yt.mean()) ** 2).sum(), 1e-12)
-                rows.append({"layer": li, "best_unit": int(r.argmax()), "best_r": float(r.max()),
-                             "linear_r2": float(r2)})
-            res[qname] = rows
+            rows = res[qname] = key_fit(acts, fn(F, names), test)
             log(f"[{net_name}] {qname}: " + "  ".join(
                 f"strato {x['layer']}: r {x['best_r']:.2f}, R² {x['linear_r2']:.2f}" for x in rows))
         report["nets"].setdefault(net_name, {})["key_quantities"] = res
+    path.write_text(json.dumps(report, indent=1))
+    return report
+
+
+# ------------------------------------------------------------------------------------------------ live inputs
+def live_input_stats(game_name, nets, out_dir: Path, live_from=None, collect_episodes=40, score_episodes=200,
+                     seed0=None, workers=4, keeps=(1.0, 0.5, 0.25, 0.1, 0.05), log=print):
+    """The first layer restricted to the live inputs (see `live_inputs`), added to analysis.json as nets[name]["live"]
+    (the indices of the live inputs go to "live_inputs").
+
+    The live inputs are those of all the networks in `live_from` (default: `nets`) together. For each network:
+    weight statistics on the live inputs, mean |w| on dead and live inputs, and the score after pruning the first
+    layer only (dead inputs zeroed, then the `keep` fraction of the largest live weights kept).
+    """
+    game = get_game(game_name)
+    seed0 = game.protocol.seed0 if seed0 is None else seed0
+    live = live_inputs(game, [load_weights(p, game) for p in (live_from or nets).values()], collect_episodes)
+    log(f"[{game_name}] ingressi vivi: {live.sum()} su {game.obs_dim}")
+    path = out_dir / "analysis.json"
+    report = json.loads(path.read_text())
+    report["live_inputs"] = np.flatnonzero(live).tolist()
+    for net_name, wpath in nets.items():
+        layers = load_weights(wpath, game)
+        W, b, act = layers[0]
+        st = weight_stats([(W[:, live], b, act)])[0]
+        res = {"inputs": int(live.sum()), "of": int(game.obs_dim),
+               "nonzero_frac": st["nonzero_frac"], "distinct_values": st["distinct_values"],
+               "inputs_for_90pct_median": st["inputs_for_90pct_median"],
+               "inputs_for_90pct_frac": st["inputs_for_90pct_frac"],
+               "mean_abs_live": float(np.abs(W[:, live]).mean()),
+               "mean_abs_dead": float(np.abs(W[:, ~live]).mean()) if (~live).any() else None,
+               "pruning_first_layer": []}
+        for keep in keeps:
+            m, se = score(game, prune_first_layer(layers, keep, live), score_episodes, seed0, workers)
+            res["pruning_first_layer"].append({"keep": keep, "mean": m, "stderr": se})
+        log(f"[{net_name}] primo strato sugli ingressi vivi: " + ", ".join(
+            f"{100 * p['keep']:g}% {p['mean']:.1f}" for p in res["pruning_first_layer"]))
+        report["nets"][net_name]["live"] = res
     path.write_text(json.dumps(report, indent=1))
     return report
 
@@ -522,6 +591,26 @@ def markdown_tables(report, order=None):
     rows.append("| peso più grande in valore assoluto | " + " | ".join(_f(max(L["max_abs"] for L in R[n]["weights"]), 2)
                                                                     for n in nets) + " |")
     out["weights"] = "\n".join(rows)
+
+    if all("live" in R[n] for n in nets):
+        lv = {n: R[n]["live"] for n in nets}
+        k = lv[nets[0]]
+        rows = ["| primo strato, solo i " + f"{k['inputs']} ingressi vivi su {k['of']}" + " | "
+                + " | ".join(f"`{n}`" for n in nets) + " |", "|---|" + "---|" * len(nets)]
+        rows.append("| pesi diversi da zero | " + " | ".join(f"{100 * lv[n]['nonzero_frac']:.1f}%" for n in nets) + " |")
+        rows.append("| valori diversi | " + " | ".join(f"{lv[n]['distinct_values']:,}".replace(",", ".")
+                                                       for n in nets) + " |")
+        rows.append(f"| ingressi che fanno il 90% del peso di un neurone (mediana, su {k['inputs']}) | "
+                    + " | ".join(_f(lv[n]["inputs_for_90pct_median"], 0) for n in nets) + " |")
+        rows.append("| \\|w\\| medio sugli ingressi morti / vivi | " + " | ".join(
+            f"{_f(lv[n]['mean_abs_dead'], 3)} / {_f(lv[n]['mean_abs_live'], 3)}" for n in nets) + " |")
+        out["live"] = "\n".join(rows)
+        keeps = [p["keep"] for p in k["pruning_first_layer"]]
+        rows = ["| pesi vivi del primo strato tenuti | " + " | ".join(f"{100 * x:g}%" for x in keeps) + " |",
+                "|---|" + "---|" * len(keeps)]
+        for n in nets:
+            rows.append(f"| `{n}` | " + " | ".join(_f(p["mean"]) for p in lv[n]["pruning_first_layer"]) + " |")
+        out["pruning_first_layer"] = "\n".join(rows)
 
     keeps = [p["keep"] for p in R[nets[0]]["pruning"]]
     rows = ["| pesi tenuti | " + " | ".join(f"{100 * k:g}%" for k in keeps) + " |", "|---|" + "---|" * len(keeps)]

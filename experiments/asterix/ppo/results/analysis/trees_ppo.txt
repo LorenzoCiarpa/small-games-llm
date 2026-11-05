@@ -1,0 +1,90 @@
+=== profondità 1: accordo 31.0%, 2 foglie
+|--- player_x <= 4.5
+|   |--- azione: 3 destra
+|--- player_x >  4.5
+|   |--- azione: 1 sinistra
+
+=== profondità 2: accordo 37.2%, 4 foglie, punteggio 1.29
+|--- player_x <= 4.5
+|   |--- gold_dy <= -0.5
+|   |   |--- azione: 2 su
+|   |--- gold_dy >  -0.5
+|   |   |--- azione: 3 destra
+|--- player_x >  4.5
+|   |--- gold_dy <= -0.5
+|   |   |--- azione: 2 su
+|   |--- gold_dy >  -0.5
+|   |   |--- azione: 1 sinistra
+
+=== profondità 3: accordo 39.0%, 8 foglie
+|--- player_x <= 4.5
+|   |--- gold_dy <= -0.5
+|   |   |--- player_x <= 3.5
+|   |   |   |--- azione: 3 destra
+|   |   |--- player_x >  3.5
+|   |   |   |--- azione: 2 su
+|   |--- gold_dy >  -0.5
+|   |   |--- player_x <= 3.5
+|   |   |   |--- azione: 3 destra
+|   |   |--- player_x >  3.5
+|   |   |   |--- azione: 4 giù
+|--- player_x >  4.5
+|   |--- gold_dy <= -0.5
+|   |   |--- enemy_eta_up2 <= 2.5
+|   |   |   |--- azione: 1 sinistra
+|   |   |--- enemy_eta_up2 >  2.5
+|   |   |   |--- azione: 2 su
+|   |--- gold_dy >  -0.5
+|   |   |--- player_x <= 6.5
+|   |   |   |--- azione: 4 giù
+|   |   |--- player_x >  6.5
+|   |   |   |--- azione: 1 sinistra
+
+=== profondità 4: accordo 43.8%, 16 foglie, punteggio 2.31
+|--- player_x <= 4.5
+|   |--- gold_dy <= -0.5
+|   |   |--- player_x <= 3.5
+|   |   |   |--- enemy_eta_up2 <= 2.5
+|   |   |   |   |--- azione: 3 destra
+|   |   |   |--- enemy_eta_up2 >  2.5
+|   |   |   |   |--- azione: 3 destra
+|   |   |--- player_x >  3.5
+|   |   |   |--- gold_dx <= -1.5
+|   |   |   |   |--- azione: 2 su
+|   |   |   |--- gold_dx >  -1.5
+|   |   |   |   |--- azione: 2 su
+|   |--- gold_dy >  -0.5
+|   |   |--- player_x <= 3.5
+|   |   |   |--- enemy_eta_same <= 4.5
+|   |   |   |   |--- azione: 4 giù
+|   |   |   |--- enemy_eta_same >  4.5
+|   |   |   |   |--- azione: 3 destra
+|   |   |--- player_x >  3.5
+|   |   |   |--- gold_dx <= 4.5
+|   |   |   |   |--- azione: 4 giù
+|   |   |   |--- gold_dx >  4.5
+|   |   |   |   |--- azione: 0 fermo
+|--- player_x >  4.5
+|   |--- gold_dy <= -0.5
+|   |   |--- enemy_eta_up2 <= 2.5
+|   |   |   |--- enemy_eta_up2 <= 1.5
+|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |--- enemy_eta_up2 >  1.5
+|   |   |   |   |--- azione: 1 sinistra
+|   |   |--- enemy_eta_up2 >  2.5
+|   |   |   |--- enemy_eta_up1 <= 2.5
+|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |--- enemy_eta_up1 >  2.5
+|   |   |   |   |--- azione: 2 su
+|   |--- gold_dy >  -0.5
+|   |   |--- player_x <= 6.5
+|   |   |   |--- gold_dy <= 0.5
+|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |--- gold_dy >  0.5
+|   |   |   |   |--- azione: 4 giù
+|   |   |--- player_x >  6.5
+|   |   |   |--- player_x <= 7.5
+|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |--- player_x >  7.5
+|   |   |   |   |--- azione: 1 sinistra
+

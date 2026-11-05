@@ -1,0 +1,17 @@
+{
+  "final": {
+    "mean_return": 52.203,
+    "stderr": 1.4017448696819548,
+    "min_return": 0.0,
+    "max_return": 306.0,
+    "mean_length": 575.454,
+    "truncated_rate": 0.0,
+    "protocol": {
+      "episodes": 1000,
+      "seed0": 10000,
+      "sticky_prob": 0.1,
+      "max_steps": 10000
+    },
+    "seconds": 7.5
+  }
+}
