@@ -1,0 +1,40 @@
+{
+ "game": "low_tide",
+ "model": "gpt-6-astra",
+ "imports": [
+  "heapq",
+  "numpy"
+ ],
+ "checks": {
+  "states": 2000,
+  "errors": 0,
+  "invalid": 0,
+  "us_per_call": 144.4,
+  "order_dependent": 0,
+  "action_counts": [
+   556,
+   255,
+   273,
+   467,
+   449
+  ]
+ },
+ "score": {
+  "mean_return": 188.948,
+  "stderr": 0.7309385297468844,
+  "min_return": 12.0,
+  "max_return": 228.0,
+  "mean_length": 996.432,
+  "truncated_rate": 0.994,
+  "mean_shells": 190.416,
+  "mean_stings": 1.468,
+  "mean_drowned": 0.006,
+  "protocol": {
+   "episodes": 500,
+   "seed0": 10000,
+   "sticky_prob": 0.1,
+   "max_steps": 1000
+  },
+  "seconds": 10.4
+ }
+}

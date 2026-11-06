@@ -1,0 +1,53 @@
+# Codex senza tool, per far scrivere il codice agli LLM con le stesse condizioni dei pesi.
+# Parte dalla configurazione dell'articolo (lm_understand-logs, harness/codex_config.toml), adattata a Codex 0.164.
+# run_codex.py la usa come config.toml di una CODEX_HOME temporanea, quindi niente server MCP, skill, plugin o
+# istruzioni della configurazione personale.
+#
+# Non basta: in Codex 0.164 il code mode, gli agenti, apply_patch, la shell, la ricerca e l'orologio li decide il
+# catalogo dei modelli (per gpt-6-astra tool_mode = "code_mode_only", multi_agent_version = "v2"). run_codex.py
+# scrive una copia del catalogo con quei campi tolti e la passa con -c model_catalog_json=..., poi controlla con
+# `codex debug prompt-input` che il modello non veda nessun tool.
+approval_policy = "never"
+sandbox_mode = "read-only"
+web_search = "disabled"
+
+# niente blocchi di contesto aggiunti da Codex: ambiente, permessi, app
+include_environment_context = false
+include_permissions_instructions = false
+include_apps_instructions = false
+
+[skills]
+include_instructions = false
+
+[tools.experimental_request_user_input]
+enabled = false
+
+[features]
+apps = false
+browser_annotation_api = false
+browser_use = false
+browser_use_external = false
+browser_use_full_cdp_access = false
+code_mode = false
+code_mode_host = false
+computer_use = false
+goals = false
+hooks = false
+image_generation = false
+in_app_browser = false
+in_app_local_automation = false
+memories = false
+multi_agent = false
+multi_agent_v2 = false
+plugins = false
+remote_plugin = false
+shell_snapshot = false
+shell_tool = false
+skill_mcp_dependency_install = false
+skill_search = false
+sleep_tool = false
+tool_suggest = false
+unified_exec = false
+unified_exec_tty = false
+view_image = false
+workspace_dependencies = false

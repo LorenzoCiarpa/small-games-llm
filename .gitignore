@@ -5,3 +5,5 @@ __pycache__/
 experiments/**/state.pt
 experiments/**/state.tmp
 experiments/**/pid
+experiments/code_policies/prompts/
+experiments/low_tide/bfs_exact/bfs_exact.json

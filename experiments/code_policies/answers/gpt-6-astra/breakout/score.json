@@ -1,0 +1,38 @@
+{
+ "game": "breakout",
+ "model": "gpt-6-astra",
+ "imports": [
+  "collections",
+  "numpy"
+ ],
+ "checks": {
+  "states": 2000,
+  "errors": 0,
+  "invalid": 0,
+  "us_per_call": 102.8,
+  "order_dependent": 0,
+  "action_counts": [
+   1539,
+   226,
+   0,
+   235,
+   0,
+   0
+  ]
+ },
+ "score": {
+  "mean_return": 785.964,
+  "stderr": 2.5762674274729043,
+  "min_return": 35.0,
+  "max_return": 868.0,
+  "mean_length": 9845.698,
+  "truncated_rate": 0.967,
+  "protocol": {
+   "episodes": 1000,
+   "seed0": 10000,
+   "sticky_prob": 0.1,
+   "max_steps": 10000
+  },
+  "seconds": 147.1
+ }
+}

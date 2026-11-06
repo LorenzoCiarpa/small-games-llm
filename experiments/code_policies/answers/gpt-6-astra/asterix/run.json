@@ -1,0 +1,52 @@
+{
+ "rc": 0,
+ "wall_s": 988.1,
+ "model": "gpt-6-astra",
+ "effort": "xhigh",
+ "codex": "codex-cli 0.167.0",
+ "cmd": [
+  "codex",
+  "exec",
+  "--strict-config",
+  "--skip-git-repo-check",
+  "--ephemeral",
+  "--json",
+  "-C",
+  "<work>",
+  "-c",
+  "model=\"gpt-6-astra\"",
+  "-c",
+  "model_reasoning_effort=\"xhigh\"",
+  "-c",
+  "model_instructions_file=\"<codex_home>/instructions.md\"",
+  "-c",
+  "model_catalog_json=\"<codex_home>/catalog.json\"",
+  "-c",
+  "model_reasoning_summary=\"detailed\"",
+  "-o",
+  "/home/ciarpa/Desktop/github/projects/small-games-llm/experiments/code_policies/answers/gpt-6-astra/asterix/answer.md",
+  "-"
+ ],
+ "visible_tools": [],
+ "visible_messages": [
+  "developer",
+  "user"
+ ],
+ "audit": {
+  "item_types": {
+   "reasoning": 33,
+   "agent_message": 1
+  },
+  "tool_items": {},
+  "tool_free": true,
+  "usage": {
+   "input_tokens": 2362,
+   "cached_input_tokens": 0,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 18960,
+   "reasoning_output_tokens": 17092
+  },
+  "errors": []
+ },
+ "policy_py": true
+}

@@ -1,0 +1,52 @@
+{
+ "rc": 0,
+ "wall_s": 1407.3,
+ "model": "gpt-6-astra",
+ "effort": "xhigh",
+ "codex": "codex-cli 0.167.0",
+ "cmd": [
+  "codex",
+  "exec",
+  "--strict-config",
+  "--skip-git-repo-check",
+  "--ephemeral",
+  "--json",
+  "-C",
+  "<work>",
+  "-c",
+  "model=\"gpt-6-astra\"",
+  "-c",
+  "model_reasoning_effort=\"xhigh\"",
+  "-c",
+  "model_instructions_file=\"<codex_home>/instructions.md\"",
+  "-c",
+  "model_catalog_json=\"<codex_home>/catalog.json\"",
+  "-c",
+  "model_reasoning_summary=\"detailed\"",
+  "-o",
+  "/home/ciarpa/Desktop/github/projects/small-games-llm/experiments/code_policies/answers/gpt-6-astra/seaquest/answer.md",
+  "-"
+ ],
+ "visible_tools": [],
+ "visible_messages": [
+  "developer",
+  "user"
+ ],
+ "audit": {
+  "item_types": {
+   "reasoning": 42,
+   "agent_message": 1
+  },
+  "tool_items": {},
+  "tool_free": true,
+  "usage": {
+   "input_tokens": 26031,
+   "cached_input_tokens": 10240,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4325,
+   "reasoning_output_tokens": 516
+  },
+  "errors": []
+ },
+ "policy_py": true
+}

@@ -1,0 +1,37 @@
+{
+ "game": "seaquest",
+ "model": "gpt-6-astra",
+ "imports": [
+  "numpy"
+ ],
+ "checks": {
+  "states": 2000,
+  "errors": 0,
+  "invalid": 0,
+  "us_per_call": 95.0,
+  "order_dependent": 0,
+  "action_counts": [
+   141,
+   474,
+   395,
+   468,
+   405,
+   117
+  ]
+ },
+ "score": {
+  "mean_return": 187.306,
+  "stderr": 2.7976549532130006,
+  "min_return": 0.0,
+  "max_return": 446.0,
+  "mean_length": 2427.542,
+  "truncated_rate": 0.0,
+  "protocol": {
+   "episodes": 1000,
+   "seed0": 10000,
+   "sticky_prob": 0.1,
+   "max_steps": 10000
+  },
+  "seconds": 37.3
+ }
+}

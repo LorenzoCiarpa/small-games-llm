@@ -1,0 +1,37 @@
+{
+ "game": "asterix",
+ "model": "gpt-6-astra",
+ "imports": [
+  "numpy"
+ ],
+ "checks": {
+  "states": 2000,
+  "errors": 0,
+  "invalid": 0,
+  "us_per_call": 282.6,
+  "order_dependent": 0,
+  "action_counts": [
+   1096,
+   215,
+   242,
+   217,
+   230,
+   0
+  ]
+ },
+ "score": {
+  "mean_return": 83.191,
+  "stderr": 1.7648147466774213,
+  "min_return": 0.0,
+  "max_return": 476.0,
+  "mean_length": 1345.174,
+  "truncated_rate": 0.0,
+  "protocol": {
+   "episodes": 1000,
+   "seed0": 10000,
+   "sticky_prob": 0.1,
+   "max_steps": 10000
+  },
+  "seconds": 53.4
+ }
+}
