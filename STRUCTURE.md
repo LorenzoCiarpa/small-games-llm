@@ -1,8 +1,7 @@
 # Repository structure
 
 This file explains how the repository is organized and where the code and results of each part of the article
-live. The READMEs inside the experiment folders are written in Italian; the numbers and commands in them are
-the reference for the article.
+live. The numbers and commands in the READMEs of the experiment folders are the reference for the article.
 
 ```
 small-games-llm/

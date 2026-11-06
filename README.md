@@ -1,272 +1,272 @@
 # small-games-llm
 
-Banco di prova per l'idea del post [Weight-space programming](https://rikiyat.github.io/blog/weight-space-programming/):
-un LLM scrive a mano, senza training, senza tool e senza eseguire codice, i pesi di un MLP che gioca a un gioco.
-Qui ci sono il gioco nuovo **Low Tide** (mai visto prima, mai usato per il training di nessun modello) e i tre giochi
-dell'articolo (**Breakout**, **Seaquest**, **Asterix** di MinAtar), tutti dietro la stessa interfaccia, così
-`evaluate` e `play` funzionano su qualsiasi gioco registrato.
+Test bed for the idea of the post [Weight-space programming](https://rikiyat.github.io/blog/weight-space-programming/):
+an LLM writes by hand, without training, without tools and without running code, the weights of an MLP that plays a game.
+Here are the new game **Low Tide** (never seen before, never used to train any model) and the three games
+of the article (MinAtar **Breakout**, **Seaquest**, **Asterix**), all behind the same interface, so
+`evaluate` and `play` work on any registered game.
 
 ```bash
-uv sync                    # crea .venv da uv.lock (Python 3.12)
-uv run evaluate --help     # in fondo: per ogni gioco, le baseline e i pesi disponibili
-uv run evaluate --list     # (anche `play --list`) protocolli, reti ammesse, cosa fa ogni baseline
+uv sync                    # creates .venv from uv.lock (Python 3.12)
+uv run evaluate --help     # at the end: for each game, the available baselines and weights
+uv run evaluate --list     # (also `play --list`) protocols, allowed networks, what each baseline does
 ```
 
-**Baseline**: policy di riferimento scritte a mano, non reti, che fanno da scala per i punteggi.
-`random` (azione uniforme a caso) e `astra_code` (la funzione `policy(obs, rng)` scritta come codice da GPT-6 Astra,
-senza tool, in [`experiments/code_policies/`](experiments/code_policies)) ci sono per tutti i giochi; Low Tide ha
-anche `heuristic` (BFS verso la conchiglia più vicina evitando meduse e righe che si allagano). **Greedy** invece riguarda solo le reti: argmax dei logits invece di campionare
-dalla softmax (il protocollo dell'articolo è campionato).
+**Baselines**: reference policies that are not networks and serve as a scale for the scores.
+`random` (uniform random action) and `astra_code` (the function `policy(obs, rng)` written as code by GPT-6 Astra,
+without tools, in [`experiments/code_policies/`](experiments/code_policies)) exist for all games; Low Tide also
+has `heuristic` (BFS to the nearest shell, avoiding jellyfish and rows that flood). **Greedy**, instead, applies only to networks: argmax of the logits instead of sampling
+from the softmax (the article's protocol uses sampling).
 
-## Valutare
+## Evaluating
 
 ```bash
-uv run evaluate low_tide claude gpt                     # nomi dei file in weights/low_tide/
-uv run evaluate low_tide weights/low_tide/claude.json   # oppure un percorso qualsiasi
+uv run evaluate low_tide claude gpt                     # file names in weights/low_tide/
+uv run evaluate low_tide weights/low_tide/claude.json   # or any path
 uv run evaluate low_tide --baseline heuristic --baseline astra_code
 uv run evaluate breakout paper_astra --baseline random
 ```
 
-Ogni gioco ha il suo protocollo (episodi, seed, sticky actions, limite di passi), che si può cambiare con
-`--episodes`, `--seed0`, `--sticky` e `--max-steps`. `--greedy` usa l'argmax invece di campionare dalla softmax.
-L'episodio k usa il seed `seed0 + k` (vedi *Riproducibilità*); `--workers` (default: tutti i core) non cambia i
-risultati. Il punteggio usa sempre il forward pass di riferimento (`small_games/weights.py`), mai codice scritto
-dal modello.
+Each game has its own protocol (episodes, seeds, sticky actions, step limit), which can be changed with
+`--episodes`, `--seed0`, `--sticky` and `--max-steps`. `--greedy` uses the argmax instead of sampling from the softmax.
+Episode k uses seed `seed0 + k` (see *Reproducibility*); `--workers` (default: all cores) does not change the
+results. The score always uses the reference forward pass (`small_games/weights.py`), never code written
+by the model.
 
-## Giocare o guardare
+## Playing or watching
 
 ```bash
-uv run play low_tide                          # giochi tu
-uv run play low_tide --weights claude         # guardi una rete
-uv run play low_tide --baseline heuristic     # guardi una baseline
+uv run play low_tide                          # you play
+uv run play low_tide --weights claude         # you watch a network
+uv run play low_tide --baseline heuristic     # you watch a baseline
 uv run play seaquest --weights paper_astra --speed 20
 ```
 
-Tasti: quelli del gioco (frecce, spazio per stare fermo, `F` per sparare nei giochi MinAtar);
-`1 2 3 ...` cambiano chi gioca (tu, rete, baseline) senza ricominciare; `P` pausa, `N` un passo, `+ -` velocità,
-`T` a turni o in tempo reale, `R` ricomincia con lo stesso seed, `E` passa al seed + 1, `S` sticky on/off,
-`G` greedy/campionata (solo la rete), `C` coordinate.
+Keys: the game's own (arrows, space to stay still, `F` to fire in the MinAtar games);
+`1 2 3 ...` change who plays (you, network, baseline) without restarting; `P` pause, `N` one step, `+ -` speed,
+`T` turn-based or real time, `R` restart with the same seed, `E` go to seed + 1, `S` sticky on/off,
+`G` greedy/sampled (network only), `C` coordinates.
 
-## Riproducibilità
+## Reproducibility
 
-Un episodio dipende solo dal suo seed: da quel seed ripartono il gioco, le sticky actions e il generatore con
-cui la policy campiona (`policy_rng`, lo stesso in `evaluate` e in `play`). Quindi:
+An episode depends only on its seed: the game, the sticky actions and the generator the policy samples with
+(`policy_rng`, the same in `evaluate` and in `play`) all restart from that seed. Therefore:
 
-- lo stesso comando `evaluate` dà sempre gli stessi numeri, con qualsiasi `--workers`;
-- in `play`, `R` (o rilanciare con lo stesso `--seed`) ripete l'episodio identico;
-- `play` parte dal seed0 del gioco (10000 per tutti), cioè dall'episodio 0 di `evaluate`, ed `E` passa agli
-  episodi 1, 2, ...; in generale `play <gioco> --seed s` mostra esattamente l'episodio `s - seed0`, per esempio
-  `uv run play breakout --weights paper_astra --seed 10002` è l'episodio 2.
+- the same `evaluate` command always gives the same numbers, with any `--workers`;
+- in `play`, `R` (or relaunching with the same `--seed`) repeats the identical episode;
+- `play` starts from the game's seed0 (10000 for all), i.e. from episode 0 of `evaluate`, and `E` moves to
+  episodes 1, 2, ...; in general `play <game> --seed s` shows exactly episode `s - seed0`, for example
+  `uv run play breakout --weights paper_astra --seed 10002` is episode 2.
 
-Vale finché la stessa policy gioca tutto l'episodio con le stesse impostazioni: cambiare chi gioca, `G` o `S`
-a metà partita cambia il seguito (e da quel momento non coincide più con `evaluate`).
+This holds as long as the same policy plays the whole episode with the same settings: changing who plays, `G` or `S`
+mid-game changes what follows (and from that moment it no longer matches `evaluate`).
 
-## I giochi
+## The games
 
-| gioco | osservazione | azioni | rete ammessa | protocollo |
+| game | observation | actions | allowed network | protocol |
 |---|---|---|---|---|
-| `low_tide` | 403 = 4 piani 10×10 + 3 scalari | 5 | ≤ 3 strati nascosti da ≤ 64 unità, relu/tanh/linear | 500 episodi, seed 10000.., sticky 0.1, 1000 passi |
-| `breakout`, `seaquest`, `asterix` | 600 = griglia 10×10 × 6 canali | 6 | ≤ 2 strati nascosti da ≤ 32 unità, tanh (l'articolo: 600-32-32-6) | 1000 episodi, seed 10000.., sticky 0.1, 10000 passi |
+| `low_tide` | 403 = 4 planes 10×10 + 3 scalars | 5 | ≤ 3 hidden layers of ≤ 64 units, relu/tanh/linear | 500 episodes, seed 10000.., sticky 0.1, 1000 steps |
+| `breakout`, `seaquest`, `asterix` | 600 = 10×10 grid × 6 channels | 6 | ≤ 2 hidden layers of ≤ 32 units, tanh (the article: 600-32-32-6) | 1000 episodes, seed 10000.., sticky 0.1, 10000 steps |
 
-Cosa rappresentano i 403 ingressi di Low Tide, e quali valori possono avere, è spiegato in
+What the 403 inputs of Low Tide represent, and which values they can take, is explained in
 [`docs/low_tide_observation.md`](docs/low_tide_observation.md).
 
-I giochi MinAtar sono quelli ufficiali del pacchetto `minatar==1.0.15` (la versione usata dall'articolo), non una
-reimplementazione. L'osservazione è quella dell'articolo: indice `(riga * 10 + colonna) * 6 + canale`, canali
-player, danger, reward, projectile, trail, gauge, ciascuno l'OR di alcuni canali del gioco, con la stessa mappatura
-scritta nei prompt dell'articolo (vedi `games/minatar_games.py`). Azioni: 0 fermo, 1 sinistra, 2 su, 3 destra,
-4 giù, 5 fuoco.
+The MinAtar games are the official ones from the package `minatar==1.0.15` (the version used by the article), not a
+reimplementation. The observation is the article's: index `(row * 10 + column) * 6 + channel`,
+channels player, danger, reward, projectile, trail, gauge, each the OR of some of the game's channels, with
+the same mapping written in the article's prompts (see `games/minatar_games.py`). Actions: 0 no-op, 1 left, 2 up,
+3 right, 4 down, 5 fire.
 
-**Verifica dell'integrazione.** Le reti scritte da GPT-6 Astra nell'articolo (`weights/<gioco>/paper_astra.json`)
-danno qui gli stessi punteggi dell'articolo, entro circa un errore standard:
+**Integration check.** The networks written by GPT-6 Astra in the article (`weights/<game>/paper_astra.json`)
+give the same scores here as in the article, within about one standard error:
 
-| | qui (1000 episodi) | articolo |
+| | here (1000 episodes) | article |
 |---|---|---|
 | Breakout | 512.5 ± 7.6 | 517.4 ± 7.4 |
 | Seaquest | 51.4 ± 1.4 | 53.1 ± 1.4 |
 | Asterix | 54.8 ± 1.1 | 53.2 ± 1.0 |
 
-**Low Tide** (500 episodi): euristica 164.0 ± 1.5, `claude` 132.3 ± 0.9, `gpt` 79.9 ± 1.0, casuale 2.0, `astra_code` 188.9 ± 0.7;
-`bfs_net`, l'euristica scritta a mano come pesi in questo repo, 166.7 ± 2.0.
+**Low Tide** (500 episodes): heuristic 164.0 ± 1.5, `claude` 132.3 ± 0.9, `gpt` 79.9 ± 1.0, random 2.0, `astra_code` 188.9 ± 0.7;
+`bfs_net`, the heuristic hand-written as weights in this repo, 166.7 ± 2.0.
 
-## Esperimenti
+## Experiments
 
-Gli esperimenti su un solo gioco stanno in `experiments/<gioco>/`, quelli che confrontano più giochi direttamente in
+Experiments on a single game are in `experiments/<game>/`; those that compare several games are directly in
 `experiments/`.
 
-- [`experiments/weight_distance/`](experiments/weight_distance): quanto sono lontane tra loro le reti scritte dagli
-  LLM? Distanze strato per strato (grezze, dopo aver allineato i neuroni e contro un modello nullo), unità gemelle,
-  CKA, azioni sugli stessi stati e cross-play tra giochi, con quattro reti addestrate con PPO come termine di
-  paragone. `uv run --group analysis python experiments/weight_distance/analyze.py`
-- [`experiments/ppo_over_training/`](experiments/ppo_over_training): le reti PPO diventano più sparse o più
-  leggibili andando avanti con l'addestramento, o con un'altra entropia? No: le misure principali su tutte le corse
-  e su tutti i checkpoint, accanto alle reti scritte a mano.
+- [`experiments/weight_distance/`](experiments/weight_distance): how far apart are the networks written by the
+  LLMs? Layer-by-layer distances (raw, after aligning the neurons, and against a null model), twin units,
+  CKA, actions on the same states and cross-play between games, with four networks trained with PPO as a point of
+  comparison. `uv run --group analysis python experiments/weight_distance/analyze.py`
+- [`experiments/ppo_over_training/`](experiments/ppo_over_training): do PPO networks become sparser or more
+  readable as training goes on, or with a different entropy? No: the main measures on all runs
+  and all checkpoints, next to the hand-written networks.
   `uv run --group analysis python experiments/ppo_over_training/analyze.py`
-- [`experiments/ppo_warm_start/`](experiments/ppo_warm_start): PPO che parte dalle reti scritte a mano invece che
-  da pesi casuali. Misura quanto migliora, dopo quanti passi e quanto tempo si risparmia. Misura anche il gradiente
-  in quel punto e quanto si muovono i pesi. `uv run --group ppo --group analysis python
+- [`experiments/ppo_warm_start/`](experiments/ppo_warm_start): PPO that starts from the hand-written networks instead
+  of random weights. It measures how much it improves, after how many steps and how much time is saved. It also
+  measures the gradient at that point and how much the weights move. `uv run --group ppo --group analysis python
   experiments/ppo_warm_start/analyze.py`
-- [`experiments/code_policies/`](experiments/code_policies): lo stesso LLM scrive l'algoritmo come codice Python
-  invece che come pesi. Il prompt è quello dell'articolo, con la sola parte sulla rete sostituita da una funzione
-  `policy(obs, rng)`, e il modello gira davvero senza tool (`run_codex.py`).
-  - Il codice di GPT-6 Astra batte la sua rete e il miglior PPO in tutti e quattro i giochi: Low Tide 188.9,
+- [`experiments/code_policies/`](experiments/code_policies): the same LLM writes the algorithm as Python code
+  instead of as weights. The prompt is the article's, with only the part about the network replaced by a function
+  `policy(obs, rng)`, and the model really runs without tools (`run_codex.py`).
+  - GPT-6 Astra's code beats its own network and the best PPO in all four games: Low Tide 188.9,
     Breakout 786.0, Seaquest 187.3, Asterix 83.2.
-  - Le reti di Astra fanno 79.9, 512.5, 51.4 e 54.8.
+  - Astra's networks score 79.9, 512.5, 51.4 and 54.8.
 
   `uv run python experiments/code_policies/evaluate_code.py`
-- [`experiments/ppo_runs.py`](experiments/ppo_runs.py): lancia, controlla e ferma in background tutti gli
-  addestramenti PPO (10 corse da zero, ~2 ore su 8 core, più le 9 di experiments/ppo_warm_start/).
+- [`experiments/ppo_runs.py`](experiments/ppo_runs.py): launches, monitors and stops all PPO training runs in the
+  background (10 runs from scratch, ~2 hours on 8 cores, plus the 9 of experiments/ppo_warm_start/).
 
 **Low Tide**
 
-- [`experiments/low_tide/decode_claude/`](experiments/low_tide/decode_claude): come si legge la rete `claude.json`,
-  neurone per neurone, e quale algoritmo di gioco rappresenta. La lettura è verificata contro la rete vera su
-  ~200.000 stati. `uv run python experiments/low_tide/decode_claude/check.py`
-- [`experiments/low_tide/decode_gpt/`](experiments/low_tide/decode_gpt): la stessa analisi per `gpt.json`, con un
-  confronto tra le due reti. `uv run python experiments/low_tide/decode_gpt/check.py`
-- [`experiments/low_tide/bfs_net/`](experiments/low_tide/bfs_net): il contrario delle due precedenti. Parte
-  dall'euristica BFS e la scrive nei pesi di un MLP con gli stessi limiti (403 → 64 → 58 → 63 → 5), senza
-  addestramento.
-  - La BFS esatta non ci sta. Ci sta una versione a potenziale (la conchiglia più vicina pesa più di tutte le altre,
-    mai in una medusa), che fa 166.7 punti contro i 164.0 dell'euristica.
-  - Rete e specifica scelgono la stessa mossa in tutti i 456.230 stati controllati.
+- [`experiments/low_tide/decode_claude/`](experiments/low_tide/decode_claude): how to read the network `claude.json`,
+  neuron by neuron, and which game algorithm it represents. The reading is verified against the real network on
+  ~200,000 states. `uv run python experiments/low_tide/decode_claude/check.py`
+- [`experiments/low_tide/decode_gpt/`](experiments/low_tide/decode_gpt): the same analysis for `gpt.json`, with a
+  comparison between the two networks. `uv run python experiments/low_tide/decode_gpt/check.py`
+- [`experiments/low_tide/bfs_net/`](experiments/low_tide/bfs_net): the reverse of the previous two. It starts
+  from the BFS heuristic and writes it into the weights of an MLP with the same limits (403 → 64 → 58 → 63 → 5),
+  without training.
+  - The exact BFS does not fit. A potential-based version fits (the nearest shell weighs more than all the others,
+    never stepping into a jellyfish), which scores 166.7 points against the heuristic's 164.0.
+  - Network and specification choose the same move in all 456,230 states checked.
 
   `uv run python experiments/low_tide/bfs_net/check.py`
-- [`experiments/low_tide/bfs_exact/`](experiments/low_tide/bfs_exact): la stessa BFS, esatta, togliendo i limiti del
-  gioco, per vedere quanti neuroni servono.
-  - Un'onda parte dalle conchiglie e avanza di una cella per strato.
-  - Servono 104 strati e 51.103 neuroni, contro i 192 ammessi.
-  - Fa la stessa mossa dell'euristica in ogni stato controllato, quindi ottiene lo stesso punteggio episodio per
-    episodio.
+- [`experiments/low_tide/bfs_exact/`](experiments/low_tide/bfs_exact): the same BFS, exact, removing the game's
+  limits, to see how many neurons are needed.
+  - A wave starts from the shells and advances one cell per layer.
+  - It needs 104 layers and 51,103 neurons, against the 192 allowed.
+  - It makes the same move as the heuristic in every state checked, so it gets the same score episode by
+    episode.
 
   `uv run python experiments/low_tide/bfs_exact/check.py`
-- [`experiments/low_tide/ppo/`](experiments/low_tide/ppo): una rete addestrata con PPO (403-64-64-5) gioca bene
-  quanto quella di Claude, e con 100M passi (`ppo_100m.json`) quanto l'euristica, ma i suoi pesi non si leggono come
-  un algoritmo. Le stesse misure sulle reti: pesi, pruning, ablazione, quantità dell'algoritmo di Claude nei
-  neuroni, distillazione in alberi di decisione.
-  `uv run --group ppo python experiments/low_tide/ppo/train.py`, poi `uv run --group analysis python
+- [`experiments/low_tide/ppo/`](experiments/low_tide/ppo): a network trained with PPO (403-64-64-5) plays as well
+  as Claude's, and with 100M steps (`ppo_100m.json`) as well as the heuristic, but its weights do not read as
+  an algorithm. The same measures on the networks: weights, pruning, ablation, quantities of Claude's algorithm in
+  the neurons, distillation into decision trees.
+  `uv run --group ppo python experiments/low_tide/ppo/train.py`, then `uv run --group analysis python
   experiments/low_tide/ppo/analyze.py`
 
-**Breakout, Seaquest, Asterix**: le reti di GPT-6 Astra dell'articolo (`paper_astra.json`), lette neurone per
-neurone come quelle di Low Tide, ognuna con un `check.py` che verifica la lettura contro la rete vera.
+**Breakout, Seaquest, Asterix**: the article's GPT-6 Astra networks (`paper_astra.json`), read neuron by
+neuron like the Low Tide ones, each with a `check.py` that verifies the reading against the real network.
 
-- [`experiments/breakout/decode_astra/`](experiments/breakout/decode_astra): prevede la colonna in cui arriverà la
-  palla, da una tabella "cella → colonna d'arrivo" scritta nei pesi, e ci porta la racchetta.
-- [`experiments/seaquest/decode_astra/`](experiments/seaquest/decode_astra): il sottomarino resta nella colonna 5 e
-  sceglie solo la riga, in base a sub da salvare, bersagli nella linea di tiro e pericoli; emerge con poco ossigeno.
-- [`experiments/asterix/decode_astra/`](experiments/asterix/decode_astra): un "portiere" nella colonna 5 che
-  sceglie solo la riga, evitando i nemici in arrivo e andando verso i tesori.
+- [`experiments/breakout/decode_astra/`](experiments/breakout/decode_astra): predicts the column where the
+  ball will arrive, from a "cell → arrival column" table written in the weights, and moves the paddle there.
+- [`experiments/seaquest/decode_astra/`](experiments/seaquest/decode_astra): the submarine stays in column 5 and
+  chooses only the row, based on divers to rescue, targets in the line of fire and dangers; it surfaces when oxygen is low.
+- [`experiments/asterix/decode_astra/`](experiments/asterix/decode_astra): a "goalkeeper" in column 5 that
+  chooses only the row, avoiding incoming enemies and moving toward the treasures.
 
-E le reti PPO con la stessa architettura (600-32-32-6), confrontate con quelle di Astra con le misure di Low Tide.
-`uv run --group ppo python experiments/<gioco>/ppo/train.py`, poi `uv run --group analysis python
-experiments/<gioco>/ppo/analyze.py`.
+And the PPO networks with the same architecture (600-32-32-6), compared with Astra's using the Low Tide measures.
+`uv run --group ppo python experiments/<game>/ppo/train.py`, then `uv run --group analysis python
+experiments/<game>/ppo/analyze.py`.
 
-- [`experiments/breakout/ppo/`](experiments/breakout/ppo): PPO esce dal plateau a ~6 punti solo con più entropia
-  e arriva a 63, contro i 512 di Astra.
-- [`experiments/seaquest/ppo/`](experiments/seaquest/ppo): PPO gioca meglio di Astra (55.9 contro 51.4), ma in un
-  altro modo: si muove in orizzontale invece di restare nella colonna 5.
-- [`experiments/asterix/ppo/`](experiments/asterix/ppo): PPO arriva a 24.6, metà di Astra, ancora in salita.
+- [`experiments/breakout/ppo/`](experiments/breakout/ppo): PPO leaves the plateau at ~6 points only with more entropy
+  and reaches 63, against Astra's 512.
+- [`experiments/seaquest/ppo/`](experiments/seaquest/ppo): PPO plays better than Astra (55.9 against 51.4), but in a
+  different way: it moves horizontally instead of staying in column 5.
+- [`experiments/asterix/ppo/`](experiments/asterix/ppo): PPO reaches 24.6, half of Astra, still rising.
 
-### PPO trova reti sparse e leggibili come quelle scritte a mano?
+### Does PPO find networks as sparse and readable as the hand-written ones?
 
-No, in nessuno dei quattro giochi. Anche dove gioca bene quanto o meglio delle reti scritte a mano (Low Tide,
-Seaquest), PPO trova pesi densi, che servono quasi tutti, e neuroni senza un nome. Le misure sul primo strato sono
-ristrette agli ingressi vivi, quelli che non sono sempre zero (sugli altri PPO lascia i pesi iniziali):
+No, in none of the four games. Even where it plays as well as or better than the hand-written networks (Low Tide,
+Seaquest), PPO finds dense weights, almost all of which are needed, and neurons without a name. The measures on the
+first layer are restricted to the live inputs, those that are not always zero (on the others PPO leaves the initial weights):
 
-| gioco | rete | punteggio | pesi vivi ≠ 0 | valori diversi | ingressi per il 90% del peso di un neurone | punteggio con il 25% dei pesi vivi | neuroni che da soli tolgono > 50% | quantità chiave: miglior \|r\| | albero di prof. 6: accordo |
+| game | network | score | live weights ≠ 0 | distinct values | inputs for 90% of a neuron's weight | score with 25% of live weights | neurons that alone remove > 50% | key quantities: best \|r\| | depth-6 tree: agreement |
 |---|---|---|---|---|---|---|---|---|---|
-| Low Tide | `claude` (a mano) | 132.1 | 5% | 34 | 9 su 312 | 131.9 (100%) | 3 | 0.97 | 100% |
-| | `gpt` (a mano) | 79.7 | 3% | 9 | 2 su 312 | 79.7 (100%) | 12 | 0.67 | 92% |
-| | `ppo` (20M passi) | 125.5 | 100% | 19.582 | 186 su 312 | 14.0 (11%) | 0 | 0.47 | 64% |
-| | `ppo_100m` | 155.5 | 100% | 19.731 | 172 su 312 | 4.3 (3%) | 0 | 0.47 | 64% |
-| Breakout | `paper_astra` (a mano) | 512.7 | 10% | 53 | 77 su 220 | 512.7 (100%) | 14 | 0.73 | 89% |
-| | `ppo` | 62.4 | 100% | 7.027 | 136 su 220 | 0.4 (1%) | 10 | 0.34 | 72% |
-| Seaquest | `paper_astra` (a mano) | 48.3 | 3% | 12 | 9 su 425 | 48.3 (100%) | 29 | 0.46 | 87% |
-| | `ppo` | 56.0 | 100% | 13.526 | 240 su 425 | 1.7 (3%) | 14 | 0.22 | 65% |
-| Asterix | `paper_astra` (a mano) | 54.5 | 5% | 33 | 10 su 315 | 54.5 (100%) | 14 | 0.57 | 92% |
-| | `ppo` | 26.8 | 100% | 10.029 | 167 su 315 | 7.3 (27%) | 2 | 0.11 | 49% |
+| Low Tide | `claude` (hand-written) | 132.1 | 5% | 34 | 9 of 312 | 131.9 (100%) | 3 | 0.97 | 100% |
+| | `gpt` (hand-written) | 79.7 | 3% | 9 | 2 of 312 | 79.7 (100%) | 12 | 0.67 | 92% |
+| | `ppo` (20M steps) | 125.5 | 100% | 19,582 | 186 of 312 | 14.0 (11%) | 0 | 0.47 | 64% |
+| | `ppo_100m` | 155.5 | 100% | 19,731 | 172 of 312 | 4.3 (3%) | 0 | 0.47 | 64% |
+| Breakout | `paper_astra` (hand-written) | 512.7 | 10% | 53 | 77 of 220 | 512.7 (100%) | 14 | 0.73 | 89% |
+| | `ppo` | 62.4 | 100% | 7,027 | 136 of 220 | 0.4 (1%) | 10 | 0.34 | 72% |
+| Seaquest | `paper_astra` (hand-written) | 48.3 | 3% | 12 | 9 of 425 | 48.3 (100%) | 29 | 0.46 | 87% |
+| | `ppo` | 56.0 | 100% | 13,526 | 240 of 425 | 1.7 (3%) | 14 | 0.22 | 65% |
+| Asterix | `paper_astra` (hand-written) | 54.5 | 5% | 33 | 10 of 315 | 54.5 (100%) | 14 | 0.57 | 92% |
+| | `ppo` | 26.8 | 100% | 10,029 | 167 of 315 | 7.3 (27%) | 2 | 0.11 | 49% |
 
-Punteggi su 200 episodi; "valori diversi" e "ingressi" sono del primo strato; il pruning tiene il 25% dei pesi vivi
-più grandi del primo strato; le quantità chiave sono quelle dell'algoritmo scritto a mano (media sulle quantità del
-gioco); l'albero imita la mossa più probabile della rete usando le grandezze del gioco.
+Scores over 200 episodes; "distinct values" and "inputs" refer to the first layer; pruning keeps the largest 25% of
+the live weights of the first layer; the key quantities are those of the hand-written algorithm (mean over the
+game's quantities); the tree imitates the network's most likely move using the game's variables.
 
-- **Le reti scritte a mano** sono sparse (3-10% dei pesi), con pochi valori tondi, e il pruning toglie solo zeri. I
-  neuroni sono le quantità e le condizioni dell'algoritmo, e il comportamento si scrive come un albero corto.
-- **Le reti PPO** usano ogni ingresso vivo con un peso diverso, non reggono il pruning, e nessun neurone calcola le
-  quantità dell'algoritmo scritto a mano, nemmeno come combinazione lineare. Su Low Tide nessun neurone conta da
-  solo; nei giochi MinAtar, con 32 unità per strato, molti contano, ma nessuno ha un significato riconoscibile.
-- **Le tracce leggibili** in PPO sono codifiche di posizione: la riga dell'agente insieme alla marea su Low Tide, la
-  colonna della racchetta su Breakout, macchie di posizione del sottomarino e del giocatore su Seaquest e Asterix.
-- **Con più addestramento o un'altra entropia** il quadro non cambia: la rete migliora usando più pesi, non meno
-  ([`experiments/ppo_over_training/`](experiments/ppo_over_training)).
-- **Anche il comportamento** è diverso: in Seaquest e Asterix Astra riduce il gioco a una dimensione (fermo nella
-  colonna 5, sceglie la riga), PPO no.
+- **The hand-written networks** are sparse (3-10% of the weights), with few round values, and pruning removes only
+  zeros. The neurons are the quantities and conditions of the algorithm, and the behavior can be written as a short tree.
+- **The PPO networks** use every live input with a different weight, do not survive pruning, and no neuron computes
+  the quantities of the hand-written algorithm, not even as a linear combination. On Low Tide no neuron matters on
+  its own; in the MinAtar games, with 32 units per layer, many matter, but none has a recognizable meaning.
+- **The readable traces** in PPO are position encodings: the agent's row together with the tide on Low Tide, the
+  paddle's column on Breakout, position blobs of the submarine and of the player on Seaquest and Asterix.
+- **With more training or a different entropy** the picture does not change: the network improves by using more
+  weights, not fewer ([`experiments/ppo_over_training/`](experiments/ppo_over_training)).
+- **The behavior** is different too: in Seaquest and Asterix Astra reduces the game to one dimension (it stays in
+  column 5 and chooses the row), PPO does not.
 
-### Le reti scritte a mano sono un buon punto di partenza per PPO?
+### Are the hand-written networks a good starting point for PPO?
 
-Le reti di Astra sui giochi MinAtar sì, quelle di GPT e Claude su Low Tide no. Ogni corsa usa la configurazione della
-migliore corsa da zero del gioco e ne cambia solo l'attore iniziale; per Low Tide il confronto è con una corsa da
-zero con la stessa architettura della rete a mano
+Astra's networks on the MinAtar games are; GPT's and Claude's on Low Tide are not. Each run uses the configuration of
+the game's best from-scratch run and changes only its initial actor; for Low Tide the comparison is with a
+from-scratch run with the same architecture as the hand-written network
 ([`experiments/ppo_warm_start/`](experiments/ppo_warm_start)).
 
-| gioco | rete a mano | PPO dalla rete a mano | PPO da zero | gradiente a pesi fissi: rete a mano / PPO da zero a fine corsa |
+| game | hand-written network | PPO from the hand-written network | PPO from scratch | gradient at fixed weights: hand-written network / PPO from scratch at end of run |
 |---|---|---|---|---|
-| Breakout | 512.5 | 512.5 (identica) | 63.2 | 4·10⁻¹³ / 0.085 |
+| Breakout | 512.5 | 512.5 (identical) | 63.2 | 4·10⁻¹³ / 0.085 |
 | Seaquest | 51.4 | **82.5** (+60%) | 55.9 | 0.37 / 0.12 |
 | Asterix | 54.8 | 50.8 (−7%) | 24.6 | 1.14 / 0.11 |
 | Low Tide | `gpt` 79.9 | 147.3 (+84%) | **166.9** | 1.32 / 0.41 |
 | Low Tide | `claude` 132.3 | 31.0 (−77%) | **158.4** | 28.3 / 0.35 |
 
-- **Breakout:** la rete di Astra è un plateau. La softmax è satura, il gradiente è praticamente zero e in 200M passi i
-  pesi si muovono di 7·10⁻⁶. PPO non la cambia, ma vale 8 volte la migliore corsa da zero.
-- **Seaquest:** PPO peggiora la rete per 5M passi, torna al suo livello a 20M e finisce a +60%. Per arrivare al
-  livello finale della corsa da zero risparmia 150M passi.
-- **Asterix:** PPO non la migliora, ma resta il doppio della corsa da zero.
-- **Low Tide:** nel primo milione di passi PPO cancella le reti scritte a mano (GPT scende a 1, Claude a 6), poi
-  impara più lentamente che da zero.
-  - I pesi delle reti a mano sono enormi: ‖θ‖ da 500 a 45.000, contro 11-17 di un'inizializzazione casuale. Con lo
-    stesso learning rate ogni aggiornamento cambia la policy molto di più: il KL è 20-45 volte quello di una corsa
-    da zero.
-  - Addestrare prima solo il critico non basta.
+- **Breakout:** Astra's network is a plateau. The softmax is saturated, the gradient is practically zero and in 200M
+  steps the weights move by 7·10⁻⁶. PPO does not change it, but it is worth 8 times the best from-scratch run.
+- **Seaquest:** PPO makes the network worse for 5M steps, returns to its level at 20M and ends at +60%. To reach the
+  final level of the from-scratch run it saves 150M steps.
+- **Asterix:** PPO does not improve it, but it stays at twice the from-scratch run.
+- **Low Tide:** in the first million steps PPO erases the hand-written networks (GPT drops to 1, Claude to 6), then
+  learns more slowly than from scratch.
+  - The weights of the hand-written networks are huge: ‖θ‖ from 500 to 45,000, against 11-17 for a random
+    initialization. With the same learning rate each update changes the policy much more: the KL is 20-45 times that
+    of a from-scratch run.
+  - Training only the critic first is not enough.
 
-## Struttura
+## Structure
 
-La mappa completa, con il collegamento tra le sezioni dell'articolo e le cartelle, è in
-[`STRUCTURE.md`](STRUCTURE.md) (in inglese).
+The full map, with the link between the sections of the article and the folders, is in
+[`STRUCTURE.md`](STRUCTURE.md).
 
 ```
 src/small_games/
-  core.py            Game, Protocol, NetSpec, GridSpec e il registro dei giochi
-  weights.py         formato dei pesi (JSON), validazione per gioco, MLP di riferimento
-  policy.py          campionamento, policy MLP, baseline random, ricerca dei file in weights/
-  evaluate.py        CLI `evaluate`
-  play.py            CLI `play` (pygame)
-  render.py          disegno comune: pannello, renderer generico per griglie a canali
-  ppo.py             PPO per qualsiasi gioco registrato, con salvataggi e ripresa esatta (gruppo `ppo`)
-  analysis.py        misure sui pesi: sparsità, pruning, ablazione, probe, alberi (gruppo `analysis`)
-  features.py        le grandezze di ogni gioco (il vocabolario per probe e alberi)
+  core.py            Game, Protocol, NetSpec, GridSpec and the game registry
+  weights.py         weight format (JSON), per-game validation, reference MLP
+  policy.py          sampling, MLP policy, random baseline, lookup of files in weights/
+  evaluate.py        `evaluate` CLI
+  play.py            `play` CLI (pygame)
+  render.py          shared drawing: panel, generic renderer for channel grids
+  ppo.py             PPO for any registered game, with checkpoints and exact resume (group `ppo`)
+  analysis.py        measures on the weights: sparsity, pruning, ablation, probes, trees (group `analysis`)
+  features.py        the variables of each game (the vocabulary for probes and trees)
   games/
-    low_tide/        env.py (regole), baselines.py (euristica: NON darla al modello), render.py
+    low_tide/        env.py (rules), baselines.py (heuristic: do NOT give it to the model), render.py
     minatar_games.py Breakout, Seaquest, Asterix
-weights/<gioco>/<nome>.json
-experiments/<gioco>/<nome>/   esperimenti sui pesi di un gioco (script, dati, risultati)
-experiments/<nome>/           esperimenti che confrontano più giochi
+weights/<game>/<name>.json
+experiments/<game>/<name>/   experiments on the weights of one game (scripts, data, results)
+experiments/<name>/           experiments that compare several games
 ```
 
-## Aggiungere un gioco
+## Adding a game
 
-1. Scrivi un modulo (o un pacchetto) in `src/small_games/games/`: viene importato da solo.
-2. L'ambiente deve avere `reset(seed) -> (obs, info)`, `step(a) -> (obs, r, terminated, truncated, info)` e gli
-   attributi `sticky_prob`, `last_action`, `max_steps`, `t` (dettagli in `core.py`).
-3. Chiama `register(Game(...))` con nome, `make_env`, `obs_dim`, nomi delle azioni, `Protocol`, `NetSpec`, ed
-   eventualmente baseline, tasti, `episode_stats` (chiavi di `info` mediate da `evaluate`).
-4. Per `play` basta un `GridSpec` (renderer generico, una forma per canale); per un aspetto su misura indica in
-   `renderer` una sottoclasse di `small_games.render.Renderer`, come `games/low_tide/render.py`.
-5. Metti i pesi in `weights/<nome>/`.
+1. Write a module (or a package) in `src/small_games/games/`: it is imported automatically.
+2. The environment must have `reset(seed) -> (obs, info)`, `step(a) -> (obs, r, terminated, truncated, info)` and the
+   attributes `sticky_prob`, `last_action`, `max_steps`, `t` (details in `core.py`).
+3. Call `register(Game(...))` with name, `make_env`, `obs_dim`, action names, `Protocol`, `NetSpec`, and
+   optionally baselines, keys, `episode_stats` (keys of `info` averaged by `evaluate`).
+4. For `play` a `GridSpec` is enough (generic renderer, one shape per channel); for a custom look, set
+   `renderer` to a subclass of `small_games.render.Renderer`, like `games/low_tide/render.py`.
+5. Put the weights in `weights/<name>/`.
 
-## Formato dei pesi
+## Weight format
 
-Lo stesso per tutti i giochi; ogni voce non elencata in un blocco sparse vale 0, e `y = act(W @ x + b)`:
+The same for all games; every entry not listed in a sparse block is 0, and `y = act(W @ x + b)`:
 
 ```json
 {"layers": [
@@ -277,9 +277,9 @@ Lo stesso per tutti i giochi; ogni voce non elencata in un blocco sparse vale 0,
 ]}
 ```
 
-## Crediti e licenze
+## Credits and licenses
 
-- MinAtar (Kenny Young e Tian Tian, GPL-3.0) è una dipendenza installata da PyPI, non è incluso nel repository.
-- `weights/{breakout,seaquest,asterix}/paper_astra.json` sono le reti `hand.npz` dell'articolo
+- MinAtar (Kenny Young and Tian Tian, GPL-3.0) is a dependency installed from PyPI; it is not included in the repository.
+- `weights/{breakout,seaquest,asterix}/paper_astra.json` are the article's `hand.npz` networks
   ([RikiyaT/lm_understand-logs](https://github.com/RikiyaT/lm_understand-logs), `exp5_write_from_scratch/networks/`,
-  CC BY 4.0), convertite in questo formato (W = kernel trasposto).
+  CC BY 4.0), converted to this format (W = transposed kernel).

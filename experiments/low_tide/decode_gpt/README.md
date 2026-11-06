@@ -1,322 +1,326 @@
-# Come si legge la rete `gpt.json` di Low Tide
+# How to read the Low Tide network `gpt.json`
 
-`weights/low_tide/gpt.json` è la rete scritta a mano da GPT-6 Astra per Low Tide, senza training e senza eseguire
-codice. Fa 79.9 ± 1.0 punti su 500 episodi. Per confronto, `claude.json` ne fa 132.3, l'euristica (BFS) 164.0 e
-una policy casuale 2.0.
+`weights/low_tide/gpt.json` is the network hand-written by GPT-6 Astra for Low Tide, without training and without
+running code. It scores 79.9 ± 1.0 points over 500 episodes. For comparison, `claude.json` scores 132.3, the
+heuristic (BFS) 164.0 and a random policy 2.0.
 
-Questa analisi la decodifica neurone per neurone, come
-[`decode_claude`](../decode_claude/README.md) fa per la rete di Claude. Anche questa è un
-algoritmo scritto in forma di pesi, ma è un algoritmo diverso, costruito con trucchi diversi:
+This analysis decodes it neuron by neuron, as
+[`decode_claude`](../decode_claude/README.md) does for Claude's network. This one too is an
+algorithm written in the form of weights, but it is a different algorithm, built with different tricks:
 
-- **vista:** guarda le celle una per una, ma solo in una finestra di 6×4 celle;
-- **conchiglie:** per ognuna calcola un'attrazione che dipende dalla distanza;
-- **mossa:** somma le attrazioni per direzione e aggiunge una spinta che tiene l'agente dentro la finestra.
+- **view:** it looks at cells one by one, but only in a window of 6×4 cells;
+- **shells:** for each one it computes an attraction that depends on the distance;
+- **move:** it sums the attractions by direction and adds a push that keeps the agent inside the window.
 
-La lettura è verificata contro la rete vera su 186.768 stati di gioco. La coincidenza è esatta, a meno degli
-arrotondamenti (vedi [Verifica](#7-verifica)):
+The reading is verified against the real network on 186,768 game states. The match is exact, up to
+rounding (see [Verification](#7-verification)):
 
 ```bash
 uv run python experiments/low_tide/decode_gpt/check.py            # ~1 min
 uv run python experiments/low_tide/decode_gpt/check.py --episodes 500
 ```
 
-## 1. Gioco e posizioni
+## 1. Game and positions
 
-Gioco e osservazione sono descritti nelle sezioni 1 e 2 di
-[`decode_claude`](../decode_claude/README.md#2-come-si-leggono-le-posizioni). In breve:
-
-```
-indice = canale*100 + riga*10 + colonna       agente 0..99, acqua 100..199, conchiglie 200..299, meduse 300..399
-400 marea che sale, 401 countdown, 402 stordimento
-```
-
-- **Righe:** la riga 0 è in alto (terra), la riga 9 in basso (mare).
-- **Acqua:** con livello L copre le righe da `10−L` a 9.
-- **Azioni:** 0 fermo, 1 su (riga−1), 2 giù (riga+1), 3 sinistra, 4 destra.
-- **m (margine):** le righe asciutte tra l'agente e l'acqua, `m = 9 − riga − L`.
-- **Battigia:** l'ultima riga asciutta, `9 − L`.
-
-## 2. Struttura della rete
+The game and the observation are described in sections 1 and 2 of
+[`decode_claude`](../decode_claude/README.md#2-how-to-read-the-positions). In brief:
 
 ```
-403 → 43 (relu) → 61 (relu) → 53 (relu) → 5 (linear)       23.612 parametri, 1.174 diversi da zero
+index = channel*100 + row*10 + column         agent 0..99, water 100..199, shells 200..299, jellyfish 300..399
+400 rising tide, 401 countdown, 402 stun
 ```
 
-| strato | cosa fa |
+- **Rows:** row 0 is at the top (land), row 9 at the bottom (sea).
+- **Water:** with level L it covers rows `10−L` to 9.
+- **Actions:** 0 no-op, 1 up (row−1), 2 down (row+1), 3 left, 4 right.
+- **m (margin):** the dry rows between the agent and the water, `m = 9 − row − L`.
+- **Shoreline:** the last dry row, `9 − L`.
+
+## 2. Network structure
+
+```
+403 → 43 (relu) → 61 (relu) → 53 (relu) → 5 (linear)       23,612 parameters, 1,174 non-zero
+```
+
+| layer | what it does |
 |---|---|
-| 1 (43) | **legge**: 24 celle della finestra, posizione dell'agente come "rampe", livello e direzione della marea |
-| 2 (61) | **misura**: attrazione di ogni conchiglia (6 − distanza), vicinanza di ogni medusa, pericolo della marea |
-| 3 (53) | **smista per direzione**: somma le attrazioni delle conchiglie sopra, sotto, a sinistra, a destra |
-| 4 (5) | **decide**: spinta verso la finestra + attrazioni − meduse adiacenti ± regole di emergenza |
+| 1 (43) | **reads**: 24 cells of the window, the agent's position as "ramps", tide level and direction |
+| 2 (61) | **measures**: attraction of each shell (6 − distance), proximity of each jellyfish, tide danger |
+| 3 (53) | **sorts by direction**: sums the attractions of the shells above, below, to the left, to the right |
+| 4 (5) | **decides**: push toward the window + attractions − adjacent jellyfish ± emergency rules |
 
-Tutti gli strati nascosti sono relu. La rete non usa tanh né condizioni ±1 come quella di Claude. Usa due trucchi
-lineari a tratti, che conviene vedere prima.
+All hidden layers are relu. The network uses neither tanh nor ±1 conditions like Claude's. It uses two
+piecewise-linear tricks, which are worth seeing first.
 
-### Trucco 1: le rampe
+### Trick 1: ramps
 
-Una **rampa** è `relu(x − a)`: vale 0 fino ad `a`, poi cresce di 1 per ogni passo. Con le rampe di una coordinata
-intera (la riga o la colonna dell'agente) si costruiscono due cose.
+A **ramp** is `relu(x − a)`: it is 0 up to `a`, then grows by 1 at each step. With the ramps of an integer
+coordinate (the agent's row or column) two things can be built.
 
-- **Un gradino:** `relu(x − a) − relu(x − a − 1)` vale 1 se `x ≥ a + 1`, altrimenti 0.
-- **Una tenda, cioè meno il valore assoluto:** `relu(x − a) − 2·relu(x − R)` vale `(R − a) − |x − R|` per `x ≥ a`.
-  Così la rete calcola la **distanza** tra l'agente e una cella.
+- **A step:** `relu(x − a) − relu(x − a − 1)` is 1 if `x ≥ a + 1`, otherwise 0.
+- **A tent, that is, minus the absolute value:** `relu(x − a) − 2·relu(x − R)` equals `(R − a) − |x − R|` for
+  `x ≥ a`. This is how the network computes the **distance** between the agent and a cell.
 
-### Trucco 2: il cancello
+### Trick 2: the gate
 
-Si scrive `relu(v + 64·g − 64)`, con g ∈ {0, 1} e 0 ≤ v ≤ 64:
+It is written `relu(v + 64·g − 64)`, with g ∈ {0, 1} and 0 ≤ v ≤ 64:
 
-- con `g = 1` vale `v`;
-- con `g = 0` vale 0.
+- with `g = 1` it equals `v`;
+- with `g = 0` it equals 0.
 
-È un "lascia passare v solo se g è vero", cioè un AND tra un numero e una condizione. Il cancello g è di solito un
-gradino costruito con le rampe.
+It is a "let v through only if g is true", that is, an AND between a number and a condition. The gate g is usually
+a step built from the ramps.
 
-## 3. Primo strato: cosa legge (43 neuroni)
+## 3. First layer: what it reads (43 neurons)
 
-| neuroni | ingressi | valore |
+| neurons | inputs | value |
 |---|---|---|
-| h0-h23 | conchiglia (+1) e medusa (−1) di una cella, bias 1 | 2 conchiglia, 1 vuota, 0 medusa |
-| h24-h30 | agente in riga r, pesi `r − 2 − k` | rampe sulla riga: `relu(r − 2 − k)`, k = 0..6 |
-| h31-h34 | agente in colonna c, pesi `c − 5 − k` | rampe sulla colonna: `relu(c − 5 − k)`, k = 0..3 |
-| h35 | acqua, colonna 0, righe 3..9 (peso 1) + 10·marea che sale | `L + 10·[sale]` |
-| h36 | agente in riga 0 (peso 2) o 1 (peso 1) | `relu(2 − r)` |
-| h37-h41 | acqua in riga 5, 6, 7, 8, 9 della colonna 0 + marea che sale, bias −1 | sale **e** L ≥ 5, 4, 3, 2, 1 |
-| h42 | marea che sale | 0 o 1 |
+| h0-h23 | shell (+1) and jellyfish (−1) of one cell, bias 1 | 2 shell, 1 empty, 0 jellyfish |
+| h24-h30 | agent in row r, weights `r − 2 − k` | ramps on the row: `relu(r − 2 − k)`, k = 0..6 |
+| h31-h34 | agent in column c, weights `c − 5 − k` | ramps on the column: `relu(c − 5 − k)`, k = 0..3 |
+| h35 | water, column 0, rows 3..9 (weight 1) + 10·rising tide | `L + 10·[rising]` |
+| h36 | agent in row 0 (weight 2) or 1 (weight 1) | `relu(2 − r)` |
+| h37-h41 | water in row 5, 6, 7, 8, 9 of column 0 + rising tide, bias −1 | rising **and** L ≥ 5, 4, 3, 2, 1 |
+| h42 | rising tide | 0 or 1 |
 
-**La finestra.** h0-h23 guardano le 24 celle delle righe 3-8 e delle colonne 6-9, una per neurone: la cella in riga
-R e colonna C è il neurone `4·(R−3) + (C−6)`. Per esempio, h0 ha pesi `[236: +1, 336: −1]`, cioè conchiglia e
-medusa in riga 3, colonna 6.
+**The window.** h0-h23 look at the 24 cells of rows 3-8 and columns 6-9, one per neuron: the cell in row
+R and column C is neuron `4·(R−3) + (C−6)`. For example, h0 has weights `[236: +1, 336: −1]`, that is, shell and
+jellyfish in row 3, column 6.
 
-**Il resto della spiaggia è invisibile:**
+**The rest of the beach is invisible:**
 
-- le colonne 0-5;
-- la riga 9;
-- in tutto, 46 delle 70 celle della zona di marea.
+- columns 0-5;
+- row 9;
+- in all, 46 of the 70 cells of the tide zone.
 
-**Cosa non legge:** countdown (401) e stordimento (402), come la rete di Claude.
+**What it does not read:** countdown (401) and stun (402), like Claude's network.
 
-## 4. Secondo strato: cosa misura (61 neuroni)
+## 4. Second layer: what it measures (61 neurons)
 
-### n0-n23: l'attrazione di ogni conchiglia
+### n0-n23: the attraction of each shell
 
-Per la cella (R, C) della finestra:
-
-```
-pre = 32·h_cella + h24 − 2·h(25+R−3) + h31 − 2·h(32+C−6) − 32·h(37+R−3) − 60 − (R−3) − (C−6)
-```
-
-- **Righe:** `h24 − 2·h(25+R−3)` è una tenda, cioè `(R − 2) − |r − R|`.
-- **Colonne:** `h31 − 2·h(32+C−6)` è un'altra tenda, `(C − 5) − |c − C|`.
-- **Bias:** cancella le costanti.
-
-Con una conchiglia nella cella (`h_cella = 2`) resta
+For cell (R, C) of the window:
 
 ```
-n = relu(6 − d)        d = |r − R| + |c − C|   (distanza di Manhattan)
+pre = 32·h_cell + h24 − 2·h(25+R−3) + h31 − 2·h(32+C−6) − 32·h(37+R−3) − 60 − (R−3) − (C−6)
 ```
 
-Il valore è quindi 5 per una conchiglia adiacente, 1 per una a distanza 5, 0 da distanza 6 in poi.
+- **Rows:** `h24 − 2·h(25+R−3)` is a tent, that is, `(R − 2) − |r − R|`.
+- **Columns:** `h31 − 2·h(32+C−6)` is another tent, `(C − 5) − |c − C|`.
+- **Bias:** it cancels the constants.
 
-- **Cella vuota** (`h_cella = 1`): pre = 32 − 58 − d, negativo.
-- **Medusa** (`h_cella = 0`): pre ancora più negativo.
-
-Due dettagli:
-
-- **Le rampe partono dalla riga 2 e dalla colonna 5.** Un agente nelle righe 0-1 viene visto come se fosse in riga
-  2, uno nelle colonne 0-4 come se fosse in colonna 5. Succede in meno del 5% degli stati.
-- **Il termine `−32·h(37+R−3)` spegne la conchiglia quando la marea la minaccia.** Per la riga R il neurone usato è
-  "sale e L ≥ 8 − R", cioè: la marea sale e la riga della conchiglia ha margine ≤ 1. La rete ignora le conchiglie
-  che l'acqua sta per raggiungere.
-
-### n24-n47: le meduse vicine
-
-È lo stesso calcolo con `−32·h_cella` al posto di `+32` e senza il termine della marea. Passano solo le meduse
-(`h_cella = 0`):
+With a shell in the cell (`h_cell = 2`) what remains is
 
 ```
-n = relu(2 − d)         1 se la medusa è adiacente all'agente, 0 se è più lontana
+n = relu(6 − d)        d = |r − R| + |c − C|   (Manhattan distance)
 ```
 
-### n48-n58: le rampe, copiate
+The value is therefore 5 for an adjacent shell, 1 for one at distance 5, 0 from distance 6 onward.
 
-n48-n54 copiano h24-h30, n55-n58 copiano h31-h34. In un MLP ogni strato vede solo il precedente, quindi la
-posizione dell'agente va "passata avanti" se serve più tardi. La relu non cambia un valore già ≥ 0.
+- **Empty cell** (`h_cell = 1`): pre = 32 − 58 − d, negative.
+- **Jellyfish** (`h_cell = 0`): pre even more negative.
 
-### n59, n60: il pericolo della marea
+Two details:
+
+- **The ramps start from row 2 and column 5.** An agent in rows 0-1 is seen as if it were in row
+  2, one in columns 0-4 as if it were in column 5. This happens in less than 5% of states.
+- **The term `−32·h(37+R−3)` switches the shell off when the tide threatens it.** For row R the neuron used is
+  "rising and L ≥ 8 − R", that is: the tide is rising and the shell's row has margin ≤ 1. The network ignores the
+  shells that the water is about to reach.
+
+### n24-n47: nearby jellyfish
+
+It is the same computation with `−32·h_cell` instead of `+32` and without the tide term. Only jellyfish pass
+(`h_cell = 0`):
+
+```
+n = relu(2 − d)         1 if the jellyfish is adjacent to the agent, 0 if it is farther away
+```
+
+### n48-n58: the ramps, copied
+
+n48-n54 copy h24-h30, n55-n58 copy h31-h34. In an MLP each layer sees only the previous one, so the
+agent's position has to be "passed forward" if it is needed later. The relu does not change a value that is already
+≥ 0.
+
+### n59, n60: the tide danger
 
 ```
 n59 = relu(h24 − h36 + h35 − 15)
 n60 = relu(h24 − h36 + h35 − 14)
 ```
 
-- **La riga:** `h24 − h36 = relu(r − 2) − relu(2 − r) = r − 2` per ogni riga. Due rampe opposte ricostruiscono r.
-- **La marea:** `h35 = L + 10·[sale]`. Con la marea che scende la somma resta sotto zero. Con la marea che sale
-  vale `r + L − 7 = 2 − m`, perché `r + L = 9 − m`.
+- **The row:** `h24 − h36 = relu(r − 2) − relu(2 − r) = r − 2` for every row. Two opposite ramps reconstruct r.
+- **The tide:** `h35 = L + 10·[rising]`. With the tide falling the sum stays below zero. With the tide rising it
+  equals `r + L − 7 = 2 − m`, because `r + L = 9 − m`.
 
-Quindi:
+So:
 
 ```
-n59 = relu(2 − m) se la marea sale, altrimenti 0      (2 a m = 0, 1 a m = 1)
-n60 = relu(3 − m) se la marea sale, altrimenti 0      (3, 2, 1 a m = 0, 1, 2)
+n59 = relu(2 − m) if the tide is rising, otherwise 0      (2 at m = 0, 1 at m = 1)
+n60 = relu(3 − m) if the tide is rising, otherwise 0      (3, 2, 1 at m = 0, 1, 2)
 ```
 
-## 5. Terzo strato: le direzioni (53 neuroni)
+## 5. Third layer: the directions (53 neurons)
 
-Ogni neurone somma le attrazioni di una riga o di una colonna della finestra e le fa passare con un cancello
-(trucco 2) solo se quella riga o colonna è nella direzione giusta. Il cancello è un gradino costruito con le rampe
-copiate.
+Each neuron sums the attractions of one row or one column of the window and lets them through a gate
+(trick 2) only if that row or column is in the right direction. The gate is a step built from the copied
+ramps.
 
-| neuroni | somma | cancello | direzione |
+| neurons | sum | gate | direction |
 |---|---|---|---|
-| p0-p5 | attrazioni della riga R = 3..8 | `[r ≥ R + 1]` | conchiglie **sopra** |
-| p6-p11 | attrazioni della riga R | `[r ≤ R − 1]` | conchiglie **sotto** |
-| p12-p15 | attrazioni della colonna C = 6..9 | `[c ≥ C + 1]` | conchiglie **a sinistra** (p15 sempre 0) |
-| p16-p19 | attrazioni della colonna C | `[c ≤ C − 1]` | conchiglie **a destra** |
-| p20-p39 | lo stesso per le meduse vicine | | medusa adiacente sopra, sotto, a sx, a dx |
-| p40-p50 | copie delle rampe (n48-n58) | | |
-| p51, p52 | copie di n59, n60 | | |
+| p0-p5 | attractions of row R = 3..8 | `[r ≥ R + 1]` | shells **above** |
+| p6-p11 | attractions of row R | `[r ≤ R − 1]` | shells **below** |
+| p12-p15 | attractions of column C = 6..9 | `[c ≥ C + 1]` | shells **to the left** (p15 always 0) |
+| p16-p19 | attractions of column C | `[c ≤ C − 1]` | shells **to the right** |
+| p20-p39 | the same for nearby jellyfish | | adjacent jellyfish above, below, left, right |
+| p40-p50 | copies of the ramps (n48-n58) | | |
+| p51, p52 | copies of n59, n60 | | |
 
-Per esempio, p0 ha pesi `n0..n3: +1, n49: +64, n50: −64` e bias −64. Il gradino `n49 − n50 = relu(r−3) − relu(r−4)`
-vale `[r ≥ 4]`, quindi p0 lascia passare le conchiglie della riga 3 solo se l'agente sta più in basso.
+For example, p0 has weights `n0..n3: +1, n49: +64, n50: −64` and bias −64. The step `n49 − n50 = relu(r−3) − relu(r−4)`
+equals `[r ≥ 4]`, so p0 lets the shells of row 3 through only if the agent is lower down.
 
-Una conchiglia in diagonale conta in **due** direzioni. Per esempio, una conchiglia in alto a sinistra spinge sia
-verso su sia verso sinistra.
+A diagonal shell counts in **two** directions. For example, a shell up and to the left pushes both up and
+left.
 
-## 6. Ultimo strato: la regola (5 logit)
+## 6. Last layer: the rule (5 logits)
 
-Riscritto in funzione della posizione dell'agente (r, c), con `[x]` = 1 se vero e 0 se falso:
+Rewritten as a function of the agent's position (r, c), with `[x]` = 1 if true and 0 if false:
 
 ```
-fermo = −4
-su    = −12   + 12·[r≥4] + 0.75·[r≥7] + 12·[r=9]           + 0.9·(conchiglie sopra) − 25·(medusa sopra) + 1000·n59
-giù   =  12.75 − 12·[r≥3] − 0.75·[r≥6] − 12·[r≥8]          + 0.9·(conchiglie sotto) − 25·(medusa sotto) − 1000·n60
-sx    = −12   + 12·[c≥7] + 0.75·[c=9]                      + 0.9·(conchiglie a sx)  − 25·(medusa a sx)
-dx    =  12.75 − 12·[c≥6] − 0.75·relu(c−7) − 11.25·relu(c−8) + 0.9·(conchiglie a dx) − 25·(medusa a dx)
+no-op = −4
+up    = −12   + 12·[r≥4] + 0.75·[r≥7] + 12·[r=9]           + 0.9·(shells above) − 25·(jellyfish above) + 1000·n59
+down  =  12.75 − 12·[r≥3] − 0.75·[r≥6] − 12·[r≥8]          + 0.9·(shells below) − 25·(jellyfish below) − 1000·n60
+left  = −12   + 12·[c≥7] + 0.75·[c=9]                      + 0.9·(shells left)  − 25·(jellyfish left)
+right =  12.75 − 12·[c≥6] − 0.75·relu(c−7) − 11.25·relu(c−8) + 0.9·(shells right) − 25·(jellyfish right)
 ```
 
-"Conchiglie sopra" è la somma di `6 − d` sulle conchiglie visibili sopra l'agente (sezione 5). "Medusa sopra" vale 1
-se c'è una medusa nella cella subito sopra.
+"Shells above" is the sum of `6 − d` over the visible shells above the agent (section 5). "Jellyfish above" is 1
+if there is a jellyfish in the cell directly above.
 
-### La spinta verso la finestra
+### The push toward the window
 
-Senza conchiglie e senza pericolo, i logit dipendono solo dalla posizione:
+Without shells and without danger, the logits depend only on the position:
 
-| riga r | ≤ 2 | 3 | 4-5 | 6 | 7 | 8 | 9 |
+| row r | ≤ 2 | 3 | 4-5 | 6 | 7 | 8 | 9 |
 |---|---|---|---|---|---|---|---|
-| su | −12 | −12 | 0 | 0 | 0.75 | 0.75 | 12.75 |
-| giù | **12.75** | 0.75 | 0.75 | 0 | 0 | −12 | −12 |
+| up | −12 | −12 | 0 | 0 | 0.75 | 0.75 | 12.75 |
+| down | **12.75** | 0.75 | 0.75 | 0 | 0 | −12 | −12 |
 
-| colonna c | ≤ 5 | 6 | 7 | 8 | 9 |
+| column c | ≤ 5 | 6 | 7 | 8 | 9 |
 |---|---|---|---|---|---|
-| sx | −12 | −12 | 0 | 0 | 0.75 |
-| dx | **12.75** | 0.75 | 0.75 | 0 | −12 |
+| left | −12 | −12 | 0 | 0 | 0.75 |
+| right | **12.75** | 0.75 | 0.75 | 0 | −12 |
 
-È un campo di potenziale:
+It is a potential field:
 
-- **Fuori dalla finestra** (righe 3-8, colonne 6-9) la spinta è forte, circa 12.75 contro −12, e riporta l'agente
-  dentro.
-- **Dentro la finestra** le mosse che restano nella finestra valgono 0 o 0.75, quelle che ne uscirebbero −12 (su
-  dalla riga 3, giù dalla riga 8, sx dalla colonna 6, dx dalla colonna 9). L'agente vaga, con "fermo" sempre a −4.
+- **Outside the window** (rows 3-8, columns 6-9) the push is strong, about 12.75 versus −12, and brings the agent
+  back inside.
+- **Inside the window** the moves that stay in the window are worth 0 or 0.75, those that would leave it −12 (up
+  from row 3, down from row 8, left from column 6, right from column 9). The agent wanders, with "no-op" always
+  at −4.
 
-La spinta tiene l'agente nella zona che la rete riesce a vedere.
+The push keeps the agent in the area that the network can see.
 
-### Le conchiglie: un gradiente
+### Shells: a gradient
 
-Ogni conchiglia visibile a distanza d aggiunge `0.9·(6 − d)` alle mosse che la avvicinano. Una conchiglia adiacente
-vale 4.5, una a distanza 5 vale 0.9. Più conchiglie nella stessa direzione si sommano. È come seguire il gradiente
-di un campo di attrazione: si va dove l'attrazione totale è più forte, non verso la conchiglia più vicina.
+Each visible shell at distance d adds `0.9·(6 − d)` to the moves that bring the agent closer to it. An adjacent
+shell is worth 4.5, one at distance 5 is worth 0.9. Several shells in the same direction add up. It is like
+following the gradient of an attraction field: the agent goes where the total attraction is strongest, not toward
+the nearest shell.
 
-### Meduse ed emergenze
+### Jellyfish and emergencies
 
-- **Medusa adiacente:** −25 alla mossa che ci porta sopra. È un divieto quasi assoluto.
-- **Marea che sale e m ≤ 1:** +1000 (m = 1) o +2000 (m = 0) a "su". Scappa, e batte tutto.
-- **Marea che sale e m ≤ 2:** −1000·(3 − m) a "giù". Scendere è vietato.
-- **Conchiglie con margine ≤ 1 mentre la marea sale:** ignorate (sezione 4).
+- **Adjacent jellyfish:** −25 to the move that leads onto it. It is an almost absolute ban.
+- **Rising tide and m ≤ 1:** +1000 (m = 1) or +2000 (m = 0) to "up". It flees, and this beats everything.
+- **Rising tide and m ≤ 2:** −1000·(3 − m) to "down". Moving down is forbidden.
+- **Shells with margin ≤ 1 while the tide is rising:** ignored (section 4).
 
-### L'algoritmo
+### The algorithm
 
 ```
-se la marea sale e m ≤ 1:   su
-altrimenti, per ogni mossa (su, giù, sx, dx):
-    punteggio = spinta verso la finestra (righe 3-8, colonne 6-9)
-              + 0.9 × Σ (6 − distanza) sulle conchiglie visibili in quella direzione
-                (escluse quelle che la marea che sale sta per raggiungere)
-              − 25 se nella cella di destinazione c'è una medusa
-    giù vietato se la marea sale e m ≤ 2
-fermo = −4; si campiona la mossa dalla softmax dei punteggi
+if the tide is rising and m ≤ 1:   up
+otherwise, for each move (up, down, left, right):
+    score = push toward the window (rows 3-8, columns 6-9)
+          + 0.9 × Σ (6 − distance) over the visible shells in that direction
+            (excluding those that the rising tide is about to reach)
+          − 25 if there is a jellyfish in the destination cell
+    down forbidden if the tide is rising and m ≤ 2
+no-op = −4; the move is sampled from the softmax of the scores
 ```
 
-Quando la marea scende non c'è nessuna regola: la rete non segue la battigia e non sa che le conchiglie nuove
-compaiono lì.
+When the tide is falling there is no rule: the network does not follow the shoreline and does not know that new
+shells appear there.
 
-## 7. Verifica
+## 7. Verification
 
-`check.py` gioca 200 episodi con la rete (seed 10000-10199, sticky 0.1, campionando dalla softmax come
-`evaluate`). In ogni stato ricalcola, **direttamente dallo stato del gioco e senza usare i pesi**, i 43 neuroni del
-primo strato e i 5 logit con le formule della sezione 6, e li confronta con il forward pass vero.
+`check.py` plays 200 episodes with the network (seeds 10000-10199, sticky 0.1, sampling from the softmax like
+`evaluate`). In each state it recomputes, **directly from the game state and without using the weights**, the 43
+neurons of the first layer and the 5 logits with the formulas of section 6, and compares them with the true forward
+pass.
 
-| controllo | risultato |
+| check | result |
 |---|---|
-| stati visitati | 186.768 |
-| primo strato: stati in cui la lettura sbaglia | **0** |
-| logit: differenza massima | 1.1·10⁻¹³ (la rete è tutta relu e lineare: le formule sono esatte) |
-| mossa con logit più alto diversa, esclusi i quasi-pareggi (< 0.5) | **0** |
+| states visited | 186,768 |
+| first layer: states in which the reading is wrong | **0** |
+| logits: maximum difference | 1.1·10⁻¹³ (the network is all relu and linear: the formulas are exact) |
+| move with the highest logit differs, excluding near-ties (< 0.5) | **0** |
 
-I quasi-pareggi sono 61.158 stati. Sono per lo più l'agente dentro la finestra vuota, dove i logit sono 0 o 0.75 e la
-rete vaga.
+The near-ties are 61,158 states. They are mostly the agent inside the empty window, where the logits are 0 or 0.75
+and the network wanders.
 
-Dove sta l'agente:
+Where the agent is:
 
-| colonna | 0-4 | 5 | 6 | 7 | 8 | 9 |
+| column | 0-4 | 5 | 6 | 7 | 8 | 9 |
 |---|---|---|---|---|---|---|
-| % degli stati | 0.4% | 1.1% | 14.3% | 27.7% | 36.1% | 20.5% |
+| % of states | 0.4% | 1.1% | 14.3% | 27.7% | 36.1% | 20.5% |
 
-| riga | 0-1 | 2 | 3 | 4 | 5 | 6 | 7 | 8-9 |
+| row | 0-1 | 2 | 3 | 4 | 5 | 6 | 7 | 8-9 |
 |---|---|---|---|---|---|---|---|---|
-| % degli stati | 3.7% | 10.4% | 25.7% | 21.6% | 18.7% | 13.5% | 5.1% | 1.2% |
+| % of states | 3.7% | 10.4% | 25.7% | 21.6% | 18.7% | 13.5% | 5.1% | 1.2% |
 
-L'agente passa il 98.6% del tempo nelle colonne 6-9. In media solo il **9.4%** delle conchiglie presenti sulla
-griglia è dentro la finestra: quelle che vede le raccoglie, le altre si accumulano dove non guarda.
+The agent spends 98.6% of the time in columns 6-9. On average only **9.4%** of the shells on the grid are inside
+the window: it collects those it sees, and the others pile up where it does not look.
 
-## 8. Limiti visibili nei pesi
+## 8. Limits visible in the weights
 
-- **Vede solo 24 delle 70 celle della zona di marea** (34%): righe 3-8, colonne 6-9. Le colonne 0-5 e la riga 9
-  non esistono per la rete, e la spinta verso la finestra la tiene lì anche quando la finestra è vuota. Per questo
-  raccoglie 86.6 conchiglie per episodio, contro le 154 di Claude.
-  - La causa più probabile è il limite di 64 unità per strato. Con un neurone per cella per le conchiglie e uno
-    per le meduse, 24 celle occupano già 48 neuroni; tutta la zona di marea ne richiederebbe 140.
-  - Claude ha evitato il problema con neuroni che riassumono un'intera riga o colonna (i confronti in binario).
-- **Non sfrutta il ciclo della marea.** Non ha regole per la marea che scende, quindi non segue la battigia dove
-  compaiono le conchiglie nuove.
-- **Non legge countdown (401) e stordimento (402).**
-- **Annega nel 15.6% degli episodi, ma solo per colpa delle sticky actions.** Senza sticky actions
-  (`uv run evaluate low_tide gpt --sticky 0`) annega in 0 episodi su 500 e fa 90.5 punti.
-  - **Meccanismi:** sono gli stessi della rete di Claude. Le sticky actions ripetono un "giù" mentre la marea sale.
-    Nei 65 annegamenti su 500 episodi, 34 casi sono solo sticky e 31 sono sticky + medusa che stordisce sulla
-    battigia.
-  - **Perché più spesso:** con la marea che sale, la rete sceglie "giù" a m = 3 nel 3.4% dei passi, contro l'1.3%
-    di Claude, cioè 2.6 volte di più. È la spinta verso la finestra: con la marea alta la riga 3 è vicina
-    all'acqua, ma la rete vuole stare nelle righe 3-8 (dalla riga 2 "giù" vale 12.75). Ogni discesa a m = 3 è
-    un'occasione per due sticky consecutive.
-- **Meduse: va meglio di Claude** (6.7 punture per episodio contro 21.7). Vede le meduse adiacenti in tutta la
-  finestra, non solo sulla battigia, e passa poco tempo sulla battigia, dove compaiono quelle nuove.
+- **It sees only 24 of the 70 cells of the tide zone** (34%): rows 3-8, columns 6-9. Columns 0-5 and row 9 do not
+  exist for the network, and the push toward the window keeps it there even when the window is empty. This is why
+  it collects 86.6 shells per episode, against Claude's 154.
+  - The most likely cause is the limit of 64 units per layer. With one neuron per cell for the shells and one for
+    the jellyfish, 24 cells already take up 48 neurons; the whole tide zone would require 140.
+  - Claude avoided the problem with neurons that summarize an entire row or column (the binary comparisons).
+- **It does not exploit the tide cycle.** It has no rules for the falling tide, so it does not follow the shoreline
+  where new shells appear.
+- **It does not read countdown (401) and stun (402).**
+- **It drowns in 15.6% of episodes, but only because of sticky actions.** Without sticky actions
+  (`uv run evaluate low_tide gpt --sticky 0`) it drowns in 0 episodes out of 500 and scores 90.5 points.
+  - **Mechanisms:** they are the same as for Claude's network. The sticky actions repeat a "down" while the tide
+    is rising. Of the 65 drownings over 500 episodes, 34 cases are sticky only and 31 are sticky + a jellyfish
+    that stuns on the shoreline.
+  - **Why more often:** with the tide rising, the network chooses "down" at m = 3 in 3.4% of steps, against 1.3%
+    for Claude, that is, 2.6 times more. It is the push toward the window: with the tide high, row 3 is close to
+    the water, but the network wants to stay in rows 3-8 (from row 2 "down" is worth 12.75). Each descent to m = 3
+    is an opportunity for two consecutive sticky actions.
+- **Jellyfish: it does better than Claude** (6.7 stings per episode against 21.7). It sees adjacent jellyfish in
+  the whole window, not only on the shoreline, and spends little time on the shoreline, where new ones appear.
 
-## 9. Confronto con `claude.json`
+## 9. Comparison with `claude.json`
 
 | | `claude.json` | `gpt.json` |
 |---|---|---|
-| architettura | 403-46-36-5, relu e tanh | 403-43-61-53-5, solo relu |
-| pesi diversi da zero | 953 | 1.174 |
-| conchiglie | tutta la zona di marea, ma solo in croce (riga e colonna) e senza distanza | solo 24 celle, con distanza di Manhattan |
-| meduse | solo sulla battigia, solo adiacenti | adiacenti, dentro la finestra |
-| marea | strategia completa: segue la battigia quando scende, 2 righe di margine quando sale | solo emergenze: su a m ≤ 1, mai giù a m ≤ 2 |
-| trucco principale | confronti in binario (potenze di 2), tanh saturo come booleano | rampe relu (gradini, valore assoluto), cancello `relu(v + 64g − 64)` |
-| idea di fondo | regole di priorità ("se… allora…") | campo di potenziale + gradiente di attrazione |
-| punteggio (sticky 0.1) | 132.3 ± 0.9 | 79.9 ± 1.0 |
-| conchiglie / punture / annegamenti | 154 / 21.7 / 4.2% | 86.6 / 6.7 / 15.6% |
-| senza sticky actions | 140.7, nessun annegamento | 90.5, nessun annegamento |
+| architecture | 403-46-36-5, relu and tanh | 403-43-61-53-5, relu only |
+| non-zero weights | 953 | 1,174 |
+| shells | the whole tide zone, but only in a cross (row and column) and without distance | only 24 cells, with Manhattan distance |
+| jellyfish | only on the shoreline, only adjacent | adjacent, inside the window |
+| tide | full strategy: follows the shoreline when falling, 2 rows of margin when rising | emergencies only: up at m ≤ 1, never down at m ≤ 2 |
+| main trick | binary comparisons (powers of 2), saturated tanh as a boolean | relu ramps (steps, absolute value), gate `relu(v + 64g − 64)` |
+| underlying idea | priority rules ("if… then…") | potential field + attraction gradient |
+| score (sticky 0.1) | 132.3 ± 0.9 | 79.9 ± 1.0 |
+| shells / stings / drownings | 154 / 21.7 / 4.2% | 86.6 / 6.7 / 15.6% |
+| without sticky actions | 140.7, no drownings | 90.5, no drownings |
 
-Le due reti sono due programmi diversi per lo stesso gioco:
+The two networks are two different programs for the same game:
 
-- **Claude** vede poco di ogni cosa, ma ovunque, e ha una strategia legata al ciclo della marea.
-- **GPT** vede bene una zona piccola, con distanze vere, ma resta chiuso in quella zona.
+- **Claude** sees little of each thing, but everywhere, and has a strategy tied to the tide cycle.
+- **GPT** sees a small area well, with true distances, but stays locked in that area.

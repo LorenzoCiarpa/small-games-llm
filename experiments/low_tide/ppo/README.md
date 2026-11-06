@@ -1,296 +1,299 @@
-# PPO su Low Tide: che pesi trova, e si leggono?
+# PPO on Low Tide: what weights does it find, and can they be read?
 
-`train.py` addestra con PPO una rete 403-64-64-5 tanh: due strati nascosti da 64 unità, il massimo che Low Tide
-ammette. La salva in `weights/low_tide/ppo.json`, lo stesso formato delle reti scritte a mano. `analyze.py` fa le
-stesse misure sulla rete PPO e sulle due reti scritte a mano, `claude.json` e `gpt.json`. Di queste ultime
-conosciamo l'algoritmo neurone per neurone ([`decode_claude`](../decode_claude/README.md),
-[`decode_gpt`](../decode_gpt/README.md)), quindi fanno da termine di paragone: mostrano che aspetto hanno, con
-queste misure, dei pesi che *sono* un algoritmo.
+`train.py` trains with PPO a 403-64-64-5 tanh network: two hidden layers of 64 units, the maximum that Low Tide
+allows. It saves it to `weights/low_tide/ppo.json`, the same format as the hand-written networks. `analyze.py` takes
+the same measurements on the PPO network and on the two hand-written networks, `claude.json` and `gpt.json`. For the
+latter we know the algorithm neuron by neuron ([`decode_claude`](../decode_claude/README.md),
+[`decode_gpt`](../decode_gpt/README.md)), so they serve as a reference point: they show what weights that *are* an
+algorithm look like under these measurements.
 
-**In breve.**
+**In short.**
 
-- **Come gioca:** PPO impara a giocare bene quanto le reti scritte a mano. Giocando sempre la mossa più probabile fa
-  139 punti, più dei 132 della rete di Claude.
-- **Come sono i pesi:** non si leggono come un algoritmo.
-  - Sono densi, con 25.000 valori diversi nel primo strato.
-  - Nessun neurone conta da solo.
-  - Nessun neurone calcola le quantità che usa l'algoritmo di Claude (il margine dall'acqua, "c'è una conchiglia a
-    destra").
-  - Il comportamento non si comprime in una regola corta: un albero di decisione con 442 foglie lo imita solo nel
-    77% degli stati.
-- **L'unica traccia leggibile:** i neuroni più importanti del primo strato pesano soprattutto la **riga
-  dell'agente** combinata con la **direzione della marea**. È una versione sfumata del "pericolo" che la rete di
-  Claude calcola esattamente.
-- **Con 100M passi invece di 20M** (`ppo_100m.json`, sezione 7): 162.7 punti, quanto l'euristica BFS (164.0), e 169
-  greedy. I pesi restano densi e illeggibili, e reggono il pruning ancora meno.
+- **How it plays:** PPO learns to play as well as the hand-written networks. Always playing the most probable move,
+  it scores 139 points, more than the 132 of Claude's network.
+- **What the weights are like:** they cannot be read as an algorithm.
+  - They are dense, with 25,000 distinct values in the first layer.
+  - No neuron matters on its own.
+  - No neuron computes the quantities that Claude's algorithm uses (the margin from the water, "there is a shell to
+    the right").
+  - The behavior does not compress into a short rule: a decision tree with 442 leaves imitates it in only 77% of the
+    states.
+- **The only readable trace:** the most important first-layer neurons weigh mostly the **agent's row** combined
+  with the **tide direction**. It is a blurred version of the "danger" that Claude's network computes exactly.
+- **With 100M steps instead of 20M** (`ppo_100m.json`, section 7): 162.7 points, as much as the BFS heuristic
+  (164.0), and 169 greedy. The weights stay dense and unreadable, and tolerate pruning even less.
 
 ```bash
-uv run --group ppo python experiments/low_tide/ppo/train.py          # ~16 min su un core
-uv run --group analysis python experiments/low_tide/ppo/analyze.py   # ~30 min con 2 processi
+uv run --group ppo python experiments/low_tide/ppo/train.py          # ~16 min on one core
+uv run --group analysis python experiments/low_tide/ppo/analyze.py   # ~30 min with 2 processes
 ```
 
-## 1. L'addestramento
+## 1. Training
 
-L'algoritmo è in `src/small_games/ppo.py`: PPO standard con clipping e GAE, come `ppo.py` di CleanRL.
+The algorithm is in `src/small_games/ppo.py`: standard PPO with clipping and GAE, like CleanRL's `ppo.py`.
 
 | | |
 |---|---|
-| rete (attore) | 403-64-64-5, tanh; esportata così com'è |
-| critico | 403-64-64-1, tanh; non esportato |
-| ambienti | 64 in parallelo, rollout da 128 passi (8192 passi per aggiornamento) |
-| ottimizzazione | 4 epoche, 8 minibatch, Adam lr 5·10⁻⁴ che scende a 0, clip 0.2 |
-| ritorni | γ 0.99, λ 0.95; un episodio tagliato a 1000 passi è chiuso con il valore stimato, non come fine partita |
-| esplorazione | coefficiente di entropia 0.01 |
-| durata | 20 milioni di passi, 16 minuti |
-| ambiente | quello della valutazione: sticky actions 0.1, 1000 passi; seed da 1.000.000 in su, mai quelli della valutazione |
+| network (actor) | 403-64-64-5, tanh; exported as is |
+| critic | 403-64-64-1, tanh; not exported |
+| environments | 64 in parallel, rollouts of 128 steps (8192 steps per update) |
+| optimization | 4 epochs, 8 minibatches, Adam lr 5·10⁻⁴ decaying to 0, clip 0.2 |
+| returns | γ 0.99, λ 0.95; an episode cut off at 1000 steps is closed with the estimated value, not as the end of the game |
+| exploration | entropy coefficient 0.01 |
+| duration | 20 million steps, 16 minutes |
+| environment | the evaluation one: sticky actions 0.1, 1000 steps; seeds from 1,000,000 up, never the evaluation ones |
 
-Ritorno medio degli episodi durante l'addestramento:
+Mean episode return during training:
 
-| passi | 1.1M | 4.8M | 9.7M | 14.7M | 19.6M |
+| steps | 1.1M | 4.8M | 9.7M | 14.7M | 19.6M |
 |---|---|---|---|---|---|
-| ritorno | 65 | 87 | 97 | 114 | 130 |
+| return | 65 | 87 | 97 | 114 | 130 |
 
-La curva sale ancora alla fine: con più passi la rete migliorerebbe probabilmente ancora.
+The curve is still rising at the end: with more steps the network would probably improve further.
 
-### Punteggio
+### Score
 
-Sono 500 episodi del protocollo (seed 10000-10499, sticky actions 0.1).
+These are 500 protocol episodes (seeds 10000-10499, sticky actions 0.1).
 
-- **Campionata:** la mossa è estratta dalla softmax dei logit, come nel protocollo.
-- **Greedy:** sempre la mossa più probabile.
+- **Sampled:** the move is drawn from the softmax of the logits, as in the protocol.
+- **Greedy:** always the most probable move.
 
-| rete | campionata | greedy | senza sticky, greedy | conchiglie | punture | annegamenti (campionata) |
+| network | sampled | greedy | without sticky, greedy | shells | stings | drownings (sampled) |
 |---|---|---|---|---|---|---|
-| euristica (BFS) | 164.0 | | | | | |
+| heuristic (BFS) | 164.0 | | | | | |
 | `claude.json` | 132.3 ± 0.9 | 129.6 | 136.8 | 154.0 | 21.7 | 4.2% |
 | **`ppo.json`** | **125.7 ± 1.9** | **139.2** | **153.2** | 147.2 | 21.5 | 25.2% |
 | `gpt.json` | 79.9 ± 1.0 | 76.3 | 93.0 | 86.6 | 6.7 | 15.6% |
 
-PPO raccoglie quasi le stesse conchiglie della rete di Claude, ma annega molto più spesso. Campionando sceglie a volte
-mosse poco probabili e annega nel 25% degli episodi; giocando greedy annega nel 16% e supera la rete di Claude.
-Senza sticky actions e giocando greedy annega comunque nel 4.8% degli episodi; le reti di Claude e di GPT, nelle
-stesse condizioni, mai.
+PPO collects almost as many shells as Claude's network, but drowns much more often. When sampling it sometimes
+picks unlikely moves and drowns in 25% of the episodes; playing greedy it drowns in 16% and beats Claude's network.
+Without sticky actions and playing greedy it still drowns in 4.8% of the episodes; the Claude and GPT networks,
+under the same conditions, never do.
 
-## 2. Com'è fatto un peso PPO
+## 2. What PPO weights look like
 
 | | `claude.json` | `gpt.json` | `ppo.json` |
 |---|---|---|---|
-| pesi diversi da zero | 4.3% | 4.6% | 100% |
-| valori diversi nel primo strato | 34 | 9 | 25.004 |
-| ingressi che fanno il 90% del peso di un neurone (mediana, primo strato) | 9 su 403 | 2 | 240 |
-| peso più grande (in valore assoluto) | 1023 | 1000 | 1.25 |
+| nonzero weights | 4.3% | 4.6% | 100% |
+| distinct values in the first layer | 34 | 9 | 25,004 |
+| inputs that make up 90% of a neuron's weight (median, first layer) | 9 out of 403 | 2 | 240 |
+| largest weight (in absolute value) | 1023 | 1000 | 1.25 |
 
-Ogni neurone del primo strato scritto a mano guarda pochi ingressi scelti, con valori tondi e spesso enormi: potenze
-di 2, ±1000. Ogni neurone PPO guarda più di metà dell'osservazione, con pesi piccoli e tutti diversi.
+Every hand-written first-layer neuron looks at a few chosen inputs, with round and often huge values: powers of 2,
+±1000. Every PPO neuron looks at more than half of the observation, with small weights that are all different.
 
-**Gli ingressi vivi.** 91 ingressi su 403 sono zero in tutti gli stati giocati dalle quattro reti: le righe 0-2 dei
-piani acqua, conchiglie e meduse (la marea non sale mai fin lì, e non ci lascia niente) e una cella del piano
-dell'agente. PPO non riceve gradiente sui loro pesi, che
-restano quelli dell'inizializzazione casuale: piccoli, ma diversi da zero e tutti diversi. Ristretto agli ingressi
-vivi il quadro non cambia:
+**The live inputs.** 91 inputs out of 403 are zero in all the states played by the four networks: rows 0-2 of the
+water, shell and jellyfish planes (the tide never rises that far, and leaves nothing there) and one cell of the
+agent plane. PPO receives no gradient on their weights, which
+stay those of the random initialization: small, but nonzero and all different. Restricted to the live inputs, the
+picture does not change:
 
-| primo strato, solo i 312 ingressi vivi su 403 | `claude` | `gpt` | `ppo` | `ppo_100m` |
+| first layer, only the 312 live inputs out of 403 | `claude` | `gpt` | `ppo` | `ppo_100m` |
 |---|---|---|---|---|
-| pesi diversi da zero | 5.1% | 3.4% | 100.0% | 100.0% |
-| valori diversi | 34 | 9 | 19.582 | 19.731 |
-| ingressi che fanno il 90% del peso di un neurone (mediana, su 312) | 9 | 2 | 186 | 172 |
-| \|w\| medio sugli ingressi morti / vivi | 0.530 / 11.021 | 0.007 / 0.083 | 0.057 / 0.128 | 0.060 / 0.231 |
+| nonzero weights | 5.1% | 3.4% | 100.0% | 100.0% |
+| distinct values | 34 | 9 | 19,582 | 19,731 |
+| inputs that make up 90% of a neuron's weight (median, out of 312) | 9 | 2 | 186 | 172 |
+| mean \|w\| on dead / live inputs | 0.530 / 11.021 | 0.007 / 0.083 | 0.057 / 0.128 | 0.060 / 0.231 |
 
-Le immagini mostrano i pesi del primo strato degli 8 neuroni più importanti (quelli la cui ablazione fa perdere più
-punti, sezione 4): una riga per neurone, un pannello per piano dell'osservazione (rosso positivo, blu negativo).
+The images show the first-layer weights of the 8 most important neurons (those whose ablation loses the most
+points, section 4): one row per neuron, one panel per observation plane (red positive, blue negative).
 
-**Rete di Claude:** si vedono i confronti in binario della sezione 4 di `decode_claude`, per esempio "conchiglia a
-destra nella riga r": l'agente nella riga r con pesi crescenti da destra, le conchiglie della stessa riga con potenze
-di 2.
+**Claude's network:** you can see the binary comparisons of section 4 of `decode_claude`, for example "shell to the
+right in row r": the agent in row r with weights increasing from the right, the shells of the same row with powers
+of 2.
 
-![primo strato di claude.json](results/analysis/fields_claude.png)
+![first layer of claude.json](results/analysis/fields_claude.png)
 
-**Rete PPO:**
+**PPO network:**
 
-![primo strato di ppo.json](results/analysis/fields_ppo.png)
+![first layer of ppo.json](results/analysis/fields_ppo.png)
 
-Nel piano dell'agente c'è una struttura: i pesi dipendono soprattutto dalla **riga**, positivi in alto e negativi in
-basso o viceversa. Insieme al peso sull'ingresso "la marea sale", nell'ultimo pannello, è una misura sfumata di
-"quanto sono vicino all'acqua, e l'acqua sta salendo?". Nei piani di acqua, conchiglie e meduse i pesi sembrano
-rumore: piccoli, di segno variabile, senza una forma riconoscibile. Ogni neurone mescola un po' di tutto.
+In the agent plane there is a structure: the weights depend mostly on the **row**, positive at the top and negative
+at the bottom or vice versa. Together with the weight on the "the tide is rising" input, in the last panel, it is a
+blurred measure of "how close am I to the water, and is the water rising?". In the water, shell and jellyfish
+planes the weights look like noise: small, of varying sign, with no recognizable shape. Every neuron mixes a bit of
+everything.
 
-## 3. Quanti pesi servono (pruning)
+## 3. How many weights are needed (pruning)
 
-Si tengono solo i pesi più grandi in valore assoluto, la stessa frazione in ogni strato, e si rimette la rete a
-giocare. Sono 200 episodi.
+Only the largest weights in absolute value are kept, the same fraction in every layer, and the network is put back
+to play. These are 200 episodes.
 
-| pesi tenuti | 100% | 50% | 25% | 10% | 5% | 2% |
+| weights kept | 100% | 50% | 25% | 10% | 5% | 2% |
 |---|---|---|---|---|---|---|
 | `claude.json` | 132.1 | 132.1 | 132.1 | 34.3 | 34.3 | 1.0 |
 | `gpt.json` | 79.7 | 79.7 | 79.7 | 42.8 | 1.2 | 1.2 |
 | `ppo.json` | 125.5 | 103.9 | 11.5 | 5.3 | 6.6 | 2.6 |
 
-Le reti scritte a mano sono già sparse: togliere il 75% dei pesi più piccoli toglie solo zeri. La rete PPO perde
-già con metà dei pesi, e con un quarto non gioca più. La sua informazione è spalmata su tutti i pesi.
+The hand-written networks are already sparse: removing the 75% smallest weights removes only zeros. The PPO network
+already loses points with half of the weights, and with a quarter it no longer plays. Its information is spread over
+all the weights.
 
-Lo stesso solo sul primo strato, e solo sugli ingressi vivi: i pesi degli ingressi morti a zero, poi si tiene la
-frazione indicata dei pesi vivi più grandi; gli altri strati restano interi.
+The same on the first layer only, and only on the live inputs: the weights of the dead inputs set to zero, then the
+stated fraction of the largest live weights is kept; the other layers stay whole.
 
-| pesi vivi del primo strato tenuti | 100% | 50% | 25% | 10% | 5% |
+| live first-layer weights kept | 100% | 50% | 25% | 10% | 5% |
 |---|---|---|---|---|---|
 | `claude` | 131.9 | 131.9 | 131.9 | 131.9 | 131.9 |
 | `gpt` | 79.7 | 79.7 | 79.7 | 79.7 | 79.7 |
 | `ppo` | 125.5 | 94.9 | 14.0 | 8.9 | 3.0 |
 | `ppo_100m` | 155.2 | 18.4 | 4.3 | 2.3 | 1.5 |
 
-## 4. Quanto conta ogni neurone (ablazione)
+## 4. How much each neuron matters (ablation)
 
-Si sostituisce un neurone, a ogni passo, con il valore che aveva in un altro stato preso a caso (resample
-ablation), e si misura quanti punti si perdono. Sono 100 episodi per neurone; l'errore standard del riferimento è
-±1.5 per Claude, ±2.0 per GPT e ±4.4 per PPO.
+A neuron is replaced, at every step, with the value it had in another state taken at random (resample ablation),
+and we measure how many points are lost. These are 100 episodes per neuron; the standard error of the reference is
+±1.5 for Claude, ±2.0 for GPT and ±4.4 for PPO.
 
-| | neuroni | neuroni che fanno perdere più del 10% | perdita massima | quota dei 5 neuroni peggiori sulla perdita totale |
+| | neurons | neurons that lose more than 10% | maximum loss | share of the 5 worst neurons in the total loss |
 |---|---|---|---|---|
-| `claude.json` | 82 | 7 | 129 punti su 133 | 72% |
-| `gpt.json` | 157 | 35 | 78 su 82 | 23% |
-| `ppo.json` | 128 | **0** | 12 su 124 | 20% |
+| `claude.json` | 82 | 7 | 129 points out of 133 | 72% |
+| `gpt.json` | 157 | 35 | 78 out of 82 | 23% |
+| `ppo.json` | 128 | **0** | 12 out of 124 | 20% |
 
-Nella rete di Claude pochi neuroni portano la strategia: senza "la marea sale" la rete fa 3.8 punti, senza "sale e
-margine ≤ 1" 9.6, senza il margine dall'acqua 56. I sette neuroni sopra il 10% sono proprio le grandezze e le
-condizioni dell'algoritmo. Nella rete PPO nessun neurone conta più del rumore
-statistico: il calcolo è distribuito.
+In Claude's network a few neurons carry the strategy: without "the tide is rising" the network scores 3.8 points,
+without "rising and margin ≤ 1" 9.6, without the margin from the water 56. The seven neurons above 10% are exactly
+the variables and the conditions of the algorithm. In the PPO network no neuron matters more than the statistical
+noise: the computation is distributed.
 
-## 5. Cosa calcolano i neuroni
+## 5. What the neurons compute
 
-### Le quantità dell'algoritmo di Claude
+### The quantities of Claude's algorithm
 
-L'algoritmo di Claude si basa su poche quantità: il margine dall'acqua, il pericolo ("la marea sale e il margine è
-≤ 2"), "c'è una conchiglia a destra o a sinistra nella mia riga". Per ogni quantità e ogni rete si misurano due
-cose, sugli stati visitati dalla rete stessa:
+Claude's algorithm relies on a few quantities: the margin from the water, the danger ("the tide is rising and the
+margin is ≤ 2"), "there is a shell to the right or to the left in my row". For each quantity and each network two
+things are measured, on the states visited by the network itself:
 
-- **un neurone:** la correlazione più alta tra la quantità e un singolo neurone (|r|). Vale 1 se un neurone *è* la
-  quantità;
-- **tutto lo strato:** quanto bene la ricostruisce una combinazione lineare di tutti i neuroni di uno strato (R², su
-  episodi non usati per la combinazione). È alto se la quantità c'è, anche se spalmata su molti neuroni.
+- **one neuron:** the highest correlation between the quantity and a single neuron (|r|). It is 1 if a neuron *is*
+  the quantity;
+- **the whole layer:** how well a linear combination of all the neurons of a layer reconstructs it (R², on episodes
+  not used for the combination). It is high if the quantity is there, even if spread over many neurons.
 
-Per ogni quantità si riporta lo strato migliore:
+For each quantity the best layer is reported:
 
-| quantità | `claude.json` (r / R²) | `gpt.json` (r / R²) | `ppo.json` (r / R²) |
+| quantity | `claude.json` (r / R²) | `gpt.json` (r / R²) | `ppo.json` (r / R²) |
 |---|---|---|---|
-| margine dall'acqua | **1.00 / 1.00** | 0.62 / **1.00** | 0.33 / 0.48 |
-| pericolo (sale e margine ≤ 2) | **0.90 / 1.00** | **1.00 / 1.00** | 0.77 / 0.71 |
-| conchiglia a destra nella riga | **1.00 / 1.00** | 0.64 / 0.64 | 0.29 / 0.27 |
-| conchiglia a sinistra nella riga | **1.00 / 1.00** | 0.41 / 0.46 | 0.49 / 0.41 |
+| margin from the water | **1.00 / 1.00** | 0.62 / **1.00** | 0.33 / 0.48 |
+| danger (rising and margin ≤ 2) | **0.90 / 1.00** | **1.00 / 1.00** | 0.77 / 0.71 |
+| shell to the right in the row | **1.00 / 1.00** | 0.64 / 0.64 | 0.29 / 0.27 |
+| shell to the left in the row | **1.00 / 1.00** | 0.41 / 0.46 | 0.49 / 0.41 |
 
-La rete di GPT non calcola "c'è una conchiglia a destra" perché il suo algoritmo è un altro: un'attrazione che cala
-con la distanza (`decode_gpt`). Calcola però esattamente il margine e il pericolo. La rete PPO non ha nessuna di
-queste quantità in modo pulito, nemmeno spalmata su tutto lo strato. Il pericolo è la più vicina (r 0.77).
+GPT's network does not compute "there is a shell to the right" because its algorithm is a different one: an
+attraction that decreases with distance (`decode_gpt`). It does, however, compute the margin and the danger exactly.
+The PPO network has none of these quantities cleanly, not even spread over the whole layer. The danger is the
+closest (r 0.77).
 
-### Neuroni booleani o graduati
+### Boolean or graded neurons
 
-| | primo strato | secondo strato |
+| | first layer | second layer |
 |---|---|---|
-| `claude.json`: neuroni tanh saturi (\|a\| > 0.95) | relu | 100% |
-| `ppo.json`: neuroni tanh saturi | 3% | 24% |
+| `claude.json`: saturated tanh neurons (\|a\| > 0.95) | relu | 100% |
+| `ppo.json`: saturated tanh neurons | 3% | 24% |
 
-Nella rete di Claude il secondo strato è fatto di condizioni vero/falso. Nella rete PPO quasi nessun neurone lavora
-come un interruttore.
+In Claude's network the second layer is made of true/false conditions. In the PPO network almost no neuron works as
+a switch.
 
-### Con il vocabolario del gioco
+### With the game's vocabulary
 
-Il gioco ha un vocabolario di 17 grandezze, in `src/small_games/features.py`: riga, colonna, livello, marea che
-sale, countdown, stordimento, margine, conchiglie nelle quattro direzioni, conchiglia più vicina, meduse adiacenti.
-Il neurone PPO meglio spiegato da una sola di queste ha |r| = 0.80; solo 1 neurone su 128 supera 0.8. In ciascuno
-dei due strati, per 57 neuroni su 64 la grandezza che li spiega meglio è il **livello** dell'acqua, la **marea che
-sale**, la riga o la colonna. Per gli altri 7 è una grandezza delle conchiglie, sempre con correlazioni basse. Una combinazione lineare di tutte le 17 grandezze spiega in media il 35-44% della varianza di un neurone
-PPO. Ogni neurone è una miscela.
+The game has a vocabulary of 17 variables, in `src/small_games/features.py`: row, column, level, rising tide,
+countdown, stun, margin, shells in the four directions, nearest shell, adjacent jellyfish. The PPO neuron best
+explained by a single one of these has |r| = 0.80; only 1 neuron out of 128 exceeds 0.8. In each of the two layers,
+for 57 neurons out of 64 the variable that explains them best is the water **level**, the **rising tide**, the row
+or the column. For the other 7 it is a shell variable, always with low correlations. A linear combination of all 17
+variables explains on average 35-44% of the variance of a PPO neuron. Every neuron is a mixture.
 
-## 6. Si può scrivere come regola? (distillazione)
+## 6. Can it be written as a rule? (distillation)
 
-Un albero di decisione sulle 17 grandezze impara a imitare la mossa più probabile della rete. Si allena sul 70%
-degli episodi e si misura l'accordo sul restante 30%. Poi l'albero gioca da solo al posto della rete, 200 episodi.
+A decision tree on the 17 variables learns to imitate the network's most probable move. It is trained on 70% of the
+episodes and the agreement is measured on the remaining 30%. Then the tree plays on its own in place of the
+network, 200 episodes.
 
-| profondità | `claude.json` accordo / foglie / punti | `gpt.json` | `ppo.json` |
+| depth | `claude.json` agreement / leaves / points | `gpt.json` | `ppo.json` |
 |---|---|---|---|
 | 4 | 90.4% / 16 / 15.6 | 82.9% / 16 / 49.2 | 59.9% / 16 / 4.7 |
 | 6 | **99.6%** / 47 | 92.2% / 53 | 64.2% / 53 |
 | 8 | 99.6% / 73 / 117.0 | 95.2% / 115 / 61.9 | 72.6% / 136 / 84.6 |
 | 12 | 99.6% / 92 / 117.0 | 96.5% / 242 / 68.3 | 77.0% / 442 / 112.3 |
-| la rete stessa, greedy | 127.4 | 74.0 | 138.7 |
+| the network itself, greedy | 127.4 | 74.0 | 138.7 |
 
-- **Claude:** il comportamento è una regola di 47 foglie, sulle stesse grandezze dell'algoritmo trovato a mano.
-- **GPT:** il comportamento è quasi una regola. Il resto è l'attrazione per distanza, che queste grandezze
-  descrivono solo in parte.
-- **PPO:** non ci si avvicina. Con 442 foglie l'albero sbaglia ancora una mossa su quattro. Gioca comunque
-  discretamente (112 punti): imita le parti importanti, non la rete.
+- **Claude:** the behavior is a 47-leaf rule, on the same variables as the algorithm found by hand.
+- **GPT:** the behavior is almost a rule. The rest is the distance-based attraction, which these variables describe
+  only in part.
+- **PPO:** it does not come close. With 442 leaves the tree still gets one move in four wrong. It still plays
+  reasonably well (112 points): it imitates the important parts, not the network.
 
-Gli alberi di profondità 2-4 sono in `results/analysis/trees_<rete>.txt`.
+The depth 2-4 trees are in `results/analysis/trees_<network>.txt`.
 
-## 7. Con cinque volte più passi: `ppo_100m`
+## 7. With five times more steps: `ppo_100m`
 
-La curva della sezione 1 saliva ancora a 20M passi. `ppo_100m` è la stessa configurazione portata a 100M passi
-(`experiments/ppo_runs.py`, 55 minuti), salvata in `weights/low_tide/ppo_100m.json`.
+The curve of section 1 was still rising at 20M steps. `ppo_100m` is the same configuration taken to 100M steps
+(`experiments/ppo_runs.py`, 55 minutes), saved in `weights/low_tide/ppo_100m.json`.
 
-| passi | 10M | 20M | 50M | 75M | 100M |
+| steps | 10M | 20M | 50M | 75M | 100M |
 |---|---|---|---|---|---|
-| ritorno in addestramento | 99 | 117 | 124 | 141 | 160 |
+| training return | 99 | 117 | 124 | 141 | 160 |
 
-Sui 500 episodi del protocollo fa **162.7 ± 2.6**, quanto l'euristica BFS (164.0), e 169 giocando greedy. Raccoglie
-173 conchiglie per episodio, contro le 154 di Claude, e prende metà delle punture (10.6), ma annega ancora nel 32%
-degli episodi: rischia di più, e gli conviene.
+On the 500 protocol episodes it scores **162.7 ± 2.6**, as much as the BFS heuristic (164.0), and 169 playing
+greedy. It collects 173 shells per episode, against Claude's 154, and takes half the stings (10.6), but still drowns
+in 32% of the episodes: it takes more risks, and it pays off.
 
-Le stesse misure, accanto alla rete da 20M passi (le tabelle complete sono nelle sezioni precedenti e in
+The same measurements, next to the 20M-step network (the full tables are in the previous sections and in
 `results/analysis/analysis.json`):
 
 | | `ppo` (20M) | `ppo_100m` |
 |---|---|---|
-| punteggio (200 episodi) / greedy | 125.5 / 138.7 | 155.5 / 169.1 |
-| ingressi vivi che fanno il 90% del peso di un neurone (mediana, su 312) | 186 | 172 |
-| tutti gli strati, 50% dei pesi | 103.9 | 29.6 |
-| primo strato, 50% dei pesi vivi | 94.9 | 18.4 |
-| neuroni che fanno perdere più del 10% / perdita massima | 0 / 11.8 | 7 / 24.8 |
-| margine dall'acqua (r / R²) | 0.33 / 0.48 | 0.37 / 0.62 |
-| pericolo (r / R²) | 0.77 / 0.70 | 0.75 / 0.75 |
-| conchiglia a destra / a sinistra (r) | 0.29 / 0.45 | 0.30 / 0.46 |
-| neuroni tanh saturi, primo / secondo strato | 3% / 24% | 16% / 44% |
-| albero di profondità 6: accordo | 64.2% | 64.5% |
-| albero di profondità 12: accordo / foglie / punti | 77.0% / 442 / 112.3 | 74.5% / 516 / 136.1 |
+| score (200 episodes) / greedy | 125.5 / 138.7 | 155.5 / 169.1 |
+| live inputs that make up 90% of a neuron's weight (median, out of 312) | 186 | 172 |
+| all layers, 50% of the weights | 103.9 | 29.6 |
+| first layer, 50% of the live weights | 94.9 | 18.4 |
+| neurons that lose more than 10% / maximum loss | 0 / 11.8 | 7 / 24.8 |
+| margin from the water (r / R²) | 0.33 / 0.48 | 0.37 / 0.62 |
+| danger (r / R²) | 0.77 / 0.70 | 0.75 / 0.75 |
+| shell to the right / to the left (r) | 0.29 / 0.45 | 0.30 / 0.46 |
+| saturated tanh neurons, first / second layer | 3% / 24% | 16% / 44% |
+| depth-6 tree: agreement | 64.2% | 64.5% |
+| depth-12 tree: agreement / leaves / points | 77.0% / 442 / 112.3 | 74.5% / 516 / 136.1 |
 
-Più addestramento non rende la rete più leggibile:
+More training does not make the network more readable:
 
-- **pruning:** regge ancora meno. Con metà dei pesi la rete da 20M fa 104, quella da 100M 30: ha imparato a usarne di
-  più;
-- **neuroni:** qualcuno in più conta (7 sopra il 10%, il peggiore 25 punti su 152), e sono ancora quelli legati
-  alla marea che sale (|r| 0.29-0.49 con "sale");
-- **quantità di Claude:** il margine dall'acqua si ricostruisce un po' meglio da tutto lo strato (R² 0.62), ma
-  nessun neurone lo calcola; le altre non cambiano;
-- **regola:** l'albero la imita meno di prima.
+- **pruning:** it holds up even less. With half of the weights the 20M network scores 104, the 100M one 30: it has
+  learned to use more of them;
+- **neurons:** a few more matter (7 above 10%, the worst 25 points out of 152), and they are still the ones tied to
+  the rising tide (|r| 0.29-0.49 with "rising");
+- **Claude's quantities:** the margin from the water is reconstructed a bit better from the whole layer (R² 0.62),
+  but no neuron computes it; the others do not change;
+- **rule:** the tree imitates it less than before.
 
-L'immagine del primo strato (`results/analysis/fields_ppo_100m.png`) è come quella da 20M: nel piano dell'agente i
-pesi dipendono soprattutto dalla riga, insieme al peso su "la marea sale"; gli altri piani sono rumore.
+The first-layer image (`results/analysis/fields_ppo_100m.png`) is like the 20M one: in the agent plane the weights
+depend mostly on the row, together with the weight on "the tide is rising"; the other planes are noise.
 
-## 8. Conclusione
+## 8. Conclusion
 
-- **Le reti scritte a mano:** i pesi sono il programma. Ogni neurone ha un nome ("margine", "conchiglia a destra
-  nella riga 5"), pochi neuroni portano tutta la strategia e il comportamento è una regola corta sulle quantità del
-  gioco.
-- **PPO:** trova una soluzione che gioca bene quanto quelle (meglio, se greedy), ma che non ha questa forma:
-  - i pesi sono densi e continui;
-  - il calcolo è distribuito su tutti i neuroni;
-  - le quantità "naturali" del gioco non compaiono come neuroni e solo in parte come combinazioni di neuroni;
-  - il comportamento non si riassume in una regola corta.
+- **The hand-written networks:** the weights are the program. Every neuron has a name ("margin", "shell to the
+  right in row 5"), a few neurons carry the whole strategy, and the behavior is a short rule on the game
+  quantities.
+- **PPO:** it finds a solution that plays as well as those (better, if greedy), but that does not have this form:
+  - the weights are dense and continuous;
+  - the computation is distributed over all the neurons;
+  - the "natural" quantities of the game do not appear as neurons, and only partly as combinations of neurons;
+  - the behavior cannot be summarized in a short rule.
 
-Una descrizione parziale si può dare. I neuroni più importanti del primo strato combinano la riga dell'agente con la
-direzione della marea, cioè una versione sfumata di "sto per finire sott'acqua?". Quasi tutti i neuroni seguono
-soprattutto livello, marea e posizione. La strategia di raccolta, invece, non si lascia ridurre a
-quantità con un nome.
+A partial description can be given. The most important first-layer neurons combine the agent's row with the tide
+direction, that is, a blurred version of "am I about to end up underwater?". Almost all neurons mostly follow
+level, tide and position. The collection strategy, on the other hand, cannot be reduced to
+quantities with a name.
 
-## File
+## Files
 
-- `train.py`: configurazione e lancio dell'addestramento.
-- `analyze.py`: tutte le misure; con `--only-key` solo le quantità chiave.
+- `train.py`: training configuration and launch.
+- `analyze.py`: all the measurements; with `--only-key` only the key quantities.
 - `results/ppo/`:
-  - `train_log.csv`: la curva di addestramento;
-  - `checkpoint_*.json`: i pesi al 10, 25 e 50% dell'addestramento;
-  - `eval.json`: le valutazioni;
-  - `final.pt`: attore e critico in formato PyTorch.
-- `results/ppo_100m/`: la corsa da 100M passi, con gli stessi file e `checkpoint_*M.json` ogni 5M passi.
+  - `train_log.csv`: the training curve;
+  - `checkpoint_*.json`: the weights at 10, 25 and 50% of training;
+  - `eval.json`: the evaluations;
+  - `final.pt`: actor and critic in PyTorch format.
+- `results/ppo_100m/`: the 100M-step run, with the same files and `checkpoint_*M.json` every 5M steps.
 - `results/analysis/`:
-  - `analysis.json`: tutti i numeri;
-  - `trees_*.txt`: gli alberi;
-  - `fields_*.png`: le immagini del primo strato.
+  - `analysis.json`: all the numbers;
+  - `trees_*.txt`: the trees;
+  - `fields_*.png`: the first-layer images.

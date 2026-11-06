@@ -1,337 +1,339 @@
-# Come si legge la rete `claude.json` di Low Tide
+# How to read the Low Tide network `claude.json`
 
-`weights/low_tide/claude.json` è la rete scritta a mano da Claude Opus per Low Tide, senza training e senza
-eseguire codice. Fa 132.3 ± 0.9 punti su 500 episodi; l'euristica (BFS) ne fa 164.0, una policy casuale 2.0.
+`weights/low_tide/claude.json` is the network hand-written by Claude Opus for Low Tide, without training and without
+running code. It scores 132.3 ± 0.9 points over 500 episodes; the heuristic (BFS) scores 164.0, a random policy 2.0.
 
-Questa analisi la decodifica neurone per neurone. Il risultato è che la rete **non è una scatola nera**: è un
-algoritmo a regole scritto in forma di pesi. Il primo strato misura poche grandezze del gioco, il secondo le
-trasforma in condizioni vere o false, l'ultimo le combina in una regola di priorità tra le mosse.
+This analysis decodes it neuron by neuron. The result is that the network **is not a black box**: it is a
+rule-based algorithm written in the form of weights. The first layer measures a few quantities of the game, the
+second turns them into true or false conditions, the last combines them into a priority rule among the moves.
 
-La lettura è verificata contro la rete vera su 197.920 stati di gioco (vedi [Verifica](#7-verifica)):
+The reading is verified against the real network on 197,920 game states (see [Verification](#7-verification)):
 
 ```bash
 uv run python experiments/low_tide/decode_claude/check.py            # ~1 min
 uv run python experiments/low_tide/decode_claude/check.py --episodes 500
 ```
 
-## 1. Il gioco in breve
+## 1. The game in brief
 
-La griglia è 10×10 ed è una spiaggia. La marea sale e scende di una riga ogni 3-5 passi, tra un livello basso
-(0-2) e uno alto (5-7).
+The grid is 10×10 and is a beach. The tide rises and falls by one row every 3-5 steps, between a low level
+(0-2) and a high level (5-7).
 
-- **Marea che scende:** ogni riga scoperta si riempie di conchiglie (25% per cella) e meduse (8% per cella).
-- **Marea che sale:** quello che c'è sulla riga sommersa viene cancellato.
-- **Conchiglia:** +1.
-- **Medusa:** −1 e 3 passi di stordimento, durante i quali le azioni sono ignorate.
-- **Acqua:** l'agente non può entrarci. Se la marea sommerge la riga su cui si trova, annega e l'episodio
-  finisce.
-- **Sticky actions:** con probabilità 0.1 l'ambiente ripete l'azione precedente al posto di quella scelta.
+- **Falling tide:** each uncovered row fills with shells (25% per cell) and jellyfish (8% per cell).
+- **Rising tide:** whatever is on the submerged row is erased.
+- **Shell:** +1.
+- **Jellyfish:** −1 and 3 steps of stun, during which actions are ignored.
+- **Water:** the agent cannot enter it. If the tide submerges the row the agent is on, it drowns and the episode
+  ends.
+- **Sticky actions:** with probability 0.1 the environment repeats the previous action instead of the chosen one.
 
-Le regole complete sono in `src/small_games/games/low_tide/env.py`.
+The full rules are in `src/small_games/games/low_tide/env.py`.
 
-## 2. Come si leggono le posizioni
+## 2. How to read the positions
 
-L'osservazione ha 403 numeri: quattro piani 10×10 binari, poi tre scalari.
+The observation has 403 numbers: four binary 10×10 planes, then three scalars.
 
 ```
-indice = canale*100 + riga*10 + colonna
+index = channel*100 + row*10 + column
 
-agente     0..99      (esattamente una cella vale 1)
-acqua      100..199   (le righe da 10-L a 9 valgono 1, L = livello della marea)
-conchiglie 200..299
-meduse     300..399
-400  la marea sta salendo (1) o scendendo (0)
-401  countdown: passi al prossimo cambio di livello / 5
-402  stordimento: passi rimasti / 3
+agent      0..99      (exactly one cell is 1)
+water      100..199   (rows 10-L to 9 are 1, L = tide level)
+shells     200..299
+jellyfish  300..399
+400  the tide is rising (1) or falling (0)
+401  countdown: steps to the next level change / 5
+402  stun: steps left / 3
 ```
 
-**La riga 0 è in alto (terra), la riga 9 in basso (mare).** Dentro ogni piano gli indici 0-9 sono la riga 0, gli
-indici 90-99 la riga 9. Vale uguale per i quattro piani: l'indice 245 è la conchiglia in riga 4, colonna 5.
+**Row 0 is at the top (land), row 9 at the bottom (sea).** Within each plane, indices 0-9 are row 0 and indices
+90-99 are row 9. The same holds for all four planes: index 245 is the shell in row 4, column 5.
 
 ```
            col 0 1 2 3 4 5 6 7 8 9
- riga 0  ┐                              terra: sempre asciutta
- riga 1  │ righe 0-2: mai acqua,        l'agente parte in riga 1
- riga 2  ┘ mai conchiglie né meduse
- riga 3  ┐
- ...     │ zona di marea: conchiglie e meduse compaiono qui
- riga 9  ┘                              mare: la prima riga che si bagna
+ row 0   ┐                              land: always dry
+ row 1   │ rows 0-2: never water,       the agent starts in row 1
+ row 2   ┘ never shells or jellyfish
+ row 3   ┐
+ ...     │ tide zone: shells and jellyfish appear here
+ row 9   ┘                              sea: the first row to get wet
 ```
 
-- **Acqua:** si riempie dal basso. Con livello L sono bagnate le righe da `10-L` a 9. Il livello non supera mai
-  7, quindi le righe 0-2 restano asciutte.
-- **Azioni:** 0 fermo, 1 su (riga−1, verso terra), 2 giù (riga+1, verso il mare), 3 sinistra, 4 destra.
+- **Water:** it fills from the bottom. With level L, rows `10-L` to 9 are wet. The level never exceeds 7, so
+  rows 0-2 stay dry.
+- **Actions:** 0 no-op, 1 up (row−1, toward land), 2 down (row+1, toward the sea), 3 left, 4 right.
 
-Due nomi che uso in tutto il documento:
+Two names I use throughout the document:
 
-- **battigia:** l'ultima riga asciutta, `9 − L`, quella subito sopra l'acqua;
-- **m (margine):** le righe asciutte tra l'agente e l'acqua, `m = 9 − riga − L`. Con m = 0 l'agente è sulla
-  battigia; se in quel momento la marea sale di una riga, annega.
+- **shoreline:** the last dry row, `9 − L`, the one just above the water;
+- **m (margin):** the dry rows between the agent and the water, `m = 9 − row − L`. With m = 0 the agent is on the
+  shoreline; if the tide rises by one row at that moment, it drowns.
 
-## 3. Struttura della rete
+## 3. Network structure
 
 ```
-403 → 46 (relu) → 36 (tanh) → 5 (linear)        20.461 parametri, 953 diversi da zero
+403 → 46 (relu) → 36 (tanh) → 5 (linear)        20,461 parameters, 953 non-zero
 ```
 
-| strato | cosa fa |
+| layer | what it does |
 |---|---|
-| 1 (relu, 46) | **misura**: margine, direzione della marea, conchiglie in riga e colonna, colonna dell'agente, meduse sulla battigia |
-| 2 (tanh, 36) | **condizioni**: ogni neurone è saturo, +1 vuol dire vero e −1 falso; gli AND si fanno con pesi enormi |
-| 3 (linear, 5) | **regola**: ogni logit è una somma pesata di condizioni; vince la mossa con la priorità più alta |
+| 1 (relu, 46) | **measures**: margin, tide direction, shells in the row and column, the agent's column, jellyfish on the shoreline |
+| 2 (tanh, 36) | **conditions**: each neuron is saturated, +1 means true and −1 false; ANDs are built with huge weights |
+| 3 (linear, 5) | **rule**: each logit is a weighted sum of conditions; the move with the highest priority wins |
 
-Un'idea da tenere a mente: nel primo strato un peso non "premia" o "punisce" una cella. Serve a **misurare** o a
-**fare una domanda**. Il peso dice quanto conta l'ingresso nella somma, il bias fa da soglia, la relu risponde
-"sì, e quanto" se la somma supera la soglia, altrimenti 0. Il segno negativo serve solo a sottrarre. Chi decide se
-una cosa è buona o cattiva è l'ultimo strato.
+One idea to keep in mind: in the first layer a weight does not "reward" or "punish" a cell. It serves to
+**measure** or to **ask a question**. The weight says how much the input counts in the sum, the bias acts as a
+threshold, and the relu answers "yes, and by how much" if the sum exceeds the threshold, otherwise 0. The negative
+sign only serves to subtract. What decides whether something is good or bad is the last layer.
 
-## 4. Primo strato: cosa misura (46 neuroni, relu)
+## 4. First layer: what it measures (46 neurons, relu)
 
-| neuroni | domanda | valore |
+| neurons | question | value |
 |---|---|---|
-| h0 | quante righe asciutte ho tra me e l'acqua? | m, da 0 a 9 |
-| h1 | la marea sale? | 0 o 1 |
-| h2-h11 | c'è una conchiglia **sopra** di me, nella mia colonna? (uno per colonna 0-9) | ≥ 1 se sì, 0 se no |
-| h12-h18 | c'è una conchiglia **a sinistra**, nella mia riga? (uno per riga 3-9) | ≥ 1 se sì, 0 se no |
-| h19-h25 | c'è una conchiglia **a destra**, nella mia riga? (uno per riga 3-9) | ≥ 1 se sì, 0 se no |
-| h26-h35 | sono nella colonna c? (one-hot) | 0 o 1 |
-| h36-h45 | c'è una medusa **sulla battigia** nella colonna k? | ≥ 1 se sì, 0 se no |
+| h0 | how many dry rows are there between me and the water? | m, from 0 to 9 |
+| h1 | is the tide rising? | 0 or 1 |
+| h2-h11 | is there a shell **above** me, in my column? (one per column 0-9) | ≥ 1 if yes, 0 if no |
+| h12-h18 | is there a shell **to the left**, in my row? (one per row 3-9) | ≥ 1 if yes, 0 if no |
+| h19-h25 | is there a shell **to the right**, in my row? (one per row 3-9) | ≥ 1 if yes, 0 if no |
+| h26-h35 | am I in column c? (one-hot) | 0 or 1 |
+| h36-h45 | is there a jellyfish **on the shoreline** in column k? | ≥ 1 if yes, 0 if no |
 
-### h0: il margine, con un righello
+### h0: the margin, with a ruler
 
 ```
-acqua, colonna 0, righe 3..9          peso −1    → somma = −L  (conta le righe bagnate)
-agente in riga r, qualsiasi colonna   peso −r    → somma = −r  (tutta la riga 4 pesa −4, tutta la riga 7 −7)
+water, column 0, rows 3..9            weight −1  → sum = −L  (counts the wet rows)
+agent in row r, any column            weight −r  → sum = −r  (all of row 4 weighs −4, all of row 7 −7)
 bias 9
 h0 = 9 − r − L = m
 ```
 
-- **Pesi sull'agente:** sono un righello. Non importa in che cella sia, importa solo la riga.
-- **Pesi sull'acqua:** basta la colonna 0, perché l'acqua è uguale su tutte le colonne. Bastano le righe 3..9,
-  perché il livello non supera 7.
+- **Weights on the agent:** they are a ruler. It does not matter which cell the agent is in, only the row matters.
+- **Weights on the water:** column 0 is enough, because the water is the same in all columns. Rows 3..9 are
+  enough, because the level does not exceed 7.
 
-Esempio: agente in riga 4, livello 3 (acqua nelle righe 7, 8, 9). h0 = 9 − 4 − 3 = 2, e infatti le righe 5 e 6
-sono asciutte. L'agente non entra mai in acqua, quindi h0 non è mai negativo e la relu qui non interviene.
+Example: agent in row 4, level 3 (water in rows 7, 8, 9). h0 = 9 − 4 − 3 = 2, and indeed rows 5 and 6
+are dry. The agent never enters the water, so h0 is never negative and the relu does not come into play here.
 
-### h1: la direzione della marea
+### h1: the tide direction
 
-Ha peso 1 sull'ingresso 400 e bias 0: lo copia.
+It has weight 1 on input 400 and bias 0: it copies it.
 
-### h2-h11: conchiglia sopra, con un confronto in binario
+### h2-h11: shell above, with a binary comparison
 
-Prendiamo h2, che guarda la colonna 0 (h3 la colonna 1, e così via):
+Take h2, which looks at column 0 (h3 at column 1, and so on):
 
 ```
-conchiglie, righe 3, 4, 5, ..., 9      pesi 64, 32, 16, 8, 4, 2, 1          (2^(9−riga))
-agente,     righe 4, 5, 6, 7, 8, 9     pesi 193, 225, 241, 249, 253, 255    (256 − (2^(10−riga) − 1))
+shells,     rows 3, 4, 5, ..., 9       weights 64, 32, 16, 8, 4, 2, 1       (2^(9−row))
+agent,      rows 4, 5, 6, 7, 8, 9      weights 193, 225, 241, 249, 253, 255 (256 − (2^(10−row) − 1))
 bias −256
 ```
 
-Con l'agente in riga r della stessa colonna, peso dell'agente e bias insieme valgono `−(2^(10−r) − 1)`, cioè meno
-la somma dei pesi di tutte le righe dalla r alla 9. Quindi
+With the agent in row r of the same column, the agent's weight and the bias together equal `−(2^(10−r) − 1)`,
+that is, minus the sum of the weights of all rows from r to 9. So
 
-`pre-attivazione = (pesi delle conchiglie presenti) − (somma dei pesi delle righe da r in giù)`.
+`pre-activation = (weights of the shells present) − (sum of the weights of the rows from r down)`.
 
-Una potenza di 2 è più grande di tutte le potenze più piccole messe insieme. Così basta **una** conchiglia sopra
-l'agente (righe 3..r−1) per battere tutte quelle sotto messe insieme: il neurone si accende (≥ 1) se e solo se c'è
-una conchiglia sopra l'agente, nella sua colonna.
+A power of 2 is larger than all smaller powers put together. So **one** shell above the agent (rows 3..r−1) is
+enough to beat all those below put together: the neuron turns on (≥ 1) if and only if there is a shell above the
+agent, in its column.
 
-Il neurone resta a 0 in due casi:
+The neuron stays at 0 in two cases:
 
-- **l'agente è in un'altra colonna, o in una riga ≤ 3:** manca il suo peso, e il bias −256 supera qualsiasi somma
-  di conchiglie (al massimo 127);
-- **non ci sono conchiglie sopra l'agente:** la somma non arriva alla soglia.
+- **the agent is in another column, or in a row ≤ 3:** its weight is missing, and the bias −256 outweighs any sum
+  of shells (at most 127);
+- **there are no shells above the agent:** the sum does not reach the threshold.
 
-Un solo neurone fa quindi un AND tra "sono in questa colonna" e "c'è una conchiglia più in alto di me".
+A single neuron thus computes an AND between "I am in this column" and "there is a shell higher up than me".
 
-### h12-h18 e h19-h25: conchiglia a sinistra o a destra
+### h12-h18 and h19-h25: shell to the left or to the right
 
-È lo stesso trucco, ruotato sulle colonne, con un neurone per ogni riga da 3 a 9 (h12 e h19 la riga 3, h18 e h25
-la riga 9). Il bias è −1024.
+It is the same trick, rotated onto the columns, with one neuron for each row from 3 to 9 (h12 and h19 for row 3,
+h18 and h25 for row 9). The bias is −1024.
 
-- **h12-h18 (a sinistra):** conchiglia in colonna k con peso `2^(9−k)` (512 a sinistra, 1 a destra); agente in
-  colonna j (1..9) con peso `1024 − (2^(10−j) − 1)`. Si accende se c'è una conchiglia in una colonna < j.
-- **h19-h25 (a destra):** conchiglia in colonna k con peso `2^k` (1 a sinistra, 512 a destra); agente in colonna
-  j (0..8) con peso `1024 − (2^(j+1) − 1)`. Si accende se c'è una conchiglia in una colonna > j.
+- **h12-h18 (left):** shell in column k with weight `2^(9−k)` (512 on the left, 1 on the right); agent in
+  column j (1..9) with weight `1024 − (2^(10−j) − 1)`. It turns on if there is a shell in a column < j.
+- **h19-h25 (right):** shell in column k with weight `2^k` (1 on the left, 512 on the right); agent in column
+  j (0..8) with weight `1024 − (2^(j+1) − 1)`. It turns on if there is a shell in a column > j.
 
-### h26-h35: la colonna dell'agente
+### h26-h35: the agent's column
 
-Peso +1 su tutte le 10 celle della colonna c del piano agente, bias 0. Vale 1 se l'agente è in quella colonna, 0
-altrimenti.
+Weight +1 on all 10 cells of column c of the agent plane, bias 0. It is 1 if the agent is in that column, 0
+otherwise.
 
-### h36-h45: medusa sulla battigia, con la soglia costruita dall'acqua
+### h36-h45: jellyfish on the shoreline, with the threshold built from the water
 
-Per la colonna k (h36 è la colonna 0):
+For column k (h36 is column 0):
 
 ```
-meduse, righe 3..9   pesi 8, 16, 32, ..., 512    (2^riga)
-acqua,  righe 3..9   pesi 4, 8, 16, ..., 256     (2^(riga−1))
+jellyfish, rows 3..9   weights 8, 16, 32, ..., 512    (2^row)
+water,     rows 3..9   weights 4, 8, 16, ..., 256     (2^(row−1))
 bias −511
 ```
 
-Con livello L le righe bagnate sono `10−L..9` e la loro somma vale `512 − 2^(9−L)`. Quindi
+With level L the wet rows are `10−L..9` and their sum is `512 − 2^(9−L)`. So
 
-`pre-attivazione = (meduse) + 1 − 2^(9−L)`.
+`pre-activation = (jellyfish) + 1 − 2^(9−L)`.
 
-- **Medusa sulla battigia:** è in riga `9−L`, pesa esattamente `2^(9−L)` e accende il neurone.
-- **Meduse più in alto:** sommate insieme valgono al massimo `2^(9−L) − 8` e non bastano.
+- **Jellyfish on the shoreline:** it is in row `9−L`, weighs exactly `2^(9−L)` and turns the neuron on.
+- **Jellyfish higher up:** added together they are worth at most `2^(9−L) − 8` and are not enough.
 
-L'acqua sposta la soglia insieme alla battigia, e il neurone vede **solo** le meduse sulla battigia. Con L = 0 la
-soglia è 511 e basta una medusa in riga 9 (peso 512). Con L = 7 la battigia è la riga 2, dove non ci sono mai
-meduse, e il neurone resta spento.
+The water moves the threshold together with the shoreline, and the neuron sees **only** the jellyfish on the
+shoreline. With L = 0 the threshold is 511 and one jellyfish in row 9 (weight 512) is enough. With L = 7 the
+shoreline is row 2, where there are never any jellyfish, and the neuron stays off.
 
-### Cosa il primo strato non guarda
+### What the first layer does not look at
 
-- **Countdown (401) e stordimento (402):** nessun peso.
-- **Righe 0-2 di acqua, conchiglie e meduse:** nessun peso, ma sono sempre vuote.
+- **Countdown (401) and stun (402):** no weights.
+- **Rows 0-2 of water, shells and jellyfish:** no weights, but they are always empty.
 
-L'unica informazione davvero ignorata è il tempo: la rete non sa quando si muoverà la marea, né per quanto resterà
-stordita.
+The only information truly ignored is time: the network does not know when the tide will move, nor how long it will
+stay stunned.
 
-## 5. Secondo strato: le condizioni (36 neuroni, tanh)
+## 5. Second layer: the conditions (36 neurons, tanh)
 
-Ogni neurone ha pesi tali che la pre-attivazione è almeno ±2.5, quindi tanh vale circa **+1 (vero)** o
-**−1 (falso)** (tanh 2.5 = 0.987). Gli AND si fanno con pesi molto grandi (1000, 5120): se manca un pezzo, la somma
-resta molto sotto zero.
+Each neuron has weights such that the pre-activation is at least ±2.5, so tanh is about **+1 (true)** or
+**−1 (false)** (tanh 2.5 = 0.987). ANDs are built with very large weights (1000, 5120): if one piece is missing,
+the sum stays far below zero.
 
-| neurone | pre-attivazione | condizione |
+| neuron | pre-activation | condition |
 |---|---|---|
-| g0 | 5·Σ h12..18 − 2.5 | conchiglia a sinistra nella mia riga |
-| g1 | 5·Σ h19..25 − 2.5 | conchiglia a destra nella mia riga |
-| g2 | 5·Σ h2..11 + 1000·h1 − 1002.5 | conchiglia sopra **e** marea che sale |
-| g3 | 12·h1 − 6·h0 − 3 | sale **e** m ≤ 1 |
-| g4 | 18·h1 − 6·h0 − 3 | sale **e** m ≤ 2 |
-| g5 | 6·h0 − 60·h1 − 3 | scende **e** m ≥ 1 |
-| g6 | −6·h0 + 3 | m = 0 (sono sulla battigia) |
-| g7 | 6·h0 + 60·h1 − 75 | sale **e** m ≥ 3 |
-| g8-g16 | 5·h(36+i) + 5120·h(27+i) − 5120·h0 − 5122.5 | medusa **subito a sinistra**: sono in colonna i+1, medusa in colonna i, m = 0 |
-| g17-g25 | 5·h(37+i) + 5120·h(26+i) − 5120·h0 − 5122.5 | medusa **subito a destra**: sono in colonna i, medusa in colonna i+1, m = 0 |
-| g26-g35 | 5·h(36+i) + 5120·h(26+i) − 5122.5 | medusa **sotto di me**, sulla battigia della mia colonna |
+| g0 | 5·Σ h12..18 − 2.5 | shell to the left in my row |
+| g1 | 5·Σ h19..25 − 2.5 | shell to the right in my row |
+| g2 | 5·Σ h2..11 + 1000·h1 − 1002.5 | shell above **and** rising tide |
+| g3 | 12·h1 − 6·h0 − 3 | rising **and** m ≤ 1 |
+| g4 | 18·h1 − 6·h0 − 3 | rising **and** m ≤ 2 |
+| g5 | 6·h0 − 60·h1 − 3 | falling **and** m ≥ 1 |
+| g6 | −6·h0 + 3 | m = 0 (I am on the shoreline) |
+| g7 | 6·h0 + 60·h1 − 75 | rising **and** m ≥ 3 |
+| g8-g16 | 5·h(36+i) + 5120·h(27+i) − 5120·h0 − 5122.5 | jellyfish **directly to the left**: I am in column i+1, jellyfish in column i, m = 0 |
+| g17-g25 | 5·h(37+i) + 5120·h(26+i) − 5120·h0 − 5122.5 | jellyfish **directly to the right**: I am in column i, jellyfish in column i+1, m = 0 |
+| g26-g35 | 5·h(36+i) + 5120·h(26+i) − 5122.5 | jellyfish **below me**, on the shoreline of my column |
 
-Le soglie su m (g3, g4, g5, g7) sono fatte dando a h0 un peso −6 o +6 e scegliendo il bias in modo che il cambio di
-segno cada tra due valori interi. Per esempio, con la marea che sale g4 vale 15 − 6·m, positivo per m ≤ 2 e
-negativo per m ≥ 3.
+The thresholds on m (g3, g4, g5, g7) are built by giving h0 a weight of −6 or +6 and choosing the bias so that the
+sign change falls between two integer values. For example, with the tide rising g4 equals 15 − 6·m, positive for
+m ≤ 2 and negative for m ≥ 3.
 
-## 6. Ultimo strato: la regola (5 logit)
-
-```
-fermo = 0
-su    =   23.5 + 4.5·g2 + 20·g3
-giù   = −160   + 10.5·g5 − 20·g4 − 2.5·g6 + 3·g7 − 15·Σ g26..35
-sx    = −128   + 6·g0  − 15·Σ g8..16
-dx    = −126.5 + 7.5·g1 − 15·Σ g17..25
-```
-
-I bias sembrano strani perché **i neuroni spenti valgono −1, non 0**. Per esempio, i dieci neuroni "medusa sotto"
-spenti danno −15 × (−10) = +150, che compensa quasi tutto il −160. Al massimo uno di loro è acceso (quello della
-colonna dell'agente), e accenderlo toglie 30.
-
-Riscritti con `[x]` = +1 se x è vero, −1 se è falso:
+## 6. Last layer: the rule (5 logits)
 
 ```
-fermo = 0
-su    = 23.5 + 4.5·[sale e conchiglia sopra] + 20·[sale e m ≤ 1]
-giù   = −10 + 10.5·[scende e m ≥ 1] − 20·[sale e m ≤ 2] − 2.5·[m = 0] + 3·[sale e m ≥ 3]   (−30 se medusa sotto)
-sx    = 7   + 6·[conchiglia a sx]                                                        (−30 se medusa subito a sx)
-dx    = 8.5 + 7.5·[conchiglia a dx]                                                      (−30 se medusa subito a dx)
+no-op = 0
+up    =   23.5 + 4.5·g2 + 20·g3
+down  = −160   + 10.5·g5 − 20·g4 − 2.5·g6 + 3·g7 − 15·Σ g26..35
+left  = −128   + 6·g0  − 15·Σ g8..16
+right = −126.5 + 7.5·g1 − 15·Σ g17..25
 ```
 
-Ecco i valori nei vari casi. "Fermo" vale sempre 0. Sx vale 13 con una conchiglia a sinistra e 1 senza; dx vale
-16 con una conchiglia a destra e 1 senza.
+The biases look odd because **neurons that are off are worth −1, not 0**. For example, the ten "jellyfish below"
+neurons, when off, give −15 × (−10) = +150, which offsets almost all of the −160. At most one of them is on (the
+one for the agent's column), and turning it on subtracts 30.
 
-| marea | m | su | giù | mossa scelta |
+Rewritten with `[x]` = +1 if x is true, −1 if it is false:
+
+```
+no-op = 0
+up    = 23.5 + 4.5·[rising and shell above] + 20·[rising and m ≤ 1]
+down  = −10 + 10.5·[falling and m ≥ 1] − 20·[rising and m ≤ 2] − 2.5·[m = 0] + 3·[rising and m ≥ 3]   (−30 if jellyfish below)
+left  = 7   + 6·[shell to the left]                                                                   (−30 if jellyfish directly to the left)
+right = 8.5 + 7.5·[shell to the right]                                                                (−30 if jellyfish directly to the right)
+```
+
+Here are the values in the various cases. "No-op" is always 0. Left is 13 with a shell to the left and 1 without;
+right is 16 with a shell to the right and 1 without.
+
+| tide | m | up | down | chosen move |
 |---|---|---|---|---|
-| scende | 0 | −1 | −6 | dx se c'è una conchiglia a destra (16), poi sx (13), altrimenti vaga |
-| scende | ≥ 1 | −1 | **20** (−10 con medusa sotto) | **giù**: segue l'acqua che si ritira |
-| sale | 0 | **39** (48 con conchiglia sopra) | −46 | **su**: batte tutto |
-| sale | 1 | **39** (48) | −41 | **su** |
-| sale | 2 | −1 (8 con conchiglia sopra) | −41 | dx (16) > sx (13) > su verso una conchiglia (8) > vaga |
-| sale | ≥ 3 | −1 (8) | 5 (−25 con medusa sotto) | dx (16) > sx (13) > su (8) > **giù** (5) |
+| falling | 0 | −1 | −6 | right if there is a shell to the right (16), then left (13), otherwise wander |
+| falling | ≥ 1 | −1 | **20** (−10 with jellyfish below) | **down**: follows the receding water |
+| rising | 0 | **39** (48 with shell above) | −46 | **up**: beats everything |
+| rising | 1 | **39** (48) | −41 | **up** |
+| rising | 2 | −1 (8 with shell above) | −41 | right (16) > left (13) > up toward a shell (8) > wander |
+| rising | ≥ 3 | −1 (8) | 5 (−25 with jellyfish below) | right (16) > left (13) > up (8) > **down** (5) |
 
-**Vaga** vuol dire che sx ≈ 1.08, dx ≈ 1.10, fermo 0 e su −1. La policy campiona dalla softmax dei logit, quindi va
-a sinistra o a destra con circa il 40% di probabilità ciascuna, sta ferma il 14% delle volte e sale il 5%.
+**Wander** means that left ≈ 1.08, right ≈ 1.10, no-op 0 and up −1. The policy samples from the softmax of the
+logits, so it goes left or right with about 40% probability each, stays still 14% of the time and moves up 5%.
 
-### L'algoritmo
+### The algorithm
 
 ```
-m = righe asciutte tra me e l'acqua
+m = dry rows between me and the water
 
-se la marea SCENDE:
-    m ≥ 1 → giù                         segui l'acqua che si ritira
-                                        (se c'è una medusa sotto, sulla battigia: spostati di lato)
-    m = 0 → percorri la battigia:
-            conchiglia a destra → dx, altrimenti conchiglia a sinistra → sx, altrimenti vaga
-            mai verso una medusa subito a fianco
+if the tide is FALLING:
+    m ≥ 1 → down                        follow the receding water
+                                        (if there is a jellyfish below, on the shoreline: step sideways)
+    m = 0 → walk along the shoreline:
+            shell to the right → right, else shell to the left → left, else wander
+            never toward a jellyfish right next to me
 
-se la marea SALE:
-    m ≤ 1 → su                          scappa: ha la priorità su tutto
-    m = 2 → conchiglie nella riga (prima dx, poi sx), poi conchiglia sopra, altrimenti vaga;
-            mai giù
-    m ≥ 3 → conchiglie nella riga, poi conchiglia sopra, altrimenti giù (per tornare a m = 2)
+if the tide is RISING:
+    m ≤ 1 → up                          flee: it has priority over everything
+    m = 2 → shells in the row (first right, then left), then shell above, else wander;
+            never down
+    m ≥ 3 → shells in the row, then shell above, else down (to go back to m = 2)
 ```
 
-La strategia segue le regole del gioco:
+The strategy follows the rules of the game:
 
-- **Marea che scende:** le conchiglie nuove compaiono solo sulla riga appena scoperta, cioè sulla battigia. La rete
-  ci sta attaccata e la spazza in orizzontale.
-- **Marea che sale:** l'acqua avanza di una riga ogni 3-5 passi. La rete tiene 2 righe di margine e risale appena
-  il margine scende a 1. Intanto raccoglie quello che trova nella sua riga.
+- **Falling tide:** new shells appear only on the row just uncovered, that is, on the shoreline. The network
+  sticks to it and sweeps it horizontally.
+- **Rising tide:** the water advances by one row every 3-5 steps. The network keeps a margin of 2 rows and moves
+  back up as soon as the margin drops to 1. Meanwhile it collects what it finds in its row.
 
-## 7. Verifica
+## 7. Verification
 
-`check.py` gioca 200 episodi con la rete (seed 10000-10199, sticky 0.1, campionando dalla softmax come
-`evaluate`). In ogni stato ricalcola, **direttamente dallo stato del gioco e senza usare i pesi**, i 46 neuroni del
-primo strato e i 5 logit con le formule della sezione 6, e li confronta con il forward pass vero.
+`check.py` plays 200 episodes with the network (seeds 10000-10199, sticky 0.1, sampling from the softmax like
+`evaluate`). In each state it recomputes, **directly from the game state and without using the weights**, the 46
+neurons of the first layer and the 5 logits with the formulas of section 6, and compares them with the true forward
+pass.
 
-| controllo | risultato |
+| check | result |
 |---|---|
-| stati visitati | 197.920 |
-| primo strato: stati in cui la lettura (acceso/spento, valore di h0) sbaglia | **0** |
-| logit: differenza massima | 0.315 (tanh non arriva mai esattamente a ±1) |
-| mossa con logit più alto diversa, esclusi i quasi-pareggi (< 0.5) | **0** |
+| states visited | 197,920 |
+| first layer: states in which the reading (on/off, value of h0) is wrong | **0** |
+| logits: maximum difference | 0.315 (tanh never reaches exactly ±1) |
+| move with the highest logit differs, excluding near-ties (< 0.5) | **0** |
 
-I quasi-pareggi sono 49.550 stati. Quasi tutti sono sx contro dx quando non ci sono conchiglie (1.08 contro 1.10);
-lì la rete campiona e quindi vaga.
+The near-ties are 49,550 states. Almost all of them are left versus right when there are no shells (1.08 versus
+1.10); there the network samples and so wanders.
 
-Quale mossa ha il logit più alto, per situazione:
+Which move has the highest logit, by situation:
 
-| marea | m | % degli stati | fermo | su | giù | sx | dx |
+| tide | m | % of states | no-op | up | down | left | right |
 |---|---|---|---|---|---|---|---|
-| sale | 0 | 0.3% | | 100% | | | |
-| sale | 1 | 14.0% | | 100% | | | |
-| sale | 2 | 32.1% | | 2% | | 26% | 72% |
-| sale | ≥ 3 | 3.5% | | 3% | 44% | 27% | 26% |
-| scende | 0 | 32.9% | 1% | | | 36% | 64% |
-| scende | 1 | 15.8% | | | 93% | 2% | 5% |
-| scende | 2 | 1.0% | | | 92% | 1% | 7% |
-| scende | ≥ 3 | 0.3% | | | 90% | 1% | 9% |
+| rising | 0 | 0.3% | | 100% | | | |
+| rising | 1 | 14.0% | | 100% | | | |
+| rising | 2 | 32.1% | | 2% | | 26% | 72% |
+| rising | ≥ 3 | 3.5% | | 3% | 44% | 27% | 26% |
+| falling | 0 | 32.9% | 1% | | | 36% | 64% |
+| falling | 1 | 15.8% | | | 93% | 2% | 5% |
+| falling | 2 | 1.0% | | | 92% | 1% | 7% |
+| falling | ≥ 3 | 0.3% | | | 90% | 1% | 9% |
 
-La rete passa due terzi del tempo in due stati: sulla battigia mentre la marea scende (33%) e a m = 2 mentre sale
-(32%). Il resto sono le transizioni tra i due.
+The network spends two thirds of the time in two states: on the shoreline while the tide is falling (33%) and at
+m = 2 while it is rising (32%). The rest are the transitions between the two.
 
-## 8. Limiti visibili nei pesi
+## 8. Limits visible in the weights
 
-I pesi spiegano anche perché la rete fa 132 e non 164 come l'euristica.
+The weights also explain why the network scores 132 and not 164 like the heuristic.
 
-- **Non legge countdown (401) e stordimento (402).** Non sa quando si muoverà la marea, quindi tiene sempre 2 righe
-  di margine anche quando avrebbe il tempo di scendere a raccogliere.
-- **Vede le conchiglie solo in croce**, cioè nella sua riga e nella sua colonna, e **senza distanza**:
-  - una conchiglia in diagonale non esiste per lei;
-  - una conchiglia a 1 cella vale quanto una a 8;
-  - con conchiglie da entrambi i lati va a destra il 95% delle volte (16 contro 13), anche se quella a sinistra è
-    più vicina.
-- **Le conchiglie sopra le considera solo quando la marea sale.**
-- **Vede le meduse solo sulla battigia.** Quando la marea sale e si muove a m = 2, o sale verso una conchiglia,
-  cammina sulle meduse senza vederle: 21.7 punture per episodio in media.
-- **Annega nel 4.2% degli episodi, ma solo per colpa delle sticky actions.** Senza sticky actions
-  (`uv run evaluate low_tide claude --sticky 0`) annega in 0 episodi su 500 e fa 140.7 punti. Nei 17 annegamenti su
-  500 episodi del protocollo ci sono due meccanismi, e in entrambi l'ambiente ripete un "giù" al posto di un "su":
-  - **10 casi:** la marea sale e la rete, a m = 3, scende per tornare a m = 2. Le sticky actions ripetono "giù" due
-    volte di fila, contro le scelte della rete (all'ultimo passo, a m = 1, la rete sceglie su), e l'agente arriva a
-    m = 0 proprio mentre la marea sale. Un margine di 2 righe regge a una ripetizione, non a due.
-  - **7 casi:** con la marea che sale, un "giù" ripetuto porta l'agente su una medusa sulla battigia. In 5 casi su 7
-    la marea aveva appena invertito e la rete aveva scelto su. L'agente resta stordito 3 passi a m = 0 e la marea sale
-    prima che possa muoversi.
+- **It does not read countdown (401) and stun (402).** It does not know when the tide will move, so it always keeps
+  a margin of 2 rows, even when it would have time to go down and collect.
+- **It sees shells only in a cross**, that is, in its row and its column, and **without distance**:
+  - a diagonal shell does not exist for it;
+  - a shell 1 cell away is worth as much as one 8 cells away;
+  - with shells on both sides it goes right 95% of the time (16 versus 13), even if the one on the left is
+    closer.
+- **It considers shells above only when the tide is rising.**
+- **It sees jellyfish only on the shoreline.** When the tide is rising and it moves at m = 2, or moves up toward a
+  shell, it walks onto jellyfish without seeing them: 21.7 stings per episode on average.
+- **It drowns in 4.2% of episodes, but only because of sticky actions.** Without sticky actions
+  (`uv run evaluate low_tide claude --sticky 0`) it drowns in 0 episodes out of 500 and scores 140.7 points. In the
+  17 drownings over the 500 episodes of the protocol there are two mechanisms, and in both the environment repeats
+  a "down" instead of an "up":
+  - **10 cases:** the tide is rising and the network, at m = 3, moves down to return to m = 2. The sticky actions
+    repeat "down" twice in a row, against the network's choices (at the last step, at m = 1, the network chooses
+    up), and the agent reaches m = 0 just as the tide rises. A margin of 2 rows withstands one repetition, not two.
+  - **7 cases:** with the tide rising, a repeated "down" takes the agent onto a jellyfish on the shoreline. In 5
+    cases out of 7 the tide had just reversed and the network had chosen up. The agent stays stunned for 3 steps at
+    m = 0 and the tide rises before it can move.
 
-La rete di GPT per lo stesso gioco è decodificata in [`decode_gpt`](../decode_gpt/README.md), con
-un confronto tra le due.
+GPT's network for the same game is decoded in [`decode_gpt`](../decode_gpt/README.md), with
+a comparison between the two.

@@ -1,227 +1,228 @@
-# Low Tide: cosa vede la rete
+# Low Tide: what the network sees
 
-A ogni passo la rete riceve un vettore di **403 numeri** (float32) e restituisce **5 logit**, uno per azione.
-Questo documento spiega cosa rappresenta ciascun numero, quali valori può assumere e quali regole del gioco li
-determinano. La fonte è `src/small_games/games/low_tide/env.py`. I vincoli elencati qui sono stati verificati su
-600 episodi (circa 310 000 osservazioni, giocati a caso e dall'euristica), senza nessuna eccezione.
+At each step the network receives a vector of **403 numbers** (float32) and returns **5 logits**, one per action.
+This document explains what each number represents, which values it can take and which game rules
+determine them. The source is `src/small_games/games/low_tide/env.py`. The constraints listed here were verified on
+600 episodes (about 310,000 observations, played randomly and by the heuristic), with no exception.
 
-## Il gioco in breve
+## The game in brief
 
-- La spiaggia è una griglia 10×10. La **riga 0** è in alto, lato terra; la **riga 9** è in basso, lato mare. Le
-  colonne vanno da 0 (sinistra) a 9 (destra).
-- **L'acqua** copre le ultime `livello` righe in basso. Il livello va da 0 a 7, quindi le righe 0–2 sono sempre
-  asciutte. Le righe 3–9 sono la zona di marea.
-- **La marea** cambia di una riga ogni 3, 4 o 5 passi (estratti a caso).
-  - Sale fino a un livello alto, estratto tra 5, 6 e 7, poi scende fino a un livello basso, estratto tra 0, 1 e 2,
-    e così via.
-  - Quando **scende**, la riga che si scopre si riempie a caso di conchiglie (25% per cella) e meduse (8% per
-    cella).
-  - Quando **sale**, la riga che viene coperta perde tutto quello che c'era sopra.
-- Effetti delle celle:
-  - pestare una **conchiglia** dà +1 e la toglie;
-  - pestare una **medusa** dà −1, la toglie e paralizza l'agente per 3 passi;
-  - se la marea che sale copre la riga dell'agente, l'agente **annega** e l'episodio finisce.
-- **Muoversi** verso l'acqua o fuori dalla griglia non ha effetto: l'agente resta dov'è.
-- **Azioni:** 0 fermo, 1 su (riga − 1), 2 giù (riga + 1), 3 sinistra (colonna − 1), 4 destra (colonna + 1).
-- **Sticky actions:** con probabilità 0.1 viene ripetuta l'azione precedente al posto di quella scelta.
-- Un episodio dura al massimo 1000 passi.
+- The beach is a 10×10 grid. **Row 0** is at the top, on the land side; **row 9** is at the bottom, on the sea side.
+  Columns go from 0 (left) to 9 (right).
+- **The water** covers the bottom `livello` (level) rows. The level goes from 0 to 7, so rows 0–2 are always
+  dry. Rows 3–9 are the tidal zone.
+- **The tide** changes by one row every 3, 4 or 5 steps (drawn at random).
+  - It rises up to a high level, drawn from 5, 6 and 7, then falls down to a low level, drawn from 0, 1 and 2,
+    and so on.
+  - When it **falls**, the row that is uncovered is randomly filled with shells (25% per cell) and jellyfish (8% per
+    cell).
+  - When it **rises**, the row that gets covered loses everything that was on it.
+- Cell effects:
+  - stepping on a **shell** gives +1 and removes it;
+  - stepping on a **jellyfish** gives −1, removes it and stuns the agent for 3 steps;
+  - if the rising tide covers the agent's row, the agent **drowns** and the episode ends.
+- **Moving** into the water or off the grid has no effect: the agent stays where it is.
+- **Actions:** 0 no-op, 1 up (row − 1), 2 down (row + 1), 3 left (column − 1), 4 right (column + 1).
+- **Sticky actions:** with probability 0.1 the previous action is repeated instead of the chosen one.
+- An episode lasts at most 1000 steps.
 
-## Com'è fatto il vettore
+## How the vector is laid out
 
-| indici | cosa | valori possibili |
+| indices | what | possible values |
 |---|---|---|
-| 0–99 | piano **agente** | 0 o 1; esattamente un 1 |
-| 100–199 | piano **acqua** | 0 o 1; righe intere a partire dal basso |
-| 200–299 | piano **conchiglie** | 0 o 1 |
-| 300–399 | piano **meduse** | 0 o 1 |
-| 400 | **la marea sale** | 0 o 1 |
-| 401 | **conto alla rovescia** della marea | 0.2, 0.4, 0.6, 0.8, 1.0 |
-| 402 | **stordimento** | 0, 1/3, 2/3, 1 |
+| 0–99 | **agent** plane | 0 or 1; exactly one 1 |
+| 100–199 | **water** plane | 0 or 1; whole rows starting from the bottom |
+| 200–299 | **shells** plane | 0 or 1 |
+| 300–399 | **jellyfish** plane | 0 or 1 |
+| 400 | **the tide is rising** | 0 or 1 |
+| 401 | tide **countdown** | 0.2, 0.4, 0.6, 0.8, 1.0 |
+| 402 | **stun** | 0, 1/3, 2/3, 1 |
 
-I primi 400 numeri sono quattro griglie 10×10, scritte una dopo l'altra. Dentro ogni griglia l'ordine è per righe:
+The first 400 numbers are four 10×10 grids, written one after the other. Within each grid the order is by rows:
 
 ```
-indice = 100 · piano + 10 · riga + colonna          piano: 0 agente, 1 acqua, 2 conchiglie, 3 meduse
+index = 100 · plane + 10 · row + column          plane: 0 agent, 1 water, 2 shells, 3 jellyfish
 
-piano   = indice // 100
-riga    = (indice % 100) // 10
-colonna = indice % 10
+plane  = index // 100
+row    = (index % 100) // 10
+column = index % 10
 ```
 
-Esempi per la cella in riga 3 e colonna 6: agente → 36, acqua → 136, conchiglia → 236, medusa → 336.
+Examples for the cell in row 3 and column 6: agent → 36, water → 136, shell → 236, jellyfish → 336.
 
-> **Attenzione, l'ordine è diverso da quello dei giochi MinAtar.** In Breakout, Seaquest e Asterix l'indice è
-> `(riga · 10 + colonna) · 6 + canale`: i canali di una cella sono vicini. In Low Tide sono vicine le celle di uno
-> stesso piano. Chi scrive i pesi deve usare la formula giusta per ciascun gioco.
+> **Warning: the order differs from that of the MinAtar games.** In Breakout, Seaquest and Asterix the index is
+> `(riga · 10 + colonna) · 6 + canale`: the channels of a cell are adjacent. In Low Tide the cells of the same
+> plane are adjacent. Whoever writes the weights must use the right formula for each game.
 
-## I quattro piani
+## The four planes
 
-### Agente (indici 0–99)
+### Agent (indices 0–99)
 
-- C'è sempre **esattamente un 1**, nella cella dell'agente: indice `10 · riga + colonna`.
-- All'inizio di ogni episodio l'agente è in **riga 1**, in una colonna a caso.
-- Può stare su qualsiasi riga asciutta, cioè dalla 0 alla `9 − livello`. Con la marea a 0 può arrivare fino
-  alla riga 9.
-- Non sta mai in acqua, tranne nell'**ultima osservazione** di un episodio finito per annegamento. È l'unico caso
-  in cui agente e acqua hanno un 1 nella stessa cella.
-- Non sta mai sopra una conchiglia o una medusa, perché le raccoglie o ne viene punto nello stesso passo in cui ci
-  arriva.
+- There is always **exactly one 1**, in the agent's cell: index `10 · riga + colonna`.
+- At the start of every episode the agent is in **row 1**, in a random column.
+- It can be on any dry row, i.e. from 0 to `9 − livello`. With the tide at 0 it can reach
+  row 9.
+- It is never in the water, except in the **last observation** of an episode that ended by drowning. It is the only
+  case in which agent and water have a 1 in the same cell.
+- It is never on top of a shell or a jellyfish, because it collects it, or is stung by it, in the same step in which
+  it gets there.
 
-### Acqua (indici 100–199)
+### Water (indices 100–199)
 
-- L'acqua occupa sempre **righe intere a partire dal basso**. Con livello L, le righe da `10 − L` a 9 sono tutte 1
-  e le altre tutte 0. Non esistono righe allagate a metà.
-- Quindi **livello = (somma del piano) / 10**, un intero tra 0 e 7. La riga asciutta più bassa è `9 − livello`.
-- Le righe 0–2 non sono mai acqua. All'inizio dell'episodio il livello è tra 2 e 5.
-- Frequenza dei livelli nelle osservazioni misurate:
+- The water always occupies **whole rows starting from the bottom**. With level L, rows `10 − L` to 9 are all 1
+  and the others all 0. There are no half-flooded rows.
+- So **level = (sum of the plane) / 10**, an integer between 0 and 7. The lowest dry row is `9 − livello`.
+- Rows 0–2 are never water. At the start of the episode the level is between 2 and 5.
+- Frequency of the levels in the measured observations:
 
-  | livello | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+  | level | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
   |---|---|---|---|---|---|---|---|---|
-  | quota | 3% | 10% | 17% | 20% | 20% | 17% | 10% | 3% |
+  | share | 3% | 10% | 17% | 20% | 20% | 17% | 10% | 3% |
 
-### Conchiglie (indici 200–299)
+### Shells (indices 200–299)
 
-- Un 1 per ogni conchiglia.
-- Dove possono stare:
-  - solo su righe **asciutte della zona di marea** (3–9), mai nelle righe 0–2;
-  - mai in acqua;
-  - mai nella stessa cella di una medusa;
-  - mai sotto l'agente.
-- Quando **compaiono**:
-  - all'inizio, in tutte le righe asciutte della zona di marea, con probabilità 25% per cella;
-  - ogni volta che la marea scende, nella riga appena scoperta, con la stessa probabilità.
-- Quando **spariscono**: quando l'agente le raccoglie (+1), o quando la marea che sale copre la loro riga.
-- **Non si muovono.** In media se ne vedono circa 3.5 per osservazione, con un massimo misurato di 27.
+- One 1 for each shell.
+- Where they can be:
+  - only on **dry rows of the tidal zone** (3–9), never in rows 0–2;
+  - never in the water;
+  - never in the same cell as a jellyfish;
+  - never under the agent.
+- When they **appear**:
+  - at the start, in all dry rows of the tidal zone, with probability 25% per cell;
+  - every time the tide falls, in the row just uncovered, with the same probability.
+- When they **disappear**: when the agent collects them (+1), or when the rising tide covers their row.
+- **They do not move.** On average about 3.5 are visible per observation, with a measured maximum of 27.
 
-### Meduse (indici 300–399)
+### Jellyfish (indices 300–399)
 
-- Le regole sono le stesse delle conchiglie, con probabilità **8% per cella**: compaiono nelle righe scoperte, non
-  si muovono e spariscono quando vengono coperte dall'acqua.
-- Spariscono anche quando l'agente ci passa sopra. Quel passo dà −1 e fa partire lo stordimento.
-- In media se ne vedono circa 2.6 per osservazione, con un massimo misurato di 13.
+- The rules are the same as for shells, with probability **8% per cell**: they appear in uncovered rows, do not
+  move and disappear when covered by the water.
+- They also disappear when the agent steps on them. That step gives −1 and starts the stun.
+- On average about 2.6 are visible per observation, with a measured maximum of 13.
 
-## I tre scalari
+## The three scalars
 
-### 400: la marea sale
+### 400: the tide is rising
 
-- Vale **1** se il prossimo cambio di livello alzerà l'acqua, **0** se la abbasserà. È a 1 circa metà del tempo.
-- Cambia valore solo nel passo in cui il livello raggiunge il suo obiettivo. Per esempio, se la marea sta salendo
-  verso 6, appena l'acqua arriva a 6 il valore passa a 0.
-- **L'obiettivo non è nell'osservazione.** La rete non sa se la marea salirà fino a 5, 6 o 7, né se scenderà fino
-  a 0, 1 o 2. Lo scopre solo quando questo valore cambia.
+- It is **1** if the next level change will raise the water, **0** if it will lower it. It is 1 about half of the time.
+- It changes value only in the step in which the level reaches its target. For example, if the tide is rising
+  toward 6, as soon as the water reaches 6 the value switches to 0.
+- **The target is not in the observation.** The network does not know whether the tide will rise to 5, 6 or 7,
+  nor whether it will fall to 0, 1 or 2. It finds out only when this value changes.
 
-### 401: conto alla rovescia
+### 401: countdown
 
-- Vale **(passi che mancano al prossimo cambio di livello) / 5**:
+- It is **(steps left until the next level change) / 5**:
 
-  | valore | 1.0 | 0.8 | 0.6 | 0.4 | 0.2 |
+  | value | 1.0 | 0.8 | 0.6 | 0.4 | 0.2 |
   |---|---|---|---|---|---|
-  | passi al cambio | 5 | 4 | 3 | 2 | 1 |
+  | steps to the change | 5 | 4 | 3 | 2 | 1 |
 
-- **0.2 vuol dire che il livello cambia alla fine del prossimo passo.**
-- Non vale mai 0. Quando arriva a zero il livello cambia e viene estratto subito un nuovo intervallo (3, 4 o 5
-  passi). Dopo un cambio quindi si legge 0.6, 0.8 o 1.0, e si scende di 0.2 a ogni passo.
-- All'inizio dell'episodio vale 0.6, 0.8 o 1.0.
-- Frequenze misurate: 0.2, 0.4 e 0.6 circa il 25% ciascuno, 0.8 il 17%, 1.0 l'8%.
+- **0.2 means that the level changes at the end of the next step.**
+- It is never 0. When it reaches zero the level changes and a new interval (3, 4 or 5 steps) is drawn
+  immediately. So after a change it reads 0.6, 0.8 or 1.0, and it goes down by 0.2 at each step.
+- At the start of the episode it is 0.6, 0.8 or 1.0.
+- Measured frequencies: 0.2, 0.4 and 0.6 about 25% each, 0.8 17%, 1.0 8%.
 
-### 402: stordimento
+### 402: stun
 
-- Vale **(passi di paralisi rimasti) / 3**, quindi 0, 1/3, 2/3 o 1.
-- Nel passo in cui l'agente pesta una medusa, l'osservazione mostra **1**. Le 3 azioni successive vengono
-  ignorate e il valore scende così:
+- It is **(remaining stun steps) / 3**, so 0, 1/3, 2/3 or 1.
+- In the step in which the agent steps on a jellyfish, the observation shows **1**. The next 3 actions are
+  ignored and the value goes down like this:
 
-  | stordimento letto | 1 | 2/3 | 1/3 | 0 |
+  | stun read | 1 | 2/3 | 1/3 | 0 |
   |---|---|---|---|---|
-  | la prossima azione | ignorata | ignorata | ignorata | eseguita |
+  | the next action | ignored | ignored | ignored | executed |
 
-- Quindi, se lo stordimento è maggiore di 0, l'agente resta fermo nel passo successivo qualunque azione scelga la
-  rete. È diverso da 0 in circa il 2% delle osservazioni misurate.
+- So, if the stun is greater than 0, the agent stays still in the next step whatever action the
+  network chooses. It is non-zero in about 2% of the measured observations.
 
-## In che ordine succedono le cose in un passo
+## The order of events in a step
 
-`step(azione)` esegue, nell'ordine:
+`step(azione)` runs, in order:
 
-1. **Sticky action:** con probabilità 0.1 l'azione scelta viene sostituita dalla precedente.
-2. **Movimento.** Se l'agente è stordito, non si muove e lo stordimento cala di 1. Altrimenti si sposta, salvo che
-   la cella di arrivo sia fuori dalla griglia o in acqua.
-3. **Conchiglia o medusa** nella cella di arrivo: +1, oppure −1 e stordimento a 3.
-4. **Marea:** il conto alla rovescia cala di 1. Se arriva a 0, il livello cambia di una riga: la riga coperta
-   viene svuotata, quella scoperta viene popolata, e si estrae un nuovo intervallo.
-5. **Annegamento:** se l'acqua ora copre la riga dell'agente, l'episodio finisce.
-6. **Troncamento:** dopo 1000 passi l'episodio si ferma.
+1. **Sticky action:** with probability 0.1 the chosen action is replaced by the previous one.
+2. **Movement.** If the agent is stunned, it does not move and the stun decreases by 1. Otherwise it moves, unless
+   the target cell is off the grid or in the water.
+3. **Shell or jellyfish** in the target cell: +1, or −1 and stun set to 3.
+4. **Tide:** the countdown decreases by 1. If it reaches 0, the level changes by one row: the covered row
+   is emptied, the uncovered one is populated, and a new interval is drawn.
+5. **Drowning:** if the water now covers the agent's row, the episode ends.
+6. **Truncation:** after 1000 steps the episode stops.
 
-L'osservazione restituita da `step` mostra lo stato *dopo* tutti questi eventi, compreso l'eventuale cambio di
-marea.
+The observation returned by `step` shows the state *after* all these events, including any tide
+change.
 
-Da queste regole segue la situazione più pericolosa: **marea che sale (400 = 1) con conto alla rovescia a 0.2
-(401).** Alla fine del prossimo passo l'acqua coprirà la riga `9 − livello`, cioè la riga asciutta più bassa. Se
-l'agente è lì a fine passo, annega. Per salvarsi deve salire in quel passo, ma non ci riesce se è stordito (402 > 0)
-o se la sticky action ripete un'azione diversa (10% dei passi).
+The most dangerous situation follows from these rules: **rising tide (400 = 1) with the countdown at 0.2
+(401).** At the end of the next step the water will cover row `9 − livello`, i.e. the lowest dry row. If
+the agent is there at the end of the step, it drowns. To survive it must move up in that step, but it cannot if it is
+stunned (402 > 0) or if the sticky action repeats a different action (10% of the steps).
 
-## Cosa la rete non vede
+## What the network does not see
 
-L'osservazione contiene quasi tutto lo stato del gioco, ma non:
+The observation contains almost all of the game state, but not:
 
-- **l'obiettivo della marea**: fin dove salirà o scenderà nel ciclo in corso;
-- **l'azione precedente**, che la sticky action potrebbe ripetere;
-- **il passo corrente** e quanti ne mancano ai 1000;
-- **il punteggio**;
-- **il futuro**: dove compariranno conchiglie e meduse.
+- **the tide's target**: how far it will rise or fall in the current cycle;
+- **the previous action**, which the sticky action could repeat;
+- **the current step** and how many are left until 1000;
+- **the score**;
+- **the future**: where shells and jellyfish will appear.
 
-## Esempio: l'inizio dell'episodio con seed 10000
+## Example: the start of the episode with seed 10000
 
-È l'episodio 0 di `evaluate` e quello che si vede lanciando `uv run play low_tide`. Legenda: A agente,
-o conchiglia, j medusa, ~ acqua, . sabbia.
+It is episode 0 of `evaluate` and the one you see when launching `uv run play low_tide`. Legend: A agent,
+o shell, j jellyfish, ~ water, . sand.
 
 ```
-riga 0   . . . . . . . . . .
-riga 1   . . . . . . A . . .
-riga 2   . . . . . . . . . .
-riga 3   . o o . . . . o j .
-riga 4   j o j . . o . o o .
-riga 5   j o . . . . o . . o
-riga 6   . . . j . . . . . .
-riga 7   o o j o j . . . o .
-riga 8   ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-riga 9   ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+row 0    . . . . . . . . . .
+row 1    . . . . . . A . . .
+row 2    . . . . . . . . . .
+row 3    . o o . . . . o j .
+row 4    j o j . . o . o o .
+row 5    j o . . . . o . . o
+row 6    . . . j . . . . . .
+row 7    o o j o j . . . o .
+row 8    ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+row 9    ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 ```
 
-Gli ingressi diversi da 0 sono:
+The non-zero inputs are:
 
-| ingressi | quanti | dettaglio |
+| inputs | how many | detail |
 |---|---|---|
-| agente | 1 | indice 16 = riga 1, colonna 6 |
-| acqua | 20 | indici 180–199 = righe 8 e 9, quindi livello 2 |
-| conchiglie | 14 | 231, 232, 237 (riga 3), 241, 245, 247, 248 (riga 4), ... |
-| meduse | 7 | 338 (riga 3, col. 8), 340, 342 (riga 4), 350 (riga 5), 363, 372, 374 |
-| scalari | | 400 = **1** (la marea sale), 401 = **0.8** (cambia tra 4 passi), 402 = **0** (non stordito) |
+| agent | 1 | index 16 = row 1, column 6 |
+| water | 20 | indices 180–199 = rows 8 and 9, so level 2 |
+| shells | 14 | 231, 232, 237 (row 3), 241, 245, 247, 248 (row 4), ... |
+| jellyfish | 7 | 338 (row 3, col. 8), 340, 342 (row 4), 350 (row 5), 363, 372, 374 |
+| scalars | | 400 = **1** (the tide is rising), 401 = **0.8** (changes in 4 steps), 402 = **0** (not stunned) |
 
-Lo stato nascosto in questo esempio è che la marea sta salendo verso il livello 6. La rete lo scoprirà solo quando
-il valore 400 tornerà a 0.
+The hidden state in this example is that the tide is rising toward level 6. The network will find out only when
+value 400 goes back to 0.
 
-## Leggere l'osservazione in Python
+## Reading the observation in Python
 
 ```python
 import numpy as np
 
-grid = obs[:400].reshape(4, 10, 10)          # [piano, riga, colonna]
+grid = obs[:400].reshape(4, 10, 10)          # [plane, row, column]
 agente, acqua, conchiglie, meduse = grid
 riga, colonna = np.argwhere(agente)[0]
-livello = int(acqua.sum()) // 10               # 0..7; riga asciutta più bassa = 9 - livello
+livello = int(acqua.sum()) // 10               # 0..7; lowest dry row = 9 - livello
 sale = obs[400] == 1.0
 passi_al_cambio = round(obs[401] * 5)          # 1..5
 passi_di_paralisi = round(obs[402] * 3)        # 0..3
 ```
 
-## Come la legge una rete: due esempi
+## How a network reads it: two examples
 
-Una rete non riceve variabili come `livello` o `riga`: le deve ricavare con somme pesate di questi 403 numeri.
-Ogni unità calcola `attivazione(Σ peso · ingresso + bias)`.
+A network does not receive variables like `livello` or `riga` (row): it must derive them with weighted sums of these
+403 numbers. Each unit computes `attivazione(Σ peso · ingresso + bias)` (activation(Σ weight · input + bias)).
 
-- In `weights/low_tide/gpt.json` l'unità 0 del primo strato ha peso +1 sull'ingresso 236 (conchiglia in riga 3,
-  colonna 6), −1 sul 336 (medusa nella stessa cella) e bias 1. Calcola quindi `relu(1 + conchiglia − medusa)`: vale
-  2 se nella cella c'è una conchiglia, 1 se è vuota, 0 se c'è una medusa. In pratica è un giudizio su quella cella.
-- Un'unità con peso 1 sugli ingressi 0–9, cioè la riga 0 del piano agente, vale 1 se e solo se l'agente è in riga 0.
-  Con 10 unità così, una per riga, la rete sa in che riga si trova l'agente. Per il livello dell'acqua basta una
-  cella per riga del piano acqua, perché le righe si allagano intere: per esempio l'ingresso 170 (acqua in riga 7,
-  colonna 0) vale 1 se e solo se il livello è almeno 3.
+- In `weights/low_tide/gpt.json` unit 0 of the first layer has weight +1 on input 236 (shell in row 3,
+  column 6), −1 on 336 (jellyfish in the same cell) and bias 1. So it computes `relu(1 + conchiglia − medusa)`
+  (relu(1 + shell − jellyfish)): it is 2 if the cell has a shell, 1 if it is empty, 0 if it has a jellyfish. In
+  practice it is a judgment of that cell.
+- A unit with weight 1 on inputs 0–9, i.e. row 0 of the agent plane, is 1 if and only if the agent is in row 0.
+  With 10 such units, one per row, the network knows which row the agent is in. For the water level one cell per
+  row of the water plane is enough, because rows flood whole: for example input 170 (water in row 7,
+  column 0) is 1 if and only if the level is at least 3.

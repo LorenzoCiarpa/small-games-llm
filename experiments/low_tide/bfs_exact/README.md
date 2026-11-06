@@ -1,145 +1,146 @@
-# La BFS di Low Tide esatta in un MLP, senza i limiti del gioco
+# The exact Low Tide BFS in an MLP, without the game's limits
 
-[`bfs_net`](../bfs_net) sta nei limiti del gioco, 3 strati da 64 unità, e per questo calcola solo una versione a
-potenziale della BFS (vedi la sua sezione 1). Qui i limiti si tolgono, per vedere **quanti neuroni servono per fare
-esattamente la mossa di `heuristic_policy` in ogni stato.**
+[`bfs_net`](../bfs_net) stays within the game's limits, 3 layers of 64 units, and for this reason computes only a
+potential-based version of the BFS (see its section 1). Here the limits are removed, to see **how many neurons are
+needed to make exactly the move of `heuristic_policy` in every state.**
 
-`build.py` scrive `bfs_exact.json`:
-- 104 strati nascosti relu, fino a 503 unità per strato, **51.103 neuroni** in tutto;
-- 273.944 pesi diversi da zero, su 25,5 milioni;
-- nessun addestramento: ogni peso viene da una formula.
+`build.py` writes `bfs_exact.json`:
+- 104 relu hidden layers, up to 503 units per layer, **51,103 neurons** in total;
+- 273,944 non-zero weights, out of 25.5 million;
+- no training: every weight comes from a formula.
 
-I limiti del gioco ammettono al massimo 3 × 64 = 192 neuroni.
+The game's limits allow at most 3 × 64 = 192 neurons.
 
-**Risultato:** la rete fa sempre la stessa mossa dell'euristica:
-- in tutti i 470.889 stati dei 500 episodi del protocollo;
-- in tutti i 20.000 stati costruiti apposta, con cammini fino a 54 passi.
+**Result:** the network always makes the same move as the heuristic:
+- in all 470,889 states of the 500 protocol episodes;
+- in all 20,000 purpose-built states, with paths of up to 54 steps.
 
-Gioca quindi gli stessi episodi, con lo stesso punteggio episodio per episodio: **164.0 ± 1.5**, come l'euristica.
+It therefore plays the same episodes, with the same score episode by episode: **164.0 ± 1.5**, like the heuristic.
 
-La rete supera i limiti del gioco, quindi `uv run evaluate` e `uv run play` non la caricano. `check.py` la legge con
-lo stesso `load_weights` del repo, a cui toglie solo i limiti di strati e unità, e la valuta con il forward di
-riferimento (`ReferenceMLP`, float64).
+The network exceeds the game's limits, so `uv run evaluate` and `uv run play` do not load it. `check.py` reads it with
+the repo's own `load_weights`, removing only the limits on layers and units, and evaluates it with the reference
+forward pass (`ReferenceMLP`, float64).
 
 ```bash
-uv run python experiments/low_tide/bfs_exact/build.py     # scrive bfs_exact.json (3.8 MB, non versionato)
-uv run python experiments/low_tide/bfs_exact/check.py     # verifica, ~9 min con 8 processi
+uv run python experiments/low_tide/bfs_exact/build.py     # writes bfs_exact.json (3.8 MB, not versioned)
+uv run python experiments/low_tide/bfs_exact/check.py     # verification, ~9 min with 8 processes
 ```
 
-## 1. L'algoritmo
+## 1. The algorithm
 
-La BFS dell'euristica parte dall'agente e visita i vicini nell'ordine su, giù, sinistra, destra. Si ferma alla prima
-conchiglia che toglie dalla coda e fa il primo passo del cammino che ve l'ha portata.
+The heuristic's BFS starts from the agent and visits the neighbors in the order up, down, left, right. It stops at
+the first shell it removes from the queue and takes the first step of the path that led it there.
 
-**Una regola equivalente, più comoda per una rete:**
+**An equivalent rule, more convenient for a network:**
 
-> vai nel vicino consentito più vicino a una conchiglia; a parità, nell'ordine su, giù, sinistra, destra.
+> go to the allowed neighbor closest to a shell; on ties, in the order up, down, left, right.
 
-Le due regole scelgono la stessa mossa:
-- la BFS toglie le celle dalla coda in ordine di distanza;
-- a parità di distanza, le toglie in ordine dei cammini: prima quelli che cominciano con su, poi con giù, e così via.
+The two rules choose the same move:
+- the BFS removes cells from the queue in order of distance;
+- at equal distance, it removes them in the order of their paths: first those that start with up, then with down, and so on.
 
-Quindi la prima conchiglia che trova è la più vicina. Il suo cammino comincia con la prima direzione da cui parte un
-cammino minimo, cioè la prima direzione il cui vicino è a distanza d − 1 da una conchiglia.
+So the first shell it finds is the nearest. Its path starts with the first direction from which a
+shortest path starts, i.e. the first direction whose neighbor is at distance d − 1 from a shell.
 
-**La rete calcola la distanza dalle conchiglie con un'onda:**
-- **Partenza.** L'onda parte dalle conchiglie nelle celle consentite. Sono le celle che la BFS può visitare:
-  - righe fino all'ultima sicura;
-  - niente meduse;
-  - se la marea sale, niente celle vicine a una medusa.
-- **Un passo per strato.** A ogni strato l'onda raggiunge le celle consentite vicine a una cella già raggiunta. Dopo k
-  strati copre esattamente le celle a distanza ≤ k da una conchiglia.
-- **Conteggio.** Ogni cella conta per quanti strati è stata raggiunta: dopo K strati il conteggio è K + 1 − d, con d
-  la distanza dalla conchiglia più vicina (0 se d > K).
-- **Lettura.** Alla fine la rete legge il conteggio nei quattro vicini dell'agente:
-  - logit = 10⁴ · (conteggio + 0.4, 0.3, 0.2 o 0.1) per su, giù, sinistra e destra;
-  - vince il vicino più vicino a una conchiglia, e a parità l'ordine della BFS.
-- **Marea.** Sono le regole dell'euristica:
-  - se l'agente è sotto l'ultima riga sicura, sale;
-  - se nessun vicino è stato raggiunto dall'onda, aspetta una riga sopra l'ultima sicura.
+**The network computes the distance from the shells with a wave:**
+- **Start.** The wave starts from the shells in the allowed cells. These are the cells the BFS can visit:
+  - rows up to the last safe one;
+  - no jellyfish;
+  - if the tide is rising, no cells next to a jellyfish.
+- **One step per layer.** At each layer the wave reaches the allowed cells next to a cell already reached. After k
+  layers it covers exactly the cells at distance ≤ k from a shell.
+- **Count.** Each cell counts for how many layers it has been reached: after K layers the count is K + 1 − d, with d
+  the distance from the nearest shell (0 if d > K).
+- **Readout.** At the end the network reads the count in the agent's four neighbors:
+  - logit = 10⁴ · (count + 0.4, 0.3, 0.2 or 0.1) for up, down, left and right;
+  - the neighbor closest to a shell wins, and on ties the BFS order.
+- **Tide.** These are the heuristic's rules:
+  - if the agent is below the last safe row, it moves up;
+  - if no neighbor has been reached by the wave, it waits one row above the last safe one.
 
-## 2. Struttura
+## 2. Structure
 
-| strati | unità | cosa calcolano |
+| layers | units | what they compute |
 |---|---|---|
-| 1 | 405 | copie di agente, conchiglie e meduse; numero di meduse vicine se la marea sale; livello dell'acqua; riga dell'agente; countdown ≥ 3 |
-| 2 | 405 | marea che sale e countdown ≤ 2, cioè margine 2 invece di 1 |
-| 3 | 425 | per ogni riga, se è entro l'ultima riga sicura; dov'è l'agente rispetto a quella riga |
-| 4 | 303 | celle consentite; partenza dell'onda; "agente sotto l'ultima riga"; attesa su o giù |
-| 5-102 | 503 (l'ultimo 403) | un passo dell'onda ciascuno, 98 in tutto |
-| 103 | 363 | il conteggio nei vicini dell'agente, una unità per cella e direzione |
-| 104 | 8 | conteggio per direzione; attesa solo se nessun vicino è stato raggiunto |
-| uscita | 5 | logit |
+| 1 | 405 | copies of agent, shells and jellyfish; number of neighboring jellyfish if the tide is rising; water level; agent's row; countdown ≥ 3 |
+| 2 | 405 | tide rising and countdown ≤ 2, i.e. margin 2 instead of 1 |
+| 3 | 425 | for each row, whether it is within the last safe row; where the agent is relative to that row |
+| 4 | 303 | allowed cells; start of the wave; "agent below the last row"; wait up or down |
+| 5-102 | 503 (the last 403) | one wave step each, 98 in total |
+| 103 | 363 | the count in the agent's neighbors, one unit per cell and direction |
+| 104 | 8 | count per direction; wait only if no neighbor has been reached |
+| output | 5 | logits |
 
-**Per cella e per passo servono 5 unità:**
-- **2 per l'"o" dei vicini.** Con s il numero di celle raggiunte attorno, relu(s) − relu(s − 1) = min(1, s). Una sola
-  relu non si ferma a 1.
-- **1 per il conteggio.**
-- **1 per la maschera delle celle consentite.** Serve a ogni passo, quindi va portata avanti di strato in strato.
-- **1 per la posizione dell'agente.** Serve solo alla fine, ma anche lei va portata avanti.
+**Per cell and per step, 5 units are needed:**
+- **2 for the "or" of the neighbors.** With s the number of reached cells around, relu(s) − relu(s − 1) = min(1, s). A single
+  relu does not stop at 1.
+- **1 for the count.**
+- **1 for the mask of allowed cells.** It is needed at every step, so it must be carried forward from layer to layer.
+- **1 for the agent's position.** It is needed only at the end, but it too must be carried forward.
 
-**Il calcolo è esatto.** Tutti i valori interni sono interi piccoli, tra 0 e 100, che il float64 rappresenta senza
-errori.
-- L'unico ingresso non intero è il countdown, k/5 in float32.
-- `relu(10 · countdown − 5)` vale 0 per k ≤ 2 e almeno 1 per k ≥ 3, quindi `relu(sale − ·)` dà un 0/1 esatto.
+**The computation is exact.** All internal values are small integers, between 0 and 100, which float64 represents
+without error.
+- The only non-integer input is the countdown, k/5 in float32.
+- `relu(10 · countdown − 5)` is 0 for k ≤ 2 and at least 1 for k ≥ 3, so `relu(sale − ·)` (`sale`: the tide is
+  rising) gives an exact 0/1.
 
-**Anche campionando dalla softmax la mossa è sempre la stessa.** I logit hanno margini ≥ 1000, ed exp(−1000) è 0 in
-float64. La rete gioca quindi esattamente gli stessi episodi dell'euristica.
+**Even when sampling from the softmax the move is always the same.** The logits have margins ≥ 1000, and exp(−1000)
+is 0 in float64. The network therefore plays exactly the same episodes as the heuristic.
 
-## 3. Quanti neuroni servono
+## 3. How many neurons are needed
 
-**Profondità: uno strato per passo di cammino.**
-- **K = 98 basta per ogni stato possibile.** In 100 celle la conchiglia più vicina è a distanza ≤ 99, e al vicino
-  dell'agente ne servono d − 1 ≤ 98.
-- **È un limite sicuro, non il minimo.** Con pareti di meduse il cammino minimo più lungo è più corto: negli stati
-  costruiti si arriva a 54 passi.
-- **Negli episodi del protocollo la conchiglia trovata è al massimo a 26 passi.** Per quegli stati basterebbero
-  K = 25 passi, cioè 31 strati e 14.384 neuroni. La rete però sbaglierebbe in uno stato con un cammino più lungo.
+**Depth: one layer per path step.**
+- **K = 98 is enough for every possible state.** In 100 cells the nearest shell is at distance ≤ 99, and the
+  agent's neighbor needs d − 1 ≤ 98.
+- **It is a safe bound, not the minimum.** With walls of jellyfish the longest shortest path is shorter: in the
+  constructed states it reaches 54 steps.
+- **In the protocol episodes the shell found is at most 26 steps away.** For those states
+  K = 25 steps would be enough, i.e. 31 layers and 14,384 neurons. But the network would be wrong in a state with a longer path.
 
-**Larghezza: 5 unità per cella**, circa 500 per strato.
+**Width: 5 units per cell**, about 500 per layer.
 
-| passi dell'onda K | strati nascosti | neuroni | pesi ≠ 0 | esatta se la conchiglia è entro |
+| wave steps K | hidden layers | neurons | weights ≠ 0 | exact if the shell is within |
 |---|---|---|---|---|
-| 98 (`bfs_exact.json`) | 104 | 51.103 | 273.944 | sempre |
-| 30 | 36 | 16.899 | 87.420 | 31 passi |
-| 25 | 31 | 14.384 | 73.705 | 26 passi: tutti gli stati del protocollo |
-| limiti del gioco (`bfs_net`, a potenziale) | 3 | 185 | 6.806 | non esatta (78.8% delle mosse) |
+| 98 (`bfs_exact.json`) | 104 | 51,103 | 273,944 | always |
+| 30 | 36 | 16,899 | 87,420 | 31 steps |
+| 25 | 31 | 14,384 | 73,705 | 26 steps: all protocol states |
+| game limits (`bfs_net`, potential-based) | 3 | 185 | 6,806 | not exact (78.8% of the moves) |
 
-`build.py --k N` costruisce le varianti più corte.
+`build.py --k N` builds the shorter variants.
 
-**Si può scambiare profondità con larghezza, ma costa molto.** Si possono calcolare le distanze tra tutte le coppie di
-celle e raddoppiare il raggio a ogni strato, come nel prodotto di matrici min-plus.
-- Bastano log₂ 99 ≈ 7 raddoppi.
-- Ogni raddoppio però ha bisogno di un'unità per ogni terna di celle, circa un milione.
+**Depth can be traded for width, but at a high cost.** One can compute the distances between all pairs of
+cells and double the radius at each layer, as in the min-plus matrix product.
+- log₂ 99 ≈ 7 doublings are enough.
+- But each doubling needs one unit for each triple of cells, about a million.
 
-Non l'ho costruita.
+I did not build it.
 
-## 4. Verifica
+## 4. Verification
 
 `check.py`:
-1. riscrive i pesi dalle formule e controlla che coincidano con il file;
-2. gioca i 500 episodi del protocollo con la rete, campionando dalla softmax come `evaluate`. In ogni stato confronta
-   la mossa con quella dell'euristica. Gioca gli stessi episodi con l'euristica e confronta i punteggi;
-3. controlla 20.000 stati costruiti apposta, anche fuori dalle regole del gioco:
-   - metà casuali, con fino al 45% di meduse e 1-3 conchiglie;
-   - un quarto labirinti di meduse;
-   - un quarto serpentine.
+1. rewrites the weights from the formulas and checks that they match the file;
+2. plays the 500 protocol episodes with the network, sampling from the softmax like `evaluate`. In every state it
+   compares the move with the heuristic's. It plays the same episodes with the heuristic and compares the scores;
+3. checks 20,000 purpose-built states, including some outside the game's rules:
+   - half random, with up to 45% jellyfish and 1-3 shells;
+   - a quarter jellyfish mazes;
+   - a quarter serpentines.
 
-   Servono a provare cammini lunghi, che negli episodi non capitano.
+   They serve to test long paths, which do not occur in the episodes.
 
 ```
-pesi riscritti dalle formule uguali al file: True
-rete: 104 strati nascosti, 51103 neuroni, 273944 pesi diversi da zero su 25472463
+weights rewritten from the formulas equal to the file: True
+network: 104 hidden layers, 51103 neurons, 273944 non-zero weights out of 25472463
 
-episodi del protocollo: 500, stati 470889
-  mosse diverse dall'euristica: 0
-  azione campionata ≠ argmax: 0; margine minimo dei logit: 1000
-  punteggio rete 163.97 ± 1.47, euristica 163.97 ± 1.47, episodi con punteggio diverso: 0
-  distanza massima della conchiglia trovata dalla BFS: 26 (per questi stati basterebbero K = 25 passi, 31 strati)
+protocol episodes: 500, states 470889
+  moves different from the heuristic: 0
+  sampled action ≠ argmax: 0; smallest logit margin: 1000
+  network score 163.97 ± 1.47, heuristic 163.97 ± 1.47, episodes with a different score: 0
+  largest distance of the shell found by the BFS: 26 (for these states K = 25 steps, 31 layers, would be enough)
 
-stati costruiti (casuali, labirinti, serpentine): 20000
-  mosse diverse dall'euristica: 0; margine minimo: 1000
-  distanza della conchiglia: mediana 8, massima 54, stati con distanza > 26: 1879
+constructed states (random, mazes, serpentines): 20000
+  moves different from the heuristic: 0; smallest margin: 1000
+  shell distance: median 8, largest 54, states with distance > 26: 1879
 
 (540 s)
 ```
