@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 672 262">
+<text x="190.0" y="12.0" text-anchor="start" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11.5px; font-weight: 600; fill: var(--color-fg);">Non-zero weights (% of all parameters)</text>
+<line x1="190.0" y1="30.0" x2="190.0" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="190.0" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">0</text>
+<line x1="237.5" y1="30.0" x2="237.5" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="237.5" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">25</text>
+<line x1="285.0" y1="30.0" x2="285.0" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="285.0" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">50</text>
+<line x1="332.5" y1="30.0" x2="332.5" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="332.5" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">75</text>
+<line x1="380.0" y1="30.0" x2="380.0" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="380.0" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">100</text>
+<text x="180.0" y="39.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Low Tide, Claude</text>
+<circle cx="198.8" cy="39.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Low Tide, Claude: 4.7% (62 distinct non-zero values out of 20461 parameters)</title></circle>
+<text x="180.0" y="58.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Low Tide, Astra</text>
+<circle cx="199.4" cy="58.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Low Tide, Astra: 5.0% (40 distinct non-zero values out of 23612 parameters)</title></circle>
+<text x="180.0" y="77.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Breakout, Astra</text>
+<circle cx="197.6" cy="77.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Breakout, Astra: 4.0% (61 distinct non-zero values out of 20486 parameters)</title></circle>
+<text x="180.0" y="96.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Seaquest, Astra</text>
+<circle cx="197.4" cy="96.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Seaquest, Astra: 3.9% (52 distinct non-zero values out of 20486 parameters)</title></circle>
+<text x="180.0" y="115.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Asterix, Astra</text>
+<circle cx="195.9" cy="115.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Asterix, Astra: 3.1% (42 distinct non-zero values out of 20486 parameters)</title></circle>
+<text x="180.0" y="142.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Low Tide, PPO (Astra&#x27;s shape)</text>
+<circle cx="380.0" cy="142.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Low Tide, PPO (Astra&#x27;s shape): 100.0% (23473 distinct non-zero values out of 23612 parameters)</title></circle>
+<text x="180.0" y="161.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Low Tide, PPO (Claude&#x27;s shape)</text>
+<circle cx="380.0" cy="161.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Low Tide, PPO (Claude&#x27;s shape): 100.0% (20395 distinct non-zero values out of 20461 parameters)</title></circle>
+<text x="180.0" y="180.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Breakout, PPO</text>
+<circle cx="379.1" cy="180.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Breakout, PPO: 99.5% (20320 distinct non-zero values out of 20486 parameters)</title></circle>
+<text x="180.0" y="199.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Seaquest, PPO</text>
+<circle cx="380.0" cy="199.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Seaquest, PPO: 100.0% (20407 distinct non-zero values out of 20486 parameters)</title></circle>
+<text x="180.0" y="218.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Asterix, PPO</text>
+<circle cx="379.7" cy="218.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Asterix, PPO: 99.8% (20383 distinct non-zero values out of 20486 parameters)</title></circle>
+<text x="432.0" y="12.0" text-anchor="start" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11.5px; font-weight: 600; fill: var(--color-fg);">Integer weights (% of the non-zero ones)</text>
+<line x1="432.0" y1="30.0" x2="432.0" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="432.0" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">0</text>
+<line x1="479.5" y1="30.0" x2="479.5" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="479.5" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">25</text>
+<line x1="527.0" y1="30.0" x2="527.0" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="527.0" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">50</text>
+<line x1="574.5" y1="30.0" x2="574.5" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="574.5" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">75</text>
+<line x1="622.0" y1="30.0" x2="622.0" y2="220.0" style="stroke: var(--color-rule); stroke-width: 1;" />
+<text x="622.0" y="234.0" text-anchor="middle" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10px; font-weight: 400; fill: var(--color-muted);">100</text>
+<circle cx="614.6" cy="39.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Low Tide, Claude: 96.1% (62 distinct non-zero values out of 20461 parameters)</title></circle>
+<circle cx="617.3" cy="58.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Low Tide, Astra: 97.5% (40 distinct non-zero values out of 23612 parameters)</title></circle>
+<circle cx="529.0" cy="77.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Breakout, Astra: 51.0% (61 distinct non-zero values out of 20486 parameters)</title></circle>
+<circle cx="540.4" cy="96.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Seaquest, Astra: 57.0% (52 distinct non-zero values out of 20486 parameters)</title></circle>
+<circle cx="600.5" cy="115.5" r="4.5" style="fill: var(--fig-1); stroke: var(--color-bg); stroke-width: 2;"><title>Asterix, Astra: 88.7% (42 distinct non-zero values out of 20486 parameters)</title></circle>
+<circle cx="432.0" cy="142.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Low Tide, PPO (Astra&#x27;s shape): 0.0% (23473 distinct non-zero values out of 23612 parameters)</title></circle>
+<circle cx="432.0" cy="161.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Low Tide, PPO (Claude&#x27;s shape): 0.0% (20395 distinct non-zero values out of 20461 parameters)</title></circle>
+<circle cx="432.0" cy="180.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Breakout, PPO: 0.0% (20320 distinct non-zero values out of 20486 parameters)</title></circle>
+<circle cx="432.0" cy="199.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Seaquest, PPO: 0.0% (20407 distinct non-zero values out of 20486 parameters)</title></circle>
+<circle cx="432.0" cy="218.5" r="4.5" style="fill: var(--fig-2); stroke: var(--color-bg); stroke-width: 2;"><title>Asterix, PPO: 0.0% (20383 distinct non-zero values out of 20486 parameters)</title></circle>
+</svg>

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 672 550">
+<rect x="0.0" y="6.0" width="11.0" height="11.0" rx="2" style="fill: var(--fig-1);"></rect>
+<text x="16.0" y="12.0" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">written by an LLM</text>
+<rect x="143.4" y="6.0" width="11.0" height="11.0" rx="2" style="fill: var(--fig-2);"></rect>
+<text x="159.4" y="12.0" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">trained with PPO</text>
+<rect x="280.6" y="6.0" width="11.0" height="11.0" rx="2" style="fill: var(--fig-3);"></rect>
+<text x="296.6" y="12.0" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">written by hand (ours)</text>
+<text x="0.0" y="44.0" text-anchor="start" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 12px; font-weight: 600; fill: var(--color-fg);">Low Tide</text>
+<text x="202.0" y="62.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Code written by Astra</text>
+<rect x="210.0" y="56.0" width="400.0" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Low Tide, Code written by Astra: 188.9 ± 0.7</title></rect>
+<text x="615.0" y="62.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">188.9</text>
+<text x="202.0" y="79.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO from scratch, best (100M)</text>
+<rect x="210.0" y="73.0" width="353.4" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Low Tide, PPO from scratch, best (100M): 166.9 ± 2.7</title></rect>
+<text x="568.4" y="79.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">166.9</text>
+<text x="202.0" y="96.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">BFS heuristic as weights (ours)</text>
+<rect x="210.0" y="90.0" width="353.0" height="13.0" rx="2" style="fill: var(--fig-3);"><title>Low Tide, BFS heuristic as weights (ours): 166.7 ± 2.0</title></rect>
+<text x="568.0" y="96.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">166.7</text>
+<text x="202.0" y="113.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">BFS heuristic (ours)</text>
+<rect x="210.0" y="107.0" width="347.3" height="13.0" rx="2" style="fill: var(--fig-3);"><title>Low Tide, BFS heuristic (ours): 164.0 ± 1.5</title></rect>
+<text x="562.3" y="113.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">164</text>
+<text x="202.0" y="130.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO from Astra&#x27;s net (100M)</text>
+<rect x="210.0" y="124.0" width="311.9" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Low Tide, PPO from Astra&#x27;s net (100M): 147.3 ± 2.9</title></rect>
+<text x="526.9" y="130.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">147.3</text>
+<text x="202.0" y="147.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Weights written by Claude</text>
+<rect x="210.0" y="141.0" width="280.1" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Low Tide, Weights written by Claude: 132.3 ± 0.9</title></rect>
+<text x="495.1" y="147.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">132.3</text>
+<text x="202.0" y="164.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Weights written by Astra</text>
+<rect x="210.0" y="158.0" width="169.2" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Low Tide, Weights written by Astra: 79.9 ± 1.0</title></rect>
+<text x="384.2" y="164.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">79.9</text>
+<text x="0.0" y="197.0" text-anchor="start" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 12px; font-weight: 600; fill: var(--color-fg);">Breakout</text>
+<text x="202.0" y="215.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Code written by Astra</text>
+<rect x="210.0" y="209.0" width="400.0" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Breakout, Code written by Astra: 786.0 ± 2.6</title></rect>
+<text x="615.0" y="215.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">786</text>
+<text x="202.0" y="232.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Weights written by Astra</text>
+<rect x="210.0" y="226.0" width="260.8" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Breakout, Weights written by Astra: 512.5 ± 7.6</title></rect>
+<text x="475.8" y="232.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">512.5</text>
+<text x="202.0" y="249.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO from Astra&#x27;s net (200M)</text>
+<rect x="210.0" y="243.0" width="260.8" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Breakout, PPO from Astra&#x27;s net (200M): 512.5 ± 7.6</title></rect>
+<text x="475.8" y="249.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">512.5</text>
+<text x="202.0" y="266.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO from scratch, best (200M)</text>
+<rect x="210.0" y="260.0" width="32.2" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Breakout, PPO from scratch, best (200M): 63.2 ± 1.0</title></rect>
+<text x="247.2" y="266.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">63.2</text>
+<text x="202.0" y="283.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO, article (500M)</text>
+<rect x="210.0" y="277.0" width="12.9" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Breakout, PPO, article (500M): 25.3 (reported)</title></rect>
+<text x="227.9" y="283.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">25.3</text>
+<text x="0.0" y="316.0" text-anchor="start" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 12px; font-weight: 600; fill: var(--color-fg);">Seaquest</text>
+<text x="202.0" y="334.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Code written by Astra</text>
+<rect x="210.0" y="328.0" width="400.0" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Seaquest, Code written by Astra: 187.3 ± 2.8</title></rect>
+<text x="615.0" y="334.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">187.3</text>
+<text x="202.0" y="351.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO, article (500M)</text>
+<rect x="210.0" y="345.0" width="189.9" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Seaquest, PPO, article (500M): 88.9 (reported)</title></rect>
+<text x="404.9" y="351.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">88.9</text>
+<text x="202.0" y="368.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO from Astra&#x27;s net (200M)</text>
+<rect x="210.0" y="362.0" width="176.2" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Seaquest, PPO from Astra&#x27;s net (200M): 82.5 ± 2.1</title></rect>
+<text x="391.2" y="368.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">82.5</text>
+<text x="202.0" y="385.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO from scratch, best (200M)</text>
+<rect x="210.0" y="379.0" width="119.4" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Seaquest, PPO from scratch, best (200M): 55.9 ± 1.3</title></rect>
+<text x="334.4" y="385.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">55.9</text>
+<text x="202.0" y="402.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Weights written by Astra</text>
+<rect x="210.0" y="396.0" width="109.8" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Seaquest, Weights written by Astra: 51.4 ± 1.4</title></rect>
+<text x="324.8" y="402.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">51.4</text>
+<text x="0.0" y="435.0" text-anchor="start" dominant-baseline="auto" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 12px; font-weight: 600; fill: var(--color-fg);">Asterix</text>
+<text x="202.0" y="453.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Code written by Astra</text>
+<rect x="210.0" y="447.0" width="400.0" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Asterix, Code written by Astra: 83.2 ± 1.8</title></rect>
+<text x="615.0" y="453.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">83.2</text>
+<text x="202.0" y="470.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO, article (500M)</text>
+<rect x="210.0" y="464.0" width="265.4" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Asterix, PPO, article (500M): 55.2 (reported)</title></rect>
+<text x="480.4" y="470.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">55.2</text>
+<text x="202.0" y="487.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">Weights written by Astra</text>
+<rect x="210.0" y="481.0" width="263.5" height="13.0" rx="2" style="fill: var(--fig-1);"><title>Asterix, Weights written by Astra: 54.8 ± 1.1</title></rect>
+<text x="478.5" y="487.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">54.8</text>
+<text x="202.0" y="504.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO from Astra&#x27;s net (200M)</text>
+<rect x="210.0" y="498.0" width="244.2" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Asterix, PPO from Astra&#x27;s net (200M): 50.8 ± 1.0</title></rect>
+<text x="459.2" y="504.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">50.8</text>
+<text x="202.0" y="521.5" text-anchor="end" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 11px; font-weight: 400; fill: var(--color-fg);">PPO from scratch, best (200M)</text>
+<rect x="210.0" y="515.0" width="118.3" height="13.0" rx="2" style="fill: var(--fig-2);"><title>Asterix, PPO from scratch, best (200M): 24.6 ± 0.5</title></rect>
+<text x="333.3" y="521.5" text-anchor="start" dominant-baseline="middle" style="font-family: var(--font-sans, system-ui, sans-serif); font-size: 10.5px; font-weight: 400; fill: var(--color-muted);">24.6</text>
+</svg>

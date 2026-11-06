@@ -42,6 +42,7 @@ small-games-llm/
 | Hand-written networks as a starting point for PPO | `experiments/ppo_warm_start/` | `uv run --group ppo --group analysis python experiments/ppo_warm_start/analyze.py` |
 | From an algorithm to weights: the BFS in an MLP | `experiments/low_tide/bfs_net/` (within the limits), `experiments/low_tide/bfs_exact/` (exact, without limits) | `uv run python experiments/low_tide/bfs_net/check.py` |
 | Asking for the algorithm as code | `experiments/code_policies/` | `uv run python experiments/code_policies/evaluate_code.py` |
+| The figures of the article | `experiments/article/` | `uv run python experiments/article/figures.py` |
 
 ## Inside an experiment folder
 
