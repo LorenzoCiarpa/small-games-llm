@@ -143,8 +143,8 @@ SCOREBOARD = {
     "Low Tide": [
         ("Code written by Astra", 188.9, 0.7, BLUE),
         ("PPO from scratch, best (100M)", 166.9, 2.7, ORANGE),
-        ("BFS heuristic as weights (ours)", 166.7, 2.0, AQUA),
-        ("BFS heuristic (ours)", 164.0, 1.5, AQUA),
+        ("BFS heuristic as weights", 166.7, 2.0, AQUA),
+        ("BFS heuristic", 164.0, 1.5, AQUA),
         ("PPO from Astra's net (100M)", 147.3, 2.9, ORANGE),
         ("Weights written by Claude", 132.3, 0.9, BLUE),
         ("Weights written by Astra", 79.9, 1.0, BLUE),
@@ -178,7 +178,7 @@ def scoreboard(out):
     H = 40 + sum(len(v) * row + gap for v in SCOREBOARD.values())
     s = Svg(W, H)
     lx = 0
-    for label, color in [("written by an LLM", BLUE), ("trained with PPO", ORANGE), ("written by hand (ours)", AQUA)]:
+    for label, color in [("written by an LLM", BLUE), ("trained with PPO", ORANGE), ("written by hand by me", AQUA)]:
         s.rect(lx, 6, 11, 11, color)
         s.text(lx + 16, 12, label, 11, INK, baseline="middle")
         lx += 16 + 6.2 * len(label) + 22

@@ -13,6 +13,7 @@ small-games-llm/
 │   ├── weights.py            the weight-file format and the reference MLP forward pass used for every score
 │   ├── evaluate.py, play.py  the `uv run evaluate` and `uv run play` commands
 │   ├── ppo.py                the PPO trainer (CleanRL style, PyTorch CPU)
+│   ├── code_policy.py        the code written by an LLM as a baseline (`--baseline astra_code`, every game)
 │   └── analysis.py, features.py   tools for the weight analyses (pruning, ablation, probes, ...)
 ├── weights/<game>/           every network, one JSON file each (format in src/small_games/weights.py)
 ├── experiments/<game>/<name>/   experiments on one game
@@ -24,7 +25,7 @@ small-games-llm/
 
 | file | what it is |
 |---|---|
-| `weights/low_tide/claude.json` | written by Claude Opus 5.5 from the prompt in `experiments/low_tide/weights_prompt/` |
+| `weights/low_tide/claude.json` | written by Claude Opus 5.5; `experiments/low_tide/weights_prompt/` holds a reconstruction of the prompt |
 | `weights/low_tide/gpt.json` | written by GPT-6 Astra from the same prompt |
 | `weights/<minatar game>/paper_astra.json` | the networks written by GPT-6 Astra in the original article, converted to JSON |
 | `weights/low_tide/bfs_net.json` | the BFS heuristic of Low Tide written by hand as weights, within the game's limits |
@@ -41,8 +42,8 @@ small-games-llm/
 | PPO from scratch, and whether its weights read as algorithms | `experiments/<game>/ppo/`, `experiments/ppo_over_training/`, `experiments/ppo_runs.py` | `uv run --group ppo python experiments/ppo_runs.py status` |
 | Hand-written networks as a starting point for PPO | `experiments/ppo_warm_start/` | `uv run --group ppo --group analysis python experiments/ppo_warm_start/analyze.py` |
 | From an algorithm to weights: the BFS in an MLP | `experiments/low_tide/bfs_net/` (within the limits), `experiments/low_tide/bfs_exact/` (exact, without limits) | `uv run python experiments/low_tide/bfs_net/check.py` |
-| Asking for the algorithm as code | `experiments/code_policies/` | `uv run python experiments/code_policies/evaluate_code.py` |
-| The figures of the article | `experiments/article/` | `uv run python experiments/article/figures.py` |
+| Asking for the algorithm as code | `experiments/code_policies/` | `uv run python experiments/code_policies/evaluate_code.py`, or `uv run evaluate <game> --baseline astra_code` |
+| The figures and the gameplay clips of the article | `experiments/article/` | `uv run python experiments/article/figures.py`, `uv run python experiments/article/videos.py` (needs ffmpeg) |
 
 ## Inside an experiment folder
 
