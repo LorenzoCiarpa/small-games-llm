@@ -25,8 +25,8 @@ small-games-llm/
 
 | file | what it is |
 |---|---|
-| `weights/low_tide/claude.json` | written by Claude Opus 5.5; `experiments/low_tide/weights_prompt/` holds a reconstruction of the prompt |
-| `weights/low_tide/gpt.json` | written by GPT-6 Astra from the same prompt |
+| `weights/low_tide/claude.json` | written by Claude Opus 5.5 |
+| `weights/low_tide/gpt.json` | written by GPT-6 Astra, with the same prompt as Claude |
 | `weights/<minatar game>/paper_astra.json` | the networks written by GPT-6 Astra in the original article, converted to JSON |
 | `weights/low_tide/bfs_net.json` | the BFS heuristic of Low Tide written by hand as weights, within the game's limits |
 | `weights/<game>/ppo*.json` | networks trained with PPO: `ppo` (reference run), `ppo_100m` (Low Tide, 100M steps), `ppo_ent*` (entropy sweep), `ppo_v1` (first MinAtar attempt), `ppo_arch_*` (PPO from scratch with the shape of a hand-written network), `ppo_from_*` (PPO started from a hand-written network; `_cw` = with critic warm-up) |
@@ -36,7 +36,7 @@ small-games-llm/
 | article section | folder | main command |
 |---|---|---|
 | The games and the protocol | `src/small_games/`, `docs/low_tide_observation.md` | `uv run evaluate <game> <weights>` |
-| Writing weights for a new game | `experiments/low_tide/weights_prompt/`, `weights/low_tide/` | `uv run evaluate low_tide claude gpt --baseline heuristic` |
+| Writing weights for a new game | `weights/low_tide/` | `uv run evaluate low_tide claude gpt --baseline heuristic` |
 | What the written weights look like | `experiments/weight_distance/` | `uv run --group analysis python experiments/weight_distance/analyze.py` |
 | Reading the algorithm back from the weights | `experiments/low_tide/decode_claude/`, `experiments/low_tide/decode_gpt/`, `experiments/<minatar game>/decode_astra/` | `uv run python experiments/<game>/decode_*/check.py` |
 | PPO from scratch, and whether its weights read as algorithms | `experiments/<game>/ppo/`, `experiments/ppo_over_training/`, `experiments/ppo_runs.py` | `uv run --group ppo python experiments/ppo_runs.py status` |

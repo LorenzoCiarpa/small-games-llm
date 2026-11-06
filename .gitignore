@@ -7,3 +7,5 @@ experiments/**/state.tmp
 experiments/**/pid
 experiments/code_policies/prompts/
 experiments/low_tide/bfs_exact/bfs_exact.json
+# the Low Tide weight prompt and the scripts given with it: not published for now
+experiments/low_tide/weights_prompt/
