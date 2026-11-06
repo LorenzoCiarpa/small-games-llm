@@ -21,7 +21,18 @@ the time; PPO then settled on "almost never move" (see experiments/breakout/ppo/
 Interrupting and resuming: every `save_every` steps the full state (actor, critic, optimizer, the games themselves,
 random generators) goes to results/<name>/state.pt, and the actor to checkpoint_<N>M.json. SIGTERM or Ctrl-C stop
 at the end of the current update after saving; `--resume` continues from state.pt exactly where it stopped (same
-result as an uninterrupted run).
+result as an uninterrupted run). The starting actor is written to checkpoint_0000M.json.
+
+Starting from a weight file: `init` (a path from the repository root) loads a hand-written or trained network into
+the actor; `hidden` and `activations` must describe the same architecture. The critic starts random as usual.
+`critic_warmup` steps at the start train only the critic: the actor stays where it is, but its gradient is still
+computed and logged, so a run with critic_warmup = total_steps measures the policy gradient at fixed weights with a
+critic fitted to that policy (experiments/ppo_warm_start/probe.py).
+
+Besides the losses, the training log records the actor's gradient (before clipping): its mean minibatch norm, the
+norm of the full-batch gradient (mean of the first epoch's minibatch gradients, at the weights of the start of the
+update), the same split into the policy-gradient term and the entropy term, the critic's gradient norm, the
+fraction of minibatches cut by max_grad_norm, and the L2 distance of the actor from its starting weights.
 
 Needs the `ppo` dependency group:  uv run --group ppo python experiments/<game>/ppo/train.py
 """
@@ -71,6 +82,16 @@ class PPOConfig:
     threads: int = 1
     log_every: int = 10                      # updates between log lines
     save_every: int = 5_000_000              # steps between saves of the full state and of the weights
+    activations: tuple[str, ...] | None = None  # one per hidden layer (None: `activation` for all)
+    init: str | None = None                  # weight file the actor starts from (path from the repo root)
+    critic_warmup: int = 0                   # steps at the start during which only the critic learns
+
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def hidden_activations(cfg: PPOConfig):
+    return list(cfg.activations) if cfg.activations is not None else [cfg.activation] * len(cfg.hidden)
 
 
 def _check_spec(cfg: PPOConfig, game):
@@ -79,14 +100,20 @@ def _check_spec(cfg: PPOConfig, game):
         raise ValueError(f"{game.name}: {len(cfg.hidden)} hidden layers, allowed 1..{spec.max_hidden_layers}")
     if any(not 1 <= h <= spec.max_hidden_units for h in cfg.hidden):
         raise ValueError(f"{game.name}: hidden sizes {cfg.hidden}, max {spec.max_hidden_units}")
-    if cfg.activation not in spec.hidden_activations:
-        raise ValueError(f"{game.name}: activation {cfg.activation!r} not in {spec.hidden_activations}")
+    acts = hidden_activations(cfg)
+    if len(acts) != len(cfg.hidden):
+        raise ValueError(f"{game.name}: {len(acts)} activations for {len(cfg.hidden)} hidden layers")
+    for a in acts:
+        if a not in spec.hidden_activations or a not in ("tanh", "relu", "linear"):
+            raise ValueError(f"{game.name}: activation {a!r} not in {spec.hidden_activations}")
 
 
-def _mlp(sizes, activation, out_gain):
+def _mlp(sizes, activations, out_gain):
+    """Linear layers with orthogonal init; `activations` has one entry per hidden layer (or one string for all)."""
     import torch.nn as nn
 
-    act = {"tanh": nn.Tanh, "relu": nn.ReLU}[activation]
+    if isinstance(activations, str):
+        activations = [activations] * (len(sizes) - 2)
     layers = []
     for i in range(len(sizes) - 1):
         lin = nn.Linear(sizes[i], sizes[i + 1])
@@ -95,8 +122,27 @@ def _mlp(sizes, activation, out_gain):
         nn.init.zeros_(lin.bias)
         layers.append(lin)
         if not last:
-            layers.append(act())
+            layers.append({"tanh": nn.Tanh, "relu": nn.ReLU, "linear": nn.Identity}[activations[i]]())
     return nn.Sequential(*layers)
+
+
+def _load_init(actor, cfg: PPOConfig, game):
+    """Copy the weight file `cfg.init` into the actor (same architecture required)."""
+    import torch
+
+    from .weights import load_weights
+
+    path = Path(cfg.init) if Path(cfg.init).is_absolute() else ROOT / cfg.init
+    layers = load_weights(path, game)
+    lins = [m for m in actor if hasattr(m, "weight")]
+    file_arch = [(W.shape[0], a) for W, _, a in layers[:-1]]
+    if file_arch != list(zip(cfg.hidden, hidden_activations(cfg))) or len(layers) != len(lins):
+        raise ValueError(f"init {cfg.init}: architecture {file_arch}, config "
+                         f"{list(zip(cfg.hidden, hidden_activations(cfg)))}")
+    with torch.no_grad():
+        for lin, (W, b, _) in zip(lins, layers):
+            lin.weight.copy_(torch.from_numpy(W))
+            lin.bias.copy_(torch.from_numpy(b))
 
 
 UNUSED_LOGIT = -100.0
@@ -109,6 +155,7 @@ def export_actor(actor, cfg: PPOConfig, game, path: Path, source: str):
     network (still obs -> ... -> n_actions) never picks them, exactly as during training.
     """
     lins = [m for m in actor if hasattr(m, "weight")]
+    acts = hidden_activations(cfg)
     layers = []
     for i, lin in enumerate(lins):
         W = lin.weight.detach().double().numpy().copy()
@@ -120,7 +167,7 @@ def export_actor(actor, cfg: PPOConfig, game, path: Path, source: str):
             b[unused] = UNUSED_LOGIT
         layers.append({
             "in": int(W.shape[1]), "out": int(W.shape[0]),
-            "activation": "linear" if last else cfg.activation,
+            "activation": "linear" if last else acts[i],
             "W": {"dense": [[float(f"{x:.6g}") for x in row] for row in W]},
             "b": {"dense": [float(f"{x:.6g}") for x in b]},
         })
@@ -141,7 +188,12 @@ def _git_commit():
 
 
 LOG_HEADER = ["update", "steps", "seconds", "episodes", "mean_return", "mean_length",
-              "policy_loss", "value_loss", "entropy", "approx_kl", "clipfrac", "lr"]
+              "policy_loss", "value_loss", "entropy", "approx_kl", "clipfrac", "lr",
+              # actor gradient before clipping: mean minibatch norm; full-batch norm (first epoch), and its
+              # policy-gradient and entropy (times ent_coef) parts; critic gradient; fraction of minibatches
+              # clipped; L2 distance of the actor from its starting weights
+              "actor_grad", "actor_grad_full", "pg_grad_full", "ent_grad_full", "critic_grad", "clipped",
+              "dist_init"]
 
 
 class _StopFlag:
@@ -182,13 +234,21 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path, resume=False):
 
     torch.manual_seed(cfg.seed)
     np.random.seed(cfg.seed)
-    actor = _mlp((game.obs_dim, *cfg.hidden, game.n_actions), cfg.activation, 0.01)
+    actor = _mlp((game.obs_dim, *cfg.hidden, game.n_actions), hidden_activations(cfg), 0.01)
+    if cfg.init:
+        _load_init(actor, cfg, game)
     mask = torch.zeros(game.n_actions)        # added to the logits: -1e9 on the actions the policy may not use
     if cfg.actions is not None:
         mask[[a for a in range(game.n_actions) if a not in cfg.actions]] = -1e9
     critic = _mlp((game.obs_dim, *cfg.critic_hidden, 1), "tanh", 1.0)
-    params = list(actor.parameters()) + list(critic.parameters())
+    actor_params, critic_params = list(actor.parameters()), list(critic.parameters())
+    params = actor_params + critic_params
     opt = torch.optim.Adam(params, lr=cfg.lr, eps=1e-5)
+    # the starting actor (deterministic given the config, so also right on --resume), for dist_init
+    theta0 = torch.cat([p.detach().reshape(-1) for p in actor_params]).clone()
+
+    def flat(tensors):
+        return torch.cat([t.reshape(-1) for t in tensors])
 
     T, N = cfg.n_steps, cfg.n_envs
     batch = T * N
@@ -224,6 +284,7 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path, resume=False):
         start, t_prev = 1, 0.0
         log_f = open(log_path, "w", newline="")
         csv.writer(log_f).writerow(LOG_HEADER)
+        export_actor(actor, cfg, game, results_dir / "checkpoint_0000M.json", source + ", starting weights")
     log = csv.writer(log_f)
 
     def save_state(update, seconds):
@@ -294,7 +355,18 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path, resume=False):
             # ---- update
             f_obs, f_act, f_logp = b_obs.reshape(batch, -1), b_act.reshape(batch), b_logp.reshape(batch)
             f_adv, f_ret = adv.reshape(batch), ret.reshape(batch)
-            stats = []
+            frozen = (update - 1) * batch < cfg.critic_warmup      # critic warm-up: the actor does not move
+            logged = update % cfg.log_every == 0 or update == n_updates
+            if logged:
+                # full-batch gradient at the weights of the start of the update (ratio = 1, no clipping active)
+                logits = actor(f_obs) + mask
+                dist = torch.distributions.Categorical(logits=logits)
+                a_ = (f_adv - f_adv.mean()) / (f_adv.std() + 1e-8)
+                pg_full = -(a_ * (dist.log_prob(f_act) - f_logp).exp()).mean()
+                g_pg = flat(torch.autograd.grad(pg_full, actor_params, retain_graph=True))
+                g_ent = cfg.ent_coef * flat(torch.autograd.grad(dist.entropy().mean(), actor_params))
+                full = (g_pg.norm().item(), (g_pg - g_ent).norm().item(), g_ent.norm().item())
+            stats, gstats = [], []
             for _ in range(cfg.epochs):
                 perm = torch.randperm(batch)
                 for s in range(0, batch, mb):
@@ -312,22 +384,33 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path, resume=False):
                     loss = pg + cfg.vf_coef * vl - cfg.ent_coef * ent
                     opt.zero_grad()
                     loss.backward()
-                    nn.utils.clip_grad_norm_(params, cfg.max_grad_norm)
+                    with torch.no_grad():
+                        ga = flat([p.grad for p in actor_params]).norm().item()
+                        gc = flat([p.grad for p in critic_params]).norm().item()
+                    if frozen:
+                        for p in actor_params:
+                            p.grad = None            # Adam skips parameters without a gradient
+                    total = float(nn.utils.clip_grad_norm_(params, cfg.max_grad_norm))
                     opt.step()
                     with torch.no_grad():
                         lr_ = logp - f_logp[idx]
                         kl = ((lr_.exp() - 1) - lr_).mean().item()
                         cf = ((ratio - 1).abs() > cfg.clip).float().mean().item()
                     stats.append((pg.item(), vl.item(), ent.item(), kl, cf))
+                    gstats.append((ga, gc, total > cfg.max_grad_norm))
 
             steps = update * batch
             seconds = t_prev + time.time() - t0
-            if update % cfg.log_every == 0 or update == n_updates:
+            if logged:
                 s = np.mean(stats, axis=0)
+                g = np.mean(gstats, axis=0)
+                with torch.no_grad():
+                    dist_init = (flat([p.detach() for p in actor_params]) - theta0).norm().item()
                 mr = float(np.mean([f[0] for f in finished])) if finished else float("nan")
                 ml = float(np.mean([f[1] for f in finished])) if finished else float("nan")
                 log.writerow([update, steps, round(seconds, 1), len(finished), round(mr, 3), round(ml, 1),
-                              *[round(float(x), 5) for x in s], opt.param_groups[0]["lr"]])
+                              *[round(float(x), 5) for x in s], opt.param_groups[0]["lr"],
+                              *[f"{x:.4g}" for x in (g[0], full[1], full[0], full[2], g[1], g[2], dist_init)]])
                 log_f.flush()
                 print(f"[{cfg.game}] {steps / 1e6:7.2f}M passi  {seconds:6.0f}s  "
                       f"ritorno {mr:8.2f} ({len(finished)} ep)  entropia {s[2]:.3f}  kl {s[3]:.4f}", flush=True)
@@ -364,15 +447,26 @@ def _parse_sets(cfg: PPOConfig, items):
             out[key] = None
         elif isinstance(cur, bool):
             out[key] = val.lower() in ("1", "true", "yes")
-        elif isinstance(cur, tuple) or key == "actions":
-            out[key] = tuple(int(x) if x.lstrip("-").isdigit() else float(x) for x in val.split(","))
+        elif isinstance(cur, tuple) or key in ("actions", "activations"):
+            out[key] = tuple(_scalar(x) for x in val.split(","))
         elif isinstance(cur, int):
             out[key] = int(val)
-        elif isinstance(cur, float) or cur is None:
+        elif isinstance(cur, float):
             out[key] = float(val)
+        elif cur is None:
+            out[key] = _scalar(val)
         else:
             out[key] = val
     return out
+
+
+def _scalar(x):
+    for cast in (int, float):
+        try:
+            return cast(x)
+        except ValueError:
+            pass
+    return x
 
 
 def main(cfg: PPOConfig, here: Path):

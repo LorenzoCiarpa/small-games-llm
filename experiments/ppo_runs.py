@@ -38,6 +38,22 @@ for _g in ("breakout", "seaquest", "asterix"):
         RUNS[f"{_g}/ppo_{_tag}"] = (_g, ["--total-steps", str(MINATAR_STEPS), "--set", f"ent_coef={_ent}"])
 RUNS["low_tide/ppo_100m"] = ("low_tide", ["--total-steps", "100000000"])
 
+# PPO che parte dalle reti scritte a mano (experiments/ppo_warm_start/): la configurazione della migliore corsa da
+# zero di ogni gioco, cambia solo il punto di partenza dell'attore. Su Low Tide le reti a mano hanno un'altra
+# architettura, quindi c'è anche la corsa da zero con la stessa architettura (ppo_arch_<rete>).
+for _g in ("breakout", "seaquest", "asterix"):
+    RUNS[f"{_g}/ppo_from_astra"] = (_g, ["--total-steps", str(MINATAR_STEPS), "--set", "ent_coef=0.05",
+                                         "--set", f"init=weights/{_g}/paper_astra.json"])
+LOW_TIDE_ARCH = {"gpt": ["--set", "hidden=43,61,53", "--set", "activation=relu"],
+                 "claude": ["--set", "hidden=46,36", "--set", "activations=relu,tanh"]}
+for _net, _arch in LOW_TIDE_ARCH.items():
+    RUNS[f"low_tide/ppo_from_{_net}"] = ("low_tide", ["--total-steps", "100000000", *_arch,
+                                                      "--set", f"init=weights/low_tide/{_net}.json"])
+    RUNS[f"low_tide/ppo_arch_{_net}"] = ("low_tide", ["--total-steps", "100000000", *_arch])
+    # la stessa partenza, ma i primi 2M passi addestrano solo il critico (l'attore resta la rete scritta a mano)
+    RUNS[f"low_tide/ppo_from_{_net}_cw"] = ("low_tide", [*RUNS[f"low_tide/ppo_from_{_net}"][1],
+                                                         "--set", "critic_warmup=2000000"])
+
 
 def run_dir(run):
     game, name = run.split("/")

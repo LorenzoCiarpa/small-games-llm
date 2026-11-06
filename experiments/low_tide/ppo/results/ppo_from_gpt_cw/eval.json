@@ -1,0 +1,20 @@
+{
+  "final": {
+    "mean_return": 0.0,
+    "stderr": 0.0,
+    "min_return": 0.0,
+    "max_return": 0.0,
+    "mean_length": 1000.0,
+    "truncated_rate": 1.0,
+    "mean_shells": 0.0,
+    "mean_stings": 0.0,
+    "mean_drowned": 0.0,
+    "protocol": {
+      "episodes": 500,
+      "seed0": 10000,
+      "sticky_prob": 0.1,
+      "max_steps": 1000
+    },
+    "seconds": 6.6
+  }
+}

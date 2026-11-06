@@ -1,0 +1,1847 @@
+{
+ "low_tide|baseline:random|protocol": {
+  "mean": 1.95,
+  "stderr": 0.09839900776663815,
+  "episodes": 500
+ },
+ "low_tide|baseline:heuristic|protocol": {
+  "mean": 163.972,
+  "stderr": 1.4740774201109526,
+  "episodes": 500
+ },
+ "low_tide|baseline:safe|protocol": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 500
+ },
+ "low_tide|weights/low_tide/claude.json|protocol": {
+  "mean": 132.272,
+  "stderr": 0.8699365558605093,
+  "episodes": 500
+ },
+ "low_tide|weights/low_tide/gpt.json|protocol": {
+  "mean": 79.914,
+  "stderr": 0.9496319337613064,
+  "episodes": 500
+ },
+ "breakout|baseline:random|protocol": {
+  "mean": 0.495,
+  "stderr": 0.022281639784169194,
+  "episodes": 1000
+ },
+ "breakout|weights/breakout/paper_astra.json|protocol": {
+  "mean": 512.545,
+  "stderr": 7.5718440817146915,
+  "episodes": 1000
+ },
+ "seaquest|baseline:random|protocol": {
+  "mean": 0.107,
+  "stderr": 0.012873100509073823,
+  "episodes": 1000
+ },
+ "seaquest|weights/seaquest/paper_astra.json|protocol": {
+  "mean": 51.417,
+  "stderr": 1.3752681460258847,
+  "episodes": 1000
+ },
+ "asterix|baseline:random|protocol": {
+  "mean": 0.479,
+  "stderr": 0.026158043566812162,
+  "episodes": 1000
+ },
+ "asterix|weights/asterix/paper_astra.json|protocol": {
+  "mean": 54.843,
+  "stderr": 1.053794493169249,
+  "episodes": 1000
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0005M.json|200": {
+  "mean": 11.02,
+  "stderr": 0.37710614583447283,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0010M.json|200": {
+  "mean": 14.05,
+  "stderr": 0.7558066674705672,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0025M.json|200": {
+  "mean": 30.225,
+  "stderr": 1.4645464679496922,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0050M.json|200": {
+  "mean": 37.845,
+  "stderr": 2.0878458700020035,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0100M.json|200": {
+  "mean": 58.415,
+  "stderr": 3.7101265571880107,
+  "episodes": 200
+ },
+ "breakout|experiments/ppo_warm_start/results/init/breakout_ppo_ent05.json|200": {
+  "mean": 0.47,
+  "stderr": 0.048551894218050895,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_from_astra/checkpoint_0000M.json|200": {
+  "mean": 512.665,
+  "stderr": 16.8704452665738,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_from_astra/checkpoint_0005M.json|200": {
+  "mean": 512.665,
+  "stderr": 16.8704452665738,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_from_astra/checkpoint_0010M.json|200": {
+  "mean": 512.665,
+  "stderr": 16.8704452665738,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_from_astra/checkpoint_0025M.json|200": {
+  "mean": 512.665,
+  "stderr": 16.8704452665738,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_from_astra/checkpoint_0050M.json|200": {
+  "mean": 512.665,
+  "stderr": 16.8704452665738,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_from_astra/checkpoint_0100M.json|200": {
+  "mean": 512.665,
+  "stderr": 16.8704452665738,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0005M.json|200": {
+  "mean": 3.405,
+  "stderr": 0.13053763969401475,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0010M.json|200": {
+  "mean": 4.46,
+  "stderr": 0.14490336409008286,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0025M.json|200": {
+  "mean": 5.785,
+  "stderr": 0.14934993140289773,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0050M.json|200": {
+  "mean": 21.44,
+  "stderr": 1.274737927544167,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0100M.json|200": {
+  "mean": 37.49,
+  "stderr": 1.9888254405969945,
+  "episodes": 200
+ },
+ "seaquest|experiments/ppo_warm_start/results/init/seaquest_ppo_ent05.json|200": {
+  "mean": 0.07,
+  "stderr": 0.019426449358371355,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0000M.json|200": {
+  "mean": 48.335,
+  "stderr": 2.9373635112094862,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0005M.json|200": {
+  "mean": 33.28,
+  "stderr": 2.5848627773809283,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0010M.json|200": {
+  "mean": 34.485,
+  "stderr": 2.619984823884851,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0025M.json|200": {
+  "mean": 60.175,
+  "stderr": 3.9200774111677608,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0050M.json|200": {
+  "mean": 65.01,
+  "stderr": 4.139483800023049,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0100M.json|200": {
+  "mean": 74.435,
+  "stderr": 4.473352578487111,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0005M.json|200": {
+  "mean": 2.13,
+  "stderr": 0.1601365623240515,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0010M.json|200": {
+  "mean": 3.535,
+  "stderr": 0.2870642863935064,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0025M.json|200": {
+  "mean": 5.985,
+  "stderr": 0.4391905242408067,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0050M.json|200": {
+  "mean": 10.195,
+  "stderr": 0.671857004258238,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0100M.json|200": {
+  "mean": 17.655,
+  "stderr": 1.0458003475014581,
+  "episodes": 200
+ },
+ "asterix|experiments/ppo_warm_start/results/init/asterix_ppo_ent05.json|200": {
+  "mean": 0.42,
+  "stderr": 0.05321804960744146,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0000M.json|200": {
+  "mean": 54.53,
+  "stderr": 2.479310469063939,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0005M.json|200": {
+  "mean": 45.93,
+  "stderr": 2.353085326282032,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0010M.json|200": {
+  "mean": 39.81,
+  "stderr": 1.9145093969881104,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0025M.json|200": {
+  "mean": 45.57,
+  "stderr": 2.0385297441018464,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0050M.json|200": {
+  "mean": 46.215,
+  "stderr": 1.7799818967517111,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0100M.json|200": {
+  "mean": 45.625,
+  "stderr": 1.9142475265662025,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0005M.json|200": {
+  "mean": 93.32,
+  "stderr": 3.290795446904416,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0010M.json|200": {
+  "mean": 97.87,
+  "stderr": 3.853852148423645,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0025M.json|200": {
+  "mean": 114.475,
+  "stderr": 4.406424829027422,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0050M.json|200": {
+  "mean": 120.775,
+  "stderr": 4.815946279584023,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0000M.json|200": {
+  "mean": 1.92,
+  "stderr": 0.179804472250292,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0000M.json|200": {
+  "mean": 79.695,
+  "stderr": 1.491722512827497,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0005M.json|200": {
+  "mean": 46.105,
+  "stderr": 2.492737163809934,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0010M.json|200": {
+  "mean": 77.82,
+  "stderr": 2.7667785087684407,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0025M.json|200": {
+  "mean": 119.56,
+  "stderr": 3.614068268203602,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0050M.json|200": {
+  "mean": 137.095,
+  "stderr": 4.026598733647177,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0000M.json|200": {
+  "mean": 79.695,
+  "stderr": 1.491722512827497,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0005M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0010M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0025M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0050M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0005M.json|200": {
+  "mean": 90.595,
+  "stderr": 3.14169638185788,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0010M.json|200": {
+  "mean": 117.595,
+  "stderr": 3.2707174807977495,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0025M.json|200": {
+  "mean": 126.445,
+  "stderr": 4.124133516425787,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0050M.json|200": {
+  "mean": 147.415,
+  "stderr": 3.997563815286309,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0000M.json|200": {
+  "mean": 1.895,
+  "stderr": 0.1772766483501176,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0000M.json|200": {
+  "mean": 132.135,
+  "stderr": 1.3301618426485515,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0005M.json|200": {
+  "mean": 5.39,
+  "stderr": 0.3214907174508079,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0010M.json|200": {
+  "mean": 22.295,
+  "stderr": 0.7425271766340952,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0025M.json|200": {
+  "mean": 26.64,
+  "stderr": 0.8426758051367169,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0050M.json|200": {
+  "mean": 36.12,
+  "stderr": 0.6088773754143417,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0000M.json|200": {
+  "mean": 132.135,
+  "stderr": 1.3301618426485515,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0005M.json|200": {
+  "mean": 39.8,
+  "stderr": 1.1119949025587226,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0010M.json|200": {
+  "mean": 72.62,
+  "stderr": 2.692046353211474,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0025M.json|200": {
+  "mean": 49.725,
+  "stderr": 0.9687825209324957,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0050M.json|200": {
+  "mean": 57.24,
+  "stderr": 1.204352241500816,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0015M.json|200": {
+  "mean": 23.245,
+  "stderr": 0.9652894871331861,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0020M.json|200": {
+  "mean": 28.09,
+  "stderr": 1.3312100136727159,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0030M.json|200": {
+  "mean": 33.475,
+  "stderr": 1.5174353115118664,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0035M.json|200": {
+  "mean": 29.445,
+  "stderr": 1.2660764681154049,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0040M.json|200": {
+  "mean": 35.375,
+  "stderr": 1.653205163177816,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0045M.json|200": {
+  "mean": 35.3,
+  "stderr": 1.9967058298242812,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0055M.json|200": {
+  "mean": 43.16,
+  "stderr": 2.521200958146094,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0060M.json|200": {
+  "mean": 38.105,
+  "stderr": 2.05291063746748,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0065M.json|200": {
+  "mean": 51.09,
+  "stderr": 2.8815231001823363,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0070M.json|200": {
+  "mean": 53.155,
+  "stderr": 3.3225897865140137,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0075M.json|200": {
+  "mean": 43.605,
+  "stderr": 2.2759933222694384,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0080M.json|200": {
+  "mean": 48.335,
+  "stderr": 3.2036197923394947,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0085M.json|200": {
+  "mean": 49.425,
+  "stderr": 2.912617133754314,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0090M.json|200": {
+  "mean": 52.92,
+  "stderr": 2.9202667324997424,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0095M.json|200": {
+  "mean": 58.65,
+  "stderr": 3.5270936260944614,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0105M.json|200": {
+  "mean": 69.52,
+  "stderr": 4.997330744794097,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0110M.json|200": {
+  "mean": 74.815,
+  "stderr": 5.247287298688234,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0115M.json|200": {
+  "mean": 55.615,
+  "stderr": 3.750656073262316,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0120M.json|200": {
+  "mean": 79.66,
+  "stderr": 5.808793541869112,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0125M.json|200": {
+  "mean": 87.56,
+  "stderr": 5.806189904406344,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0130M.json|200": {
+  "mean": 76.78,
+  "stderr": 4.941533340856254,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0135M.json|200": {
+  "mean": 82.9,
+  "stderr": 5.640258200013016,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0140M.json|200": {
+  "mean": 54.43,
+  "stderr": 2.43,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0145M.json|200": {
+  "mean": 59.045,
+  "stderr": 2.4096049166349567,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0150M.json|200": {
+  "mean": 53.84,
+  "stderr": 2.222649964416711,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0155M.json|200": {
+  "mean": 56.055,
+  "stderr": 2.0582252869057585,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0160M.json|200": {
+  "mean": 55.97,
+  "stderr": 2.449150298762746,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0165M.json|200": {
+  "mean": 57.525,
+  "stderr": 2.211981279510413,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0170M.json|200": {
+  "mean": 59.92,
+  "stderr": 2.2670721383321726,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0175M.json|200": {
+  "mean": 61.86,
+  "stderr": 2.6035928017620065,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0180M.json|200": {
+  "mean": 58.6,
+  "stderr": 2.0002763628154465,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0185M.json|200": {
+  "mean": 60.515,
+  "stderr": 2.2029329182276647,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0190M.json|200": {
+  "mean": 61.135,
+  "stderr": 2.0887552194630588,
+  "episodes": 200
+ },
+ "breakout|experiments/breakout/ppo/results/ppo_ent05/checkpoint_0195M.json|200": {
+  "mean": 59.695,
+  "stderr": 2.127118482877953,
+  "episodes": 200
+ },
+ "breakout|weights/breakout/ppo_ent05.json|200": {
+  "mean": 62.41,
+  "stderr": 2.4568250746107627,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0015M.json|200": {
+  "mean": 5.62,
+  "stderr": 0.15859939736399095,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0020M.json|200": {
+  "mean": 5.395,
+  "stderr": 0.16410217126249527,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0030M.json|200": {
+  "mean": 6.885,
+  "stderr": 0.17524964247019065,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0035M.json|200": {
+  "mean": 6.69,
+  "stderr": 0.1893376447476649,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0040M.json|200": {
+  "mean": 18.345,
+  "stderr": 1.0614439179508137,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0045M.json|200": {
+  "mean": 20.945,
+  "stderr": 1.248923103957161,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0055M.json|200": {
+  "mean": 24.23,
+  "stderr": 1.4760518777226777,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0060M.json|200": {
+  "mean": 26.35,
+  "stderr": 1.5468682903006605,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0065M.json|200": {
+  "mean": 27.485,
+  "stderr": 1.4694711984299234,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0070M.json|200": {
+  "mean": 28.395,
+  "stderr": 1.6509765269265069,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0075M.json|200": {
+  "mean": 30.16,
+  "stderr": 1.7476393266576493,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0080M.json|200": {
+  "mean": 32.115,
+  "stderr": 1.612516643208099,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0085M.json|200": {
+  "mean": 32.0,
+  "stderr": 1.7995672288234403,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0090M.json|200": {
+  "mean": 34.035,
+  "stderr": 2.0313420756093006,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0095M.json|200": {
+  "mean": 37.955,
+  "stderr": 2.028320808330758,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0105M.json|200": {
+  "mean": 36.19,
+  "stderr": 1.962236315224015,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0110M.json|200": {
+  "mean": 39.43,
+  "stderr": 2.180780714013462,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0115M.json|200": {
+  "mean": 39.435,
+  "stderr": 2.1837519865345207,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0120M.json|200": {
+  "mean": 41.825,
+  "stderr": 2.359716760747945,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0125M.json|200": {
+  "mean": 40.895,
+  "stderr": 2.252261816809335,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0130M.json|200": {
+  "mean": 46.795,
+  "stderr": 2.361482132966838,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0135M.json|200": {
+  "mean": 39.01,
+  "stderr": 2.3809439241295136,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0140M.json|200": {
+  "mean": 38.6,
+  "stderr": 2.322838326153423,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0145M.json|200": {
+  "mean": 48.995,
+  "stderr": 2.38142410731362,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0150M.json|200": {
+  "mean": 43.55,
+  "stderr": 2.6556827283711515,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0155M.json|200": {
+  "mean": 48.495,
+  "stderr": 2.5900757395650453,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0160M.json|200": {
+  "mean": 52.605,
+  "stderr": 2.8515789287576583,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0165M.json|200": {
+  "mean": 46.105,
+  "stderr": 2.421526134299499,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0170M.json|200": {
+  "mean": 53.09,
+  "stderr": 2.9562402272831343,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0175M.json|200": {
+  "mean": 50.685,
+  "stderr": 2.700424101253943,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0180M.json|200": {
+  "mean": 54.445,
+  "stderr": 2.77917323937756,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0185M.json|200": {
+  "mean": 51.72,
+  "stderr": 2.9137790826885905,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0190M.json|200": {
+  "mean": 61.795,
+  "stderr": 3.0780083743816906,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_ent05/checkpoint_0195M.json|200": {
+  "mean": 58.28,
+  "stderr": 2.999649560771589,
+  "episodes": 200
+ },
+ "seaquest|weights/seaquest/ppo_ent05.json|200": {
+  "mean": 55.98,
+  "stderr": 2.9662249497064956,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0015M.json|200": {
+  "mean": 41.685,
+  "stderr": 3.2423359770294775,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0020M.json|200": {
+  "mean": 55.095,
+  "stderr": 3.770245833260224,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0030M.json|200": {
+  "mean": 57.58,
+  "stderr": 3.864172244566537,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0035M.json|200": {
+  "mean": 53.59,
+  "stderr": 3.6061797183174353,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0040M.json|200": {
+  "mean": 64.035,
+  "stderr": 4.172019608422919,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0045M.json|200": {
+  "mean": 59.355,
+  "stderr": 3.960894888353251,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0055M.json|200": {
+  "mean": 68.39,
+  "stderr": 4.340210436507178,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0060M.json|200": {
+  "mean": 76.325,
+  "stderr": 4.473921854345912,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0065M.json|200": {
+  "mean": 87.285,
+  "stderr": 4.7802376756999125,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0070M.json|200": {
+  "mean": 78.76,
+  "stderr": 4.5146953797415055,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0075M.json|200": {
+  "mean": 76.59,
+  "stderr": 4.442859948570635,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0080M.json|200": {
+  "mean": 67.155,
+  "stderr": 4.27412512720616,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0085M.json|200": {
+  "mean": 72.73,
+  "stderr": 4.547447845720469,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0090M.json|200": {
+  "mean": 69.74,
+  "stderr": 4.52692247953048,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0095M.json|200": {
+  "mean": 68.34,
+  "stderr": 4.492184391030167,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0105M.json|200": {
+  "mean": 62.07,
+  "stderr": 3.8240347420679526,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0110M.json|200": {
+  "mean": 79.785,
+  "stderr": 4.46738531275995,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0115M.json|200": {
+  "mean": 75.545,
+  "stderr": 4.1514893949015335,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0120M.json|200": {
+  "mean": 75.11,
+  "stderr": 4.483065791896474,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0125M.json|200": {
+  "mean": 71.595,
+  "stderr": 4.532501818939896,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0130M.json|200": {
+  "mean": 75.755,
+  "stderr": 4.628068708962127,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0135M.json|200": {
+  "mean": 80.22,
+  "stderr": 4.554688125393218,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0140M.json|200": {
+  "mean": 75.735,
+  "stderr": 4.71671611713576,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0145M.json|200": {
+  "mean": 71.46,
+  "stderr": 4.459222502481029,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0150M.json|200": {
+  "mean": 84.64,
+  "stderr": 4.6663665613003555,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0155M.json|200": {
+  "mean": 71.625,
+  "stderr": 4.43448929999372,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0160M.json|200": {
+  "mean": 72.675,
+  "stderr": 4.481883899819057,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0165M.json|200": {
+  "mean": 77.275,
+  "stderr": 4.812640065180952,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0170M.json|200": {
+  "mean": 85.22,
+  "stderr": 4.855428294146459,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0175M.json|200": {
+  "mean": 80.19,
+  "stderr": 5.0670498786139655,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0180M.json|200": {
+  "mean": 76.36,
+  "stderr": 4.576024695087456,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0185M.json|200": {
+  "mean": 79.13,
+  "stderr": 5.074630516044676,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0190M.json|200": {
+  "mean": 87.645,
+  "stderr": 4.894299306695248,
+  "episodes": 200
+ },
+ "seaquest|experiments/seaquest/ppo/results/ppo_from_astra/checkpoint_0195M.json|200": {
+  "mean": 85.485,
+  "stderr": 4.849141132573694,
+  "episodes": 200
+ },
+ "seaquest|weights/seaquest/ppo_from_astra.json|200": {
+  "mean": 79.86,
+  "stderr": 4.366702699098205,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0015M.json|200": {
+  "mean": 4.15,
+  "stderr": 0.2800529382834717,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0020M.json|200": {
+  "mean": 4.63,
+  "stderr": 0.33850914642156316,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0030M.json|200": {
+  "mean": 7.27,
+  "stderr": 0.563447303943863,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0035M.json|200": {
+  "mean": 7.305,
+  "stderr": 0.4766506627199387,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0040M.json|200": {
+  "mean": 8.51,
+  "stderr": 0.5359437268892694,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0045M.json|200": {
+  "mean": 10.1,
+  "stderr": 0.6455491215559886,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0055M.json|200": {
+  "mean": 11.295,
+  "stderr": 0.674547959561619,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0060M.json|200": {
+  "mean": 12.98,
+  "stderr": 0.7705300661976616,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0065M.json|200": {
+  "mean": 13.795,
+  "stderr": 0.7614221519415735,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0070M.json|200": {
+  "mean": 13.86,
+  "stderr": 0.8032609418511008,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0075M.json|200": {
+  "mean": 14.3,
+  "stderr": 0.8124966176968641,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0080M.json|200": {
+  "mean": 15.01,
+  "stderr": 0.8717218564283418,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0085M.json|200": {
+  "mean": 16.25,
+  "stderr": 0.8772601821214037,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0090M.json|200": {
+  "mean": 16.78,
+  "stderr": 0.9067352668894629,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0095M.json|200": {
+  "mean": 16.65,
+  "stderr": 0.8776038070855523,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0105M.json|200": {
+  "mean": 17.095,
+  "stderr": 1.000165752594697,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0110M.json|200": {
+  "mean": 18.185,
+  "stderr": 0.9475988565658066,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0115M.json|200": {
+  "mean": 18.205,
+  "stderr": 0.9606922101344766,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0120M.json|200": {
+  "mean": 19.82,
+  "stderr": 1.0439045375019143,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0125M.json|200": {
+  "mean": 19.62,
+  "stderr": 1.0281847203180359,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0130M.json|200": {
+  "mean": 18.545,
+  "stderr": 0.9434992470297624,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0135M.json|200": {
+  "mean": 20.73,
+  "stderr": 0.9984085326107492,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0140M.json|200": {
+  "mean": 19.34,
+  "stderr": 1.0460367894219211,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0145M.json|200": {
+  "mean": 20.29,
+  "stderr": 1.1084098347673776,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0150M.json|200": {
+  "mean": 22.39,
+  "stderr": 1.069889159712515,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0155M.json|200": {
+  "mean": 22.045,
+  "stderr": 1.1498371634768823,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0160M.json|200": {
+  "mean": 23.845,
+  "stderr": 1.1689684818496129,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0165M.json|200": {
+  "mean": 22.98,
+  "stderr": 1.0978956573244376,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0170M.json|200": {
+  "mean": 23.58,
+  "stderr": 1.1461396864712967,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0175M.json|200": {
+  "mean": 23.145,
+  "stderr": 1.153047033867898,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0180M.json|200": {
+  "mean": 23.035,
+  "stderr": 1.0507087222896159,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0185M.json|200": {
+  "mean": 25.115,
+  "stderr": 1.1986210146178053,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0190M.json|200": {
+  "mean": 23.01,
+  "stderr": 1.0728487883262325,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_ent05/checkpoint_0195M.json|200": {
+  "mean": 25.34,
+  "stderr": 1.1595233815502854,
+  "episodes": 200
+ },
+ "asterix|weights/asterix/ppo_ent05.json|200": {
+  "mean": 26.81,
+  "stderr": 1.1789696123029076,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0015M.json|200": {
+  "mean": 38.915,
+  "stderr": 1.7661925306365616,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0020M.json|200": {
+  "mean": 42.75,
+  "stderr": 2.0276573853493614,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0030M.json|200": {
+  "mean": 43.73,
+  "stderr": 2.01499042979385,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0035M.json|200": {
+  "mean": 45.645,
+  "stderr": 2.0093112085148275,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0040M.json|200": {
+  "mean": 47.285,
+  "stderr": 2.131356912023925,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0045M.json|200": {
+  "mean": 48.96,
+  "stderr": 1.928141761714198,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0055M.json|200": {
+  "mean": 42.0,
+  "stderr": 1.987485975425377,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0060M.json|200": {
+  "mean": 46.345,
+  "stderr": 2.244721306469601,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0065M.json|200": {
+  "mean": 43.465,
+  "stderr": 1.989619764941338,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0070M.json|200": {
+  "mean": 43.795,
+  "stderr": 2.051832095895944,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0075M.json|200": {
+  "mean": 46.665,
+  "stderr": 2.0307841580242867,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0080M.json|200": {
+  "mean": 45.565,
+  "stderr": 1.992707527826722,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0085M.json|200": {
+  "mean": 44.44,
+  "stderr": 1.9786630682580706,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0090M.json|200": {
+  "mean": 42.645,
+  "stderr": 1.9346210658270284,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0095M.json|200": {
+  "mean": 49.84,
+  "stderr": 2.1692163325697686,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0105M.json|200": {
+  "mean": 42.78,
+  "stderr": 1.9611831112825493,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0110M.json|200": {
+  "mean": 44.67,
+  "stderr": 2.1103014859988716,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0115M.json|200": {
+  "mean": 44.795,
+  "stderr": 2.1899989387574585,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0120M.json|200": {
+  "mean": 51.52,
+  "stderr": 2.1390008469179196,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0125M.json|200": {
+  "mean": 47.125,
+  "stderr": 1.9868403427902035,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0130M.json|200": {
+  "mean": 47.62,
+  "stderr": 2.0793741810757926,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0135M.json|200": {
+  "mean": 48.885,
+  "stderr": 2.074167236174097,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0140M.json|200": {
+  "mean": 55.295,
+  "stderr": 2.2053816941938704,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0145M.json|200": {
+  "mean": 52.185,
+  "stderr": 2.130952526064743,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0150M.json|200": {
+  "mean": 50.47,
+  "stderr": 2.21052655224744,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0155M.json|200": {
+  "mean": 49.43,
+  "stderr": 2.2472597495415494,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0160M.json|200": {
+  "mean": 49.025,
+  "stderr": 2.2299631281175523,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0165M.json|200": {
+  "mean": 53.81,
+  "stderr": 2.1608949151152292,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0170M.json|200": {
+  "mean": 48.785,
+  "stderr": 2.2253550052738746,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0175M.json|200": {
+  "mean": 55.39,
+  "stderr": 2.363082796160037,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0180M.json|200": {
+  "mean": 47.715,
+  "stderr": 1.968589749799352,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0185M.json|200": {
+  "mean": 50.73,
+  "stderr": 2.164209907243996,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0190M.json|200": {
+  "mean": 51.44,
+  "stderr": 2.004462859916322,
+  "episodes": 200
+ },
+ "asterix|experiments/asterix/ppo/results/ppo_from_astra/checkpoint_0195M.json|200": {
+  "mean": 52.87,
+  "stderr": 2.2060026606270147,
+  "episodes": 200
+ },
+ "asterix|weights/asterix/ppo_from_astra.json|200": {
+  "mean": 54.54,
+  "stderr": 2.1800815991367095,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0015M.json|200": {
+  "mean": 114.885,
+  "stderr": 4.115494545222821,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0020M.json|200": {
+  "mean": 111.38,
+  "stderr": 4.518435492123619,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0030M.json|200": {
+  "mean": 105.65,
+  "stderr": 4.749433978441839,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0035M.json|200": {
+  "mean": 116.99,
+  "stderr": 4.748810959349528,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0040M.json|200": {
+  "mean": 98.815,
+  "stderr": 4.91563027290494,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0045M.json|200": {
+  "mean": 117.985,
+  "stderr": 5.005356314406683,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0055M.json|200": {
+  "mean": 123.57,
+  "stderr": 4.820056037122911,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0060M.json|200": {
+  "mean": 125.82,
+  "stderr": 4.830263473779733,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0065M.json|200": {
+  "mean": 137.68,
+  "stderr": 4.870951533758174,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0070M.json|200": {
+  "mean": 131.97,
+  "stderr": 4.895110420629013,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0075M.json|200": {
+  "mean": 137.175,
+  "stderr": 5.148944554481591,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0080M.json|200": {
+  "mean": 139.94,
+  "stderr": 5.023490748123501,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0085M.json|200": {
+  "mean": 141.975,
+  "stderr": 4.8947076203224045,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0090M.json|200": {
+  "mean": 152.65,
+  "stderr": 4.778278689672767,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_gpt/checkpoint_0095M.json|200": {
+  "mean": 159.555,
+  "stderr": 4.574792729467417,
+  "episodes": 200
+ },
+ "low_tide|weights/low_tide/ppo_arch_gpt.json|200": {
+  "mean": 161.135,
+  "stderr": 4.626120277197241,
+  "episodes": 200
+ },
+ "low_tide|experiments/ppo_warm_start/results/init/low_tide_ppo_100m.json|200": {
+  "mean": 1.925,
+  "stderr": 0.1787642533938407,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0005M.json|200": {
+  "mean": 73.96,
+  "stderr": 2.9119304067005682,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0010M.json|200": {
+  "mean": 88.575,
+  "stderr": 3.385725559287709,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0015M.json|200": {
+  "mean": 101.135,
+  "stderr": 3.945856407542566,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0020M.json|200": {
+  "mean": 113.025,
+  "stderr": 4.123419066623592,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0025M.json|200": {
+  "mean": 124.985,
+  "stderr": 4.000618529438973,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0030M.json|200": {
+  "mean": 118.155,
+  "stderr": 4.321734817659554,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0035M.json|200": {
+  "mean": 100.675,
+  "stderr": 4.452479053697848,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0040M.json|200": {
+  "mean": 114.495,
+  "stderr": 4.66833122831772,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0045M.json|200": {
+  "mean": 106.205,
+  "stderr": 4.816519404181226,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0050M.json|200": {
+  "mean": 116.035,
+  "stderr": 4.632436314298357,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0055M.json|200": {
+  "mean": 133.07,
+  "stderr": 4.5443349790712,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0060M.json|200": {
+  "mean": 129.225,
+  "stderr": 4.716012696523287,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0065M.json|200": {
+  "mean": 138.97,
+  "stderr": 4.446900055151062,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0070M.json|200": {
+  "mean": 139.185,
+  "stderr": 4.699476489073734,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0075M.json|200": {
+  "mean": 136.28,
+  "stderr": 4.725011818336234,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0080M.json|200": {
+  "mean": 147.55,
+  "stderr": 4.25313215945956,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0085M.json|200": {
+  "mean": 143.255,
+  "stderr": 4.802538051246271,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0090M.json|200": {
+  "mean": 137.16,
+  "stderr": 4.691939201155177,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_100m/checkpoint_0095M.json|200": {
+  "mean": 144.6,
+  "stderr": 4.645757777438806,
+  "episodes": 200
+ },
+ "low_tide|weights/low_tide/ppo_100m.json|200": {
+  "mean": 155.535,
+  "stderr": 4.2731067246678975,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0015M.json|200": {
+  "mean": 104.56,
+  "stderr": 3.0817719891265196,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0020M.json|200": {
+  "mean": 122.93,
+  "stderr": 2.791070740665128,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0030M.json|200": {
+  "mean": 133.635,
+  "stderr": 3.292065819786877,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0035M.json|200": {
+  "mean": 122.355,
+  "stderr": 4.28200569110942,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0040M.json|200": {
+  "mean": 128.8,
+  "stderr": 3.9031941564717965,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0045M.json|200": {
+  "mean": 145.99,
+  "stderr": 3.4932525771606033,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0055M.json|200": {
+  "mean": 131.7,
+  "stderr": 4.224146906231734,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0060M.json|200": {
+  "mean": 131.285,
+  "stderr": 4.597794847784268,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0065M.json|200": {
+  "mean": 143.755,
+  "stderr": 3.9204943892679407,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0070M.json|200": {
+  "mean": 133.345,
+  "stderr": 4.498612837565771,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0075M.json|200": {
+  "mean": 136.615,
+  "stderr": 4.596490235760018,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0080M.json|200": {
+  "mean": 132.59,
+  "stderr": 4.710525955121079,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0085M.json|200": {
+  "mean": 138.83,
+  "stderr": 4.358069451802445,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0090M.json|200": {
+  "mean": 149.225,
+  "stderr": 4.178765641482202,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt/checkpoint_0095M.json|200": {
+  "mean": 139.955,
+  "stderr": 4.682944020431213,
+  "episodes": 200
+ },
+ "low_tide|weights/low_tide/ppo_from_gpt.json|200": {
+  "mean": 149.505,
+  "stderr": 4.42764838555758,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0015M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0020M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0030M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0035M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0040M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0045M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0055M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0060M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0065M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0070M.json|200": {
+  "mean": 0.02,
+  "stderr": 0.01410655786768593,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0075M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0080M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0085M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0090M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_gpt_cw/checkpoint_0095M.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|weights/low_tide/ppo_from_gpt_cw.json|200": {
+  "mean": 0.0,
+  "stderr": 0.0,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0015M.json|200": {
+  "mean": 120.365,
+  "stderr": 3.8472477763020807,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0020M.json|200": {
+  "mean": 127.585,
+  "stderr": 3.8691297081504596,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0030M.json|200": {
+  "mean": 134.55,
+  "stderr": 4.15933743998951,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0035M.json|200": {
+  "mean": 122.67,
+  "stderr": 4.481099952458056,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0040M.json|200": {
+  "mean": 109.385,
+  "stderr": 4.475806979258365,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0045M.json|200": {
+  "mean": 131.42,
+  "stderr": 4.50458928462025,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0055M.json|200": {
+  "mean": 128.275,
+  "stderr": 4.731376808872623,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0060M.json|200": {
+  "mean": 115.52,
+  "stderr": 4.7180129536867295,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0065M.json|200": {
+  "mean": 132.765,
+  "stderr": 4.879070147324444,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0070M.json|200": {
+  "mean": 135.72,
+  "stderr": 4.815433521501465,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0075M.json|200": {
+  "mean": 139.89,
+  "stderr": 4.74187901394738,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0080M.json|200": {
+  "mean": 141.525,
+  "stderr": 4.804195912619943,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0085M.json|200": {
+  "mean": 145.335,
+  "stderr": 4.828101770731714,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0090M.json|200": {
+  "mean": 145.095,
+  "stderr": 4.769356737912077,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_arch_claude/checkpoint_0095M.json|200": {
+  "mean": 154.815,
+  "stderr": 4.578807844997105,
+  "episodes": 200
+ },
+ "low_tide|weights/low_tide/ppo_arch_claude.json|200": {
+  "mean": 154.435,
+  "stderr": 4.6667248126911165,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0015M.json|200": {
+  "mean": 38.07,
+  "stderr": 1.0371130688540857,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0020M.json|200": {
+  "mean": 25.16,
+  "stderr": 0.724046418456995,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0030M.json|200": {
+  "mean": 39.265,
+  "stderr": 0.6365531198351473,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0035M.json|200": {
+  "mean": 44.675,
+  "stderr": 0.7006076866929639,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0040M.json|200": {
+  "mean": 48.26,
+  "stderr": 0.7801314152920827,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0045M.json|200": {
+  "mean": 44.86,
+  "stderr": 0.6406670518738917,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0055M.json|200": {
+  "mean": 37.585,
+  "stderr": 0.6253954527831243,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0060M.json|200": {
+  "mean": 26.295,
+  "stderr": 0.5181042705632519,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0065M.json|200": {
+  "mean": 26.61,
+  "stderr": 0.5241307712075615,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0070M.json|200": {
+  "mean": 32.58,
+  "stderr": 0.5618687412661967,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0075M.json|200": {
+  "mean": 33.26,
+  "stderr": 0.5779116797121673,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0080M.json|200": {
+  "mean": 32.76,
+  "stderr": 0.5361429345157462,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0085M.json|200": {
+  "mean": 31.18,
+  "stderr": 0.5588376307009373,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0090M.json|200": {
+  "mean": 30.145,
+  "stderr": 0.5253569018979948,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude/checkpoint_0095M.json|200": {
+  "mean": 30.475,
+  "stderr": 0.544268330031591,
+  "episodes": 200
+ },
+ "low_tide|weights/low_tide/ppo_from_claude.json|200": {
+  "mean": 30.62,
+  "stderr": 0.5694729997879067,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0015M.json|200": {
+  "mean": 67.885,
+  "stderr": 1.5598153720792962,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0020M.json|200": {
+  "mean": 56.22,
+  "stderr": 1.30878669502151,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0030M.json|200": {
+  "mean": 41.24,
+  "stderr": 1.3226902690118703,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0035M.json|200": {
+  "mean": 52.53,
+  "stderr": 1.3396900188975316,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0040M.json|200": {
+  "mean": 46.75,
+  "stderr": 1.0061806485355584,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0045M.json|200": {
+  "mean": 55.475,
+  "stderr": 0.8860430216309502,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0055M.json|200": {
+  "mean": 62.555,
+  "stderr": 1.1570343631837128,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0060M.json|200": {
+  "mean": 58.69,
+  "stderr": 1.270587052226817,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0065M.json|200": {
+  "mean": 63.385,
+  "stderr": 1.244074952499722,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0070M.json|200": {
+  "mean": 65.94,
+  "stderr": 1.113206243561146,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0075M.json|200": {
+  "mean": 59.135,
+  "stderr": 0.8759396247063226,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0080M.json|200": {
+  "mean": 60.06,
+  "stderr": 0.8437366042115466,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0085M.json|200": {
+  "mean": 63.37,
+  "stderr": 1.0751021921743487,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0090M.json|200": {
+  "mean": 64.495,
+  "stderr": 1.0539706569580782,
+  "episodes": 200
+ },
+ "low_tide|experiments/low_tide/ppo/results/ppo_from_claude_cw/checkpoint_0095M.json|200": {
+  "mean": 65.435,
+  "stderr": 1.0771630686121343,
+  "episodes": 200
+ },
+ "low_tide|weights/low_tide/ppo_from_claude_cw.json|200": {
+  "mean": 65.22,
+  "stderr": 0.9671529995937124,
+  "episodes": 200
+ }
+}

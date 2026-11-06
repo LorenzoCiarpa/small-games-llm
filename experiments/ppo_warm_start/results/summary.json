@@ -1,0 +1,3334 @@
+{
+ "scores": [
+  {
+   "game": "low_tide",
+   "model": "random",
+   "kind": "baseline",
+   "config": "",
+   "mean": 1.95,
+   "stderr": 0.09839900776663815,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "heuristic",
+   "kind": "baseline",
+   "config": "",
+   "mean": 163.972,
+   "stderr": 1.4740774201109526,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "safe",
+   "kind": "baseline",
+   "config": "",
+   "mean": 0.0,
+   "stderr": 0.0,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "claude",
+   "kind": "scritta a mano",
+   "config": "",
+   "mean": 132.272,
+   "stderr": 0.8699365558605093,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "gpt",
+   "kind": "scritta a mano",
+   "config": "",
+   "mean": 79.914,
+   "stderr": 0.9496319337613064,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "ppo",
+   "kind": "PPO da zero",
+   "config": "64-64 tanh, ent 0.01, lr 0.0005, 20M passi",
+   "mean": 125.728,
+   "stderr": 1.874446887556043,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "ppo_100m",
+   "kind": "PPO da zero",
+   "config": "64-64 tanh, ent 0.01, lr 0.0005, 100M passi",
+   "mean": 162.72,
+   "stderr": 2.6185210530011056,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "ppo_arch_claude",
+   "kind": "PPO da zero",
+   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M passi",
+   "mean": 158.366,
+   "stderr": 2.8610871583114887,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "ppo_arch_gpt",
+   "kind": "PPO da zero",
+   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M passi",
+   "mean": 166.856,
+   "stderr": 2.6674611949291607,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "ppo_from_claude",
+   "kind": "PPO dai pesi a mano",
+   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M passi",
+   "mean": 31.026,
+   "stderr": 0.349764661790288,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "ppo_from_claude_cw",
+   "kind": "PPO dai pesi a mano",
+   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M passi, 2M passi di solo critico",
+   "mean": 66.582,
+   "stderr": 0.5767702140016586,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "ppo_from_gpt",
+   "kind": "PPO dai pesi a mano",
+   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M passi",
+   "mean": 147.26,
+   "stderr": 2.903043941840446,
+   "episodes": 500
+  },
+  {
+   "game": "low_tide",
+   "model": "ppo_from_gpt_cw",
+   "kind": "PPO dai pesi a mano",
+   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M passi, 2M passi di solo critico",
+   "mean": 0.0,
+   "stderr": 0.0,
+   "episodes": 500
+  },
+  {
+   "game": "breakout",
+   "model": "random",
+   "kind": "baseline",
+   "config": "",
+   "mean": 0.495,
+   "stderr": 0.022281639784169194,
+   "episodes": 1000
+  },
+  {
+   "game": "breakout",
+   "model": "paper_astra",
+   "kind": "scritta a mano",
+   "config": "",
+   "mean": 512.545,
+   "stderr": 7.5718440817146915,
+   "episodes": 1000
+  },
+  {
+   "game": "breakout",
+   "model": "ppo_ent01",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M passi",
+   "mean": 34.657,
+   "stderr": 0.5383020714432745,
+   "episodes": 1000
+  },
+  {
+   "game": "breakout",
+   "model": "ppo_ent05",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "mean": 63.238,
+   "stderr": 1.0178218494988784,
+   "episodes": 1000
+  },
+  {
+   "game": "breakout",
+   "model": "ppo_ent10",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M passi",
+   "mean": 52.203,
+   "stderr": 1.4017448696819548,
+   "episodes": 1000
+  },
+  {
+   "game": "breakout",
+   "model": "ppo_from_astra",
+   "kind": "PPO dai pesi a mano",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "mean": 512.545,
+   "stderr": 7.5718440817146915,
+   "episodes": 1000
+  },
+  {
+   "game": "breakout",
+   "model": "ppo_v1",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M passi",
+   "mean": 5.809,
+   "stderr": 0.030585199925036527,
+   "episodes": 1000
+  },
+  {
+   "game": "seaquest",
+   "model": "random",
+   "kind": "baseline",
+   "config": "",
+   "mean": 0.107,
+   "stderr": 0.012873100509073823,
+   "episodes": 1000
+  },
+  {
+   "game": "seaquest",
+   "model": "paper_astra",
+   "kind": "scritta a mano",
+   "config": "",
+   "mean": 51.417,
+   "stderr": 1.3752681460258847,
+   "episodes": 1000
+  },
+  {
+   "game": "seaquest",
+   "model": "ppo_ent01",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M passi",
+   "mean": 4.431,
+   "stderr": 0.048389880972994556,
+   "episodes": 1000
+  },
+  {
+   "game": "seaquest",
+   "model": "ppo_ent05",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "mean": 55.874,
+   "stderr": 1.3325959387360957,
+   "episodes": 1000
+  },
+  {
+   "game": "seaquest",
+   "model": "ppo_ent10",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M passi",
+   "mean": 34.41,
+   "stderr": 0.9854303491231499,
+   "episodes": 1000
+  },
+  {
+   "game": "seaquest",
+   "model": "ppo_from_astra",
+   "kind": "PPO dai pesi a mano",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "mean": 82.451,
+   "stderr": 2.1015018222473443,
+   "episodes": 1000
+  },
+  {
+   "game": "seaquest",
+   "model": "ppo_v1",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M passi",
+   "mean": 5.368,
+   "stderr": 0.05326737663348378,
+   "episodes": 1000
+  },
+  {
+   "game": "asterix",
+   "model": "random",
+   "kind": "baseline",
+   "config": "",
+   "mean": 0.479,
+   "stderr": 0.026158043566812162,
+   "episodes": 1000
+  },
+  {
+   "game": "asterix",
+   "model": "paper_astra",
+   "kind": "scritta a mano",
+   "config": "",
+   "mean": 54.843,
+   "stderr": 1.053794493169249,
+   "episodes": 1000
+  },
+  {
+   "game": "asterix",
+   "model": "ppo_ent01",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M passi",
+   "mean": 19.397,
+   "stderr": 0.4057610541107082,
+   "episodes": 1000
+  },
+  {
+   "game": "asterix",
+   "model": "ppo_ent05",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "mean": 24.613,
+   "stderr": 0.5254782187287674,
+   "episodes": 1000
+  },
+  {
+   "game": "asterix",
+   "model": "ppo_ent10",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M passi",
+   "mean": 15.455,
+   "stderr": 0.37685805948260814,
+   "episodes": 1000
+  },
+  {
+   "game": "asterix",
+   "model": "ppo_from_astra",
+   "kind": "PPO dai pesi a mano",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "mean": 50.818,
+   "stderr": 1.005755646477026,
+   "episodes": 1000
+  },
+  {
+   "game": "asterix",
+   "model": "ppo_v1",
+   "kind": "PPO da zero",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M passi",
+   "mean": 9.076,
+   "stderr": 0.23806910950583426,
+   "episodes": 1000
+  }
+ ],
+ "comparisons": [
+  {
+   "game": "breakout",
+   "hand": "paper_astra",
+   "hand_score": {
+    "mean": 512.545,
+    "stderr": 7.5718440817146915,
+    "episodes": 1000
+   },
+   "scratch": "ppo_ent05",
+   "scratch_final": {
+    "mean": 63.238,
+    "stderr": 1.0178218494988784,
+    "episodes": 1000
+   },
+   "scratch_steps": 199999488,
+   "scratch_hours": 1.7960277777777778,
+   "scratch_sec_per_step": 3.2328582761171865e-05,
+   "scratch_reach_hand": null,
+   "level95": 60.0761,
+   "scratch_reach_level": 105000000,
+   "scratch_move": 51.15999194098474,
+   "scratch_move_rel": 0.29474423132535904,
+   "scratch_checkpoints": {
+    "0": {
+     "mean": 0.47,
+     "stderr": 0.048551894218050895,
+     "episodes": 200
+    },
+    "5000000": {
+     "mean": 11.02,
+     "stderr": 0.37710614583447283,
+     "episodes": 200
+    },
+    "10000000": {
+     "mean": 14.05,
+     "stderr": 0.7558066674705672,
+     "episodes": 200
+    },
+    "15000000": {
+     "mean": 23.245,
+     "stderr": 0.9652894871331861,
+     "episodes": 200
+    },
+    "20000000": {
+     "mean": 28.09,
+     "stderr": 1.3312100136727159,
+     "episodes": 200
+    },
+    "25000000": {
+     "mean": 30.225,
+     "stderr": 1.4645464679496922,
+     "episodes": 200
+    },
+    "30000000": {
+     "mean": 33.475,
+     "stderr": 1.5174353115118664,
+     "episodes": 200
+    },
+    "35000000": {
+     "mean": 29.445,
+     "stderr": 1.2660764681154049,
+     "episodes": 200
+    },
+    "40000000": {
+     "mean": 35.375,
+     "stderr": 1.653205163177816,
+     "episodes": 200
+    },
+    "45000000": {
+     "mean": 35.3,
+     "stderr": 1.9967058298242812,
+     "episodes": 200
+    },
+    "50000000": {
+     "mean": 37.845,
+     "stderr": 2.0878458700020035,
+     "episodes": 200
+    },
+    "55000000": {
+     "mean": 43.16,
+     "stderr": 2.521200958146094,
+     "episodes": 200
+    },
+    "60000000": {
+     "mean": 38.105,
+     "stderr": 2.05291063746748,
+     "episodes": 200
+    },
+    "65000000": {
+     "mean": 51.09,
+     "stderr": 2.8815231001823363,
+     "episodes": 200
+    },
+    "70000000": {
+     "mean": 53.155,
+     "stderr": 3.3225897865140137,
+     "episodes": 200
+    },
+    "75000000": {
+     "mean": 43.605,
+     "stderr": 2.2759933222694384,
+     "episodes": 200
+    },
+    "80000000": {
+     "mean": 48.335,
+     "stderr": 3.2036197923394947,
+     "episodes": 200
+    },
+    "85000000": {
+     "mean": 49.425,
+     "stderr": 2.912617133754314,
+     "episodes": 200
+    },
+    "90000000": {
+     "mean": 52.92,
+     "stderr": 2.9202667324997424,
+     "episodes": 200
+    },
+    "95000000": {
+     "mean": 58.65,
+     "stderr": 3.5270936260944614,
+     "episodes": 200
+    },
+    "100000000": {
+     "mean": 58.415,
+     "stderr": 3.7101265571880107,
+     "episodes": 200
+    },
+    "105000000": {
+     "mean": 69.52,
+     "stderr": 4.997330744794097,
+     "episodes": 200
+    },
+    "110000000": {
+     "mean": 74.815,
+     "stderr": 5.247287298688234,
+     "episodes": 200
+    },
+    "115000000": {
+     "mean": 55.615,
+     "stderr": 3.750656073262316,
+     "episodes": 200
+    },
+    "120000000": {
+     "mean": 79.66,
+     "stderr": 5.808793541869112,
+     "episodes": 200
+    },
+    "125000000": {
+     "mean": 87.56,
+     "stderr": 5.806189904406344,
+     "episodes": 200
+    },
+    "130000000": {
+     "mean": 76.78,
+     "stderr": 4.941533340856254,
+     "episodes": 200
+    },
+    "135000000": {
+     "mean": 82.9,
+     "stderr": 5.640258200013016,
+     "episodes": 200
+    },
+    "140000000": {
+     "mean": 54.43,
+     "stderr": 2.43,
+     "episodes": 200
+    },
+    "145000000": {
+     "mean": 59.045,
+     "stderr": 2.4096049166349567,
+     "episodes": 200
+    },
+    "150000000": {
+     "mean": 53.84,
+     "stderr": 2.222649964416711,
+     "episodes": 200
+    },
+    "155000000": {
+     "mean": 56.055,
+     "stderr": 2.0582252869057585,
+     "episodes": 200
+    },
+    "160000000": {
+     "mean": 55.97,
+     "stderr": 2.449150298762746,
+     "episodes": 200
+    },
+    "165000000": {
+     "mean": 57.525,
+     "stderr": 2.211981279510413,
+     "episodes": 200
+    },
+    "170000000": {
+     "mean": 59.92,
+     "stderr": 2.2670721383321726,
+     "episodes": 200
+    },
+    "175000000": {
+     "mean": 61.86,
+     "stderr": 2.6035928017620065,
+     "episodes": 200
+    },
+    "180000000": {
+     "mean": 58.6,
+     "stderr": 2.0002763628154465,
+     "episodes": 200
+    },
+    "185000000": {
+     "mean": 60.515,
+     "stderr": 2.2029329182276647,
+     "episodes": 200
+    },
+    "190000000": {
+     "mean": 61.135,
+     "stderr": 2.0887552194630588,
+     "episodes": 200
+    },
+    "195000000": {
+     "mean": 59.695,
+     "stderr": 2.127118482877953,
+     "episodes": 200
+    },
+    "200000000": {
+     "mean": 62.41,
+     "stderr": 2.4568250746107627,
+     "episodes": 200
+    }
+   },
+   "scratch_grad": null,
+   "warm": {
+    "ppo_from_astra": {
+     "start_ckpt": {
+      "mean": 512.665,
+      "stderr": 16.8704452665738,
+      "episodes": 200
+     },
+     "final": {
+      "mean": 512.545,
+      "stderr": 7.5718440817146915,
+      "episodes": 1000
+     },
+     "steps": 199999488,
+     "hours": 1.6496388888888889,
+     "checkpoints": {
+      "0": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "5000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "10000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "15000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "20000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "25000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "30000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "35000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "40000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "45000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "50000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "55000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "60000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "65000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "70000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "75000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "80000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "85000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "90000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "95000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "100000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "105000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "110000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "115000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "120000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "125000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "130000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "135000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "140000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "145000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "150000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "155000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "160000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "165000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "170000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "175000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "180000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "185000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "190000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "195000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      },
+      "200000000": {
+       "mean": 512.665,
+       "stderr": 16.8704452665738,
+       "episodes": 200
+      }
+     },
+     "ck_min": 512.665,
+     "ck_min_step": 0,
+     "ck_best": 512.665,
+     "ck_best_step": 0,
+     "back_to_hand_step": 0,
+     "improve10_step": null,
+     "train_dip": 444.5460283687951,
+     "train_dip_step": 14991360,
+     "gain": 0.0,
+     "gain_rel": 0.0,
+     "warm_reach_level": 0,
+     "scratch_reach_final": null,
+     "theta0_norm": 3587.7890142258925,
+     "move": 7.001470829490987e-06,
+     "move_rel": 1.951472286059618e-09,
+     "move_rel_layers": [
+      2.8580550538520945e-09,
+      3.8699497971621376e-14,
+      2.212512925847005e-08
+     ],
+     "grad": {
+      "first": 4.454e-13,
+      "first1M": 4.3525e-13,
+      "last10M": 4.299e-13,
+      "pg_first1M": 1.9664999999999997e-14,
+      "ent_first1M": 4.252e-13,
+      "clipped_first1M": 0.013016666666666668,
+      "clipped_last10M": 0.0
+     },
+     "entropy_first": 0.0,
+     "entropy_last": 0.0,
+     "hand_zeros_now_nonzero": 0.0,
+     "agree_on_hand_states": 1.0,
+     "agree_on_own_states": 1.0,
+     "saved_steps_level": 105000000,
+     "saved_hours_level": 0.9429169972008461
+    }
+   }
+  },
+  {
+   "game": "seaquest",
+   "hand": "paper_astra",
+   "hand_score": {
+    "mean": 51.417,
+    "stderr": 1.3752681460258847,
+    "episodes": 1000
+   },
+   "scratch": "ppo_ent05",
+   "scratch_final": {
+    "mean": 55.874,
+    "stderr": 1.3325959387360957,
+    "episodes": 1000
+   },
+   "scratch_steps": 199999488,
+   "scratch_hours": 1.8366388888888887,
+   "scratch_sec_per_step": 3.305958463253666e-05,
+   "scratch_reach_hand": 160000000,
+   "level95": 53.0803,
+   "scratch_reach_level": 170000000,
+   "scratch_move": 55.52513291418038,
+   "scratch_move_rel": 4.907763330566563,
+   "scratch_checkpoints": {
+    "0": {
+     "mean": 0.07,
+     "stderr": 0.019426449358371355,
+     "episodes": 200
+    },
+    "5000000": {
+     "mean": 3.405,
+     "stderr": 0.13053763969401475,
+     "episodes": 200
+    },
+    "10000000": {
+     "mean": 4.46,
+     "stderr": 0.14490336409008286,
+     "episodes": 200
+    },
+    "15000000": {
+     "mean": 5.62,
+     "stderr": 0.15859939736399095,
+     "episodes": 200
+    },
+    "20000000": {
+     "mean": 5.395,
+     "stderr": 0.16410217126249527,
+     "episodes": 200
+    },
+    "25000000": {
+     "mean": 5.785,
+     "stderr": 0.14934993140289773,
+     "episodes": 200
+    },
+    "30000000": {
+     "mean": 6.885,
+     "stderr": 0.17524964247019065,
+     "episodes": 200
+    },
+    "35000000": {
+     "mean": 6.69,
+     "stderr": 0.1893376447476649,
+     "episodes": 200
+    },
+    "40000000": {
+     "mean": 18.345,
+     "stderr": 1.0614439179508137,
+     "episodes": 200
+    },
+    "45000000": {
+     "mean": 20.945,
+     "stderr": 1.248923103957161,
+     "episodes": 200
+    },
+    "50000000": {
+     "mean": 21.44,
+     "stderr": 1.274737927544167,
+     "episodes": 200
+    },
+    "55000000": {
+     "mean": 24.23,
+     "stderr": 1.4760518777226777,
+     "episodes": 200
+    },
+    "60000000": {
+     "mean": 26.35,
+     "stderr": 1.5468682903006605,
+     "episodes": 200
+    },
+    "65000000": {
+     "mean": 27.485,
+     "stderr": 1.4694711984299234,
+     "episodes": 200
+    },
+    "70000000": {
+     "mean": 28.395,
+     "stderr": 1.6509765269265069,
+     "episodes": 200
+    },
+    "75000000": {
+     "mean": 30.16,
+     "stderr": 1.7476393266576493,
+     "episodes": 200
+    },
+    "80000000": {
+     "mean": 32.115,
+     "stderr": 1.612516643208099,
+     "episodes": 200
+    },
+    "85000000": {
+     "mean": 32.0,
+     "stderr": 1.7995672288234403,
+     "episodes": 200
+    },
+    "90000000": {
+     "mean": 34.035,
+     "stderr": 2.0313420756093006,
+     "episodes": 200
+    },
+    "95000000": {
+     "mean": 37.955,
+     "stderr": 2.028320808330758,
+     "episodes": 200
+    },
+    "100000000": {
+     "mean": 37.49,
+     "stderr": 1.9888254405969945,
+     "episodes": 200
+    },
+    "105000000": {
+     "mean": 36.19,
+     "stderr": 1.962236315224015,
+     "episodes": 200
+    },
+    "110000000": {
+     "mean": 39.43,
+     "stderr": 2.180780714013462,
+     "episodes": 200
+    },
+    "115000000": {
+     "mean": 39.435,
+     "stderr": 2.1837519865345207,
+     "episodes": 200
+    },
+    "120000000": {
+     "mean": 41.825,
+     "stderr": 2.359716760747945,
+     "episodes": 200
+    },
+    "125000000": {
+     "mean": 40.895,
+     "stderr": 2.252261816809335,
+     "episodes": 200
+    },
+    "130000000": {
+     "mean": 46.795,
+     "stderr": 2.361482132966838,
+     "episodes": 200
+    },
+    "135000000": {
+     "mean": 39.01,
+     "stderr": 2.3809439241295136,
+     "episodes": 200
+    },
+    "140000000": {
+     "mean": 38.6,
+     "stderr": 2.322838326153423,
+     "episodes": 200
+    },
+    "145000000": {
+     "mean": 48.995,
+     "stderr": 2.38142410731362,
+     "episodes": 200
+    },
+    "150000000": {
+     "mean": 43.55,
+     "stderr": 2.6556827283711515,
+     "episodes": 200
+    },
+    "155000000": {
+     "mean": 48.495,
+     "stderr": 2.5900757395650453,
+     "episodes": 200
+    },
+    "160000000": {
+     "mean": 52.605,
+     "stderr": 2.8515789287576583,
+     "episodes": 200
+    },
+    "165000000": {
+     "mean": 46.105,
+     "stderr": 2.421526134299499,
+     "episodes": 200
+    },
+    "170000000": {
+     "mean": 53.09,
+     "stderr": 2.9562402272831343,
+     "episodes": 200
+    },
+    "175000000": {
+     "mean": 50.685,
+     "stderr": 2.700424101253943,
+     "episodes": 200
+    },
+    "180000000": {
+     "mean": 54.445,
+     "stderr": 2.77917323937756,
+     "episodes": 200
+    },
+    "185000000": {
+     "mean": 51.72,
+     "stderr": 2.9137790826885905,
+     "episodes": 200
+    },
+    "190000000": {
+     "mean": 61.795,
+     "stderr": 3.0780083743816906,
+     "episodes": 200
+    },
+    "195000000": {
+     "mean": 58.28,
+     "stderr": 2.999649560771589,
+     "episodes": 200
+    },
+    "200000000": {
+     "mean": 55.98,
+     "stderr": 2.9662249497064956,
+     "episodes": 200
+    }
+   },
+   "scratch_grad": null,
+   "warm": {
+    "ppo_from_astra": {
+     "start_ckpt": {
+      "mean": 48.335,
+      "stderr": 2.9373635112094862,
+      "episodes": 200
+     },
+     "final": {
+      "mean": 82.451,
+      "stderr": 2.1015018222473443,
+      "episodes": 1000
+     },
+     "steps": 199999488,
+     "hours": 1.7769166666666665,
+     "checkpoints": {
+      "0": {
+       "mean": 48.335,
+       "stderr": 2.9373635112094862,
+       "episodes": 200
+      },
+      "5000000": {
+       "mean": 33.28,
+       "stderr": 2.5848627773809283,
+       "episodes": 200
+      },
+      "10000000": {
+       "mean": 34.485,
+       "stderr": 2.619984823884851,
+       "episodes": 200
+      },
+      "15000000": {
+       "mean": 41.685,
+       "stderr": 3.2423359770294775,
+       "episodes": 200
+      },
+      "20000000": {
+       "mean": 55.095,
+       "stderr": 3.770245833260224,
+       "episodes": 200
+      },
+      "25000000": {
+       "mean": 60.175,
+       "stderr": 3.9200774111677608,
+       "episodes": 200
+      },
+      "30000000": {
+       "mean": 57.58,
+       "stderr": 3.864172244566537,
+       "episodes": 200
+      },
+      "35000000": {
+       "mean": 53.59,
+       "stderr": 3.6061797183174353,
+       "episodes": 200
+      },
+      "40000000": {
+       "mean": 64.035,
+       "stderr": 4.172019608422919,
+       "episodes": 200
+      },
+      "45000000": {
+       "mean": 59.355,
+       "stderr": 3.960894888353251,
+       "episodes": 200
+      },
+      "50000000": {
+       "mean": 65.01,
+       "stderr": 4.139483800023049,
+       "episodes": 200
+      },
+      "55000000": {
+       "mean": 68.39,
+       "stderr": 4.340210436507178,
+       "episodes": 200
+      },
+      "60000000": {
+       "mean": 76.325,
+       "stderr": 4.473921854345912,
+       "episodes": 200
+      },
+      "65000000": {
+       "mean": 87.285,
+       "stderr": 4.7802376756999125,
+       "episodes": 200
+      },
+      "70000000": {
+       "mean": 78.76,
+       "stderr": 4.5146953797415055,
+       "episodes": 200
+      },
+      "75000000": {
+       "mean": 76.59,
+       "stderr": 4.442859948570635,
+       "episodes": 200
+      },
+      "80000000": {
+       "mean": 67.155,
+       "stderr": 4.27412512720616,
+       "episodes": 200
+      },
+      "85000000": {
+       "mean": 72.73,
+       "stderr": 4.547447845720469,
+       "episodes": 200
+      },
+      "90000000": {
+       "mean": 69.74,
+       "stderr": 4.52692247953048,
+       "episodes": 200
+      },
+      "95000000": {
+       "mean": 68.34,
+       "stderr": 4.492184391030167,
+       "episodes": 200
+      },
+      "100000000": {
+       "mean": 74.435,
+       "stderr": 4.473352578487111,
+       "episodes": 200
+      },
+      "105000000": {
+       "mean": 62.07,
+       "stderr": 3.8240347420679526,
+       "episodes": 200
+      },
+      "110000000": {
+       "mean": 79.785,
+       "stderr": 4.46738531275995,
+       "episodes": 200
+      },
+      "115000000": {
+       "mean": 75.545,
+       "stderr": 4.1514893949015335,
+       "episodes": 200
+      },
+      "120000000": {
+       "mean": 75.11,
+       "stderr": 4.483065791896474,
+       "episodes": 200
+      },
+      "125000000": {
+       "mean": 71.595,
+       "stderr": 4.532501818939896,
+       "episodes": 200
+      },
+      "130000000": {
+       "mean": 75.755,
+       "stderr": 4.628068708962127,
+       "episodes": 200
+      },
+      "135000000": {
+       "mean": 80.22,
+       "stderr": 4.554688125393218,
+       "episodes": 200
+      },
+      "140000000": {
+       "mean": 75.735,
+       "stderr": 4.71671611713576,
+       "episodes": 200
+      },
+      "145000000": {
+       "mean": 71.46,
+       "stderr": 4.459222502481029,
+       "episodes": 200
+      },
+      "150000000": {
+       "mean": 84.64,
+       "stderr": 4.6663665613003555,
+       "episodes": 200
+      },
+      "155000000": {
+       "mean": 71.625,
+       "stderr": 4.43448929999372,
+       "episodes": 200
+      },
+      "160000000": {
+       "mean": 72.675,
+       "stderr": 4.481883899819057,
+       "episodes": 200
+      },
+      "165000000": {
+       "mean": 77.275,
+       "stderr": 4.812640065180952,
+       "episodes": 200
+      },
+      "170000000": {
+       "mean": 85.22,
+       "stderr": 4.855428294146459,
+       "episodes": 200
+      },
+      "175000000": {
+       "mean": 80.19,
+       "stderr": 5.0670498786139655,
+       "episodes": 200
+      },
+      "180000000": {
+       "mean": 76.36,
+       "stderr": 4.576024695087456,
+       "episodes": 200
+      },
+      "185000000": {
+       "mean": 79.13,
+       "stderr": 5.074630516044676,
+       "episodes": 200
+      },
+      "190000000": {
+       "mean": 87.645,
+       "stderr": 4.894299306695248,
+       "episodes": 200
+      },
+      "195000000": {
+       "mean": 85.485,
+       "stderr": 4.849141132573694,
+       "episodes": 200
+      },
+      "200000000": {
+       "mean": 79.86,
+       "stderr": 4.366702699098205,
+       "episodes": 200
+      }
+     },
+     "ck_min": 33.28,
+     "ck_min_step": 5000000,
+     "ck_best": 87.645,
+     "ck_best_step": 190000000,
+     "back_to_hand_step": 20000000,
+     "improve10_step": 25000000,
+     "train_dip": 36.899351461038954,
+     "train_dip_step": 4915200,
+     "gain": 31.033999999999992,
+     "gain_rel": 0.6035746931948576,
+     "warm_reach_level": 20000000,
+     "scratch_reach_final": null,
+     "theta0_norm": 498.2644992872761,
+     "move": 43.85579278450234,
+     "move_rel": 0.088017093024356,
+     "move_rel_layers": [
+      0.34658526095195424,
+      0.08062448708133448,
+      0.004770280739531293
+     ],
+     "grad": {
+      "first": 0.4344,
+      "first1M": 0.53135,
+      "last10M": 0.1362,
+      "pg_first1M": 0.5049,
+      "ent_first1M": 0.1098,
+      "clipped_first1M": 1.0,
+      "clipped_last10M": 0.14583089430894305
+     },
+     "entropy_first": 0.18726,
+     "entropy_last": 0.6875100000000001,
+     "hand_zeros_now_nonzero": 0.5061728395061729,
+     "agree_on_hand_states": 0.3673655423883318,
+     "agree_on_own_states": 0.5551407237219989,
+     "saved_steps_level": 150000000,
+     "saved_hours_level": 1.377482693022361
+    }
+   }
+  },
+  {
+   "game": "asterix",
+   "hand": "paper_astra",
+   "hand_score": {
+    "mean": 54.843,
+    "stderr": 1.053794493169249,
+    "episodes": 1000
+   },
+   "scratch": "ppo_ent05",
+   "scratch_final": {
+    "mean": 24.613,
+    "stderr": 0.5254782187287674,
+    "episodes": 1000
+   },
+   "scratch_steps": 199999488,
+   "scratch_hours": 1.7852222222222223,
+   "scratch_sec_per_step": 3.2134082263250595e-05,
+   "scratch_reach_hand": null,
+   "level95": 23.38235,
+   "scratch_reach_level": 160000000,
+   "scratch_move": 52.04631361923039,
+   "scratch_move_rel": 0.5171637994051179,
+   "scratch_checkpoints": {
+    "0": {
+     "mean": 0.42,
+     "stderr": 0.05321804960744146,
+     "episodes": 200
+    },
+    "5000000": {
+     "mean": 2.13,
+     "stderr": 0.1601365623240515,
+     "episodes": 200
+    },
+    "10000000": {
+     "mean": 3.535,
+     "stderr": 0.2870642863935064,
+     "episodes": 200
+    },
+    "15000000": {
+     "mean": 4.15,
+     "stderr": 0.2800529382834717,
+     "episodes": 200
+    },
+    "20000000": {
+     "mean": 4.63,
+     "stderr": 0.33850914642156316,
+     "episodes": 200
+    },
+    "25000000": {
+     "mean": 5.985,
+     "stderr": 0.4391905242408067,
+     "episodes": 200
+    },
+    "30000000": {
+     "mean": 7.27,
+     "stderr": 0.563447303943863,
+     "episodes": 200
+    },
+    "35000000": {
+     "mean": 7.305,
+     "stderr": 0.4766506627199387,
+     "episodes": 200
+    },
+    "40000000": {
+     "mean": 8.51,
+     "stderr": 0.5359437268892694,
+     "episodes": 200
+    },
+    "45000000": {
+     "mean": 10.1,
+     "stderr": 0.6455491215559886,
+     "episodes": 200
+    },
+    "50000000": {
+     "mean": 10.195,
+     "stderr": 0.671857004258238,
+     "episodes": 200
+    },
+    "55000000": {
+     "mean": 11.295,
+     "stderr": 0.674547959561619,
+     "episodes": 200
+    },
+    "60000000": {
+     "mean": 12.98,
+     "stderr": 0.7705300661976616,
+     "episodes": 200
+    },
+    "65000000": {
+     "mean": 13.795,
+     "stderr": 0.7614221519415735,
+     "episodes": 200
+    },
+    "70000000": {
+     "mean": 13.86,
+     "stderr": 0.8032609418511008,
+     "episodes": 200
+    },
+    "75000000": {
+     "mean": 14.3,
+     "stderr": 0.8124966176968641,
+     "episodes": 200
+    },
+    "80000000": {
+     "mean": 15.01,
+     "stderr": 0.8717218564283418,
+     "episodes": 200
+    },
+    "85000000": {
+     "mean": 16.25,
+     "stderr": 0.8772601821214037,
+     "episodes": 200
+    },
+    "90000000": {
+     "mean": 16.78,
+     "stderr": 0.9067352668894629,
+     "episodes": 200
+    },
+    "95000000": {
+     "mean": 16.65,
+     "stderr": 0.8776038070855523,
+     "episodes": 200
+    },
+    "100000000": {
+     "mean": 17.655,
+     "stderr": 1.0458003475014581,
+     "episodes": 200
+    },
+    "105000000": {
+     "mean": 17.095,
+     "stderr": 1.000165752594697,
+     "episodes": 200
+    },
+    "110000000": {
+     "mean": 18.185,
+     "stderr": 0.9475988565658066,
+     "episodes": 200
+    },
+    "115000000": {
+     "mean": 18.205,
+     "stderr": 0.9606922101344766,
+     "episodes": 200
+    },
+    "120000000": {
+     "mean": 19.82,
+     "stderr": 1.0439045375019143,
+     "episodes": 200
+    },
+    "125000000": {
+     "mean": 19.62,
+     "stderr": 1.0281847203180359,
+     "episodes": 200
+    },
+    "130000000": {
+     "mean": 18.545,
+     "stderr": 0.9434992470297624,
+     "episodes": 200
+    },
+    "135000000": {
+     "mean": 20.73,
+     "stderr": 0.9984085326107492,
+     "episodes": 200
+    },
+    "140000000": {
+     "mean": 19.34,
+     "stderr": 1.0460367894219211,
+     "episodes": 200
+    },
+    "145000000": {
+     "mean": 20.29,
+     "stderr": 1.1084098347673776,
+     "episodes": 200
+    },
+    "150000000": {
+     "mean": 22.39,
+     "stderr": 1.069889159712515,
+     "episodes": 200
+    },
+    "155000000": {
+     "mean": 22.045,
+     "stderr": 1.1498371634768823,
+     "episodes": 200
+    },
+    "160000000": {
+     "mean": 23.845,
+     "stderr": 1.1689684818496129,
+     "episodes": 200
+    },
+    "165000000": {
+     "mean": 22.98,
+     "stderr": 1.0978956573244376,
+     "episodes": 200
+    },
+    "170000000": {
+     "mean": 23.58,
+     "stderr": 1.1461396864712967,
+     "episodes": 200
+    },
+    "175000000": {
+     "mean": 23.145,
+     "stderr": 1.153047033867898,
+     "episodes": 200
+    },
+    "180000000": {
+     "mean": 23.035,
+     "stderr": 1.0507087222896159,
+     "episodes": 200
+    },
+    "185000000": {
+     "mean": 25.115,
+     "stderr": 1.1986210146178053,
+     "episodes": 200
+    },
+    "190000000": {
+     "mean": 23.01,
+     "stderr": 1.0728487883262325,
+     "episodes": 200
+    },
+    "195000000": {
+     "mean": 25.34,
+     "stderr": 1.1595233815502854,
+     "episodes": 200
+    },
+    "200000000": {
+     "mean": 26.81,
+     "stderr": 1.1789696123029076,
+     "episodes": 200
+    }
+   },
+   "scratch_grad": null,
+   "warm": {
+    "ppo_from_astra": {
+     "start_ckpt": {
+      "mean": 54.53,
+      "stderr": 2.479310469063939,
+      "episodes": 200
+     },
+     "final": {
+      "mean": 50.818,
+      "stderr": 1.005755646477026,
+      "episodes": 1000
+     },
+     "steps": 199999488,
+     "hours": 1.7404166666666667,
+     "checkpoints": {
+      "0": {
+       "mean": 54.53,
+       "stderr": 2.479310469063939,
+       "episodes": 200
+      },
+      "5000000": {
+       "mean": 45.93,
+       "stderr": 2.353085326282032,
+       "episodes": 200
+      },
+      "10000000": {
+       "mean": 39.81,
+       "stderr": 1.9145093969881104,
+       "episodes": 200
+      },
+      "15000000": {
+       "mean": 38.915,
+       "stderr": 1.7661925306365616,
+       "episodes": 200
+      },
+      "20000000": {
+       "mean": 42.75,
+       "stderr": 2.0276573853493614,
+       "episodes": 200
+      },
+      "25000000": {
+       "mean": 45.57,
+       "stderr": 2.0385297441018464,
+       "episodes": 200
+      },
+      "30000000": {
+       "mean": 43.73,
+       "stderr": 2.01499042979385,
+       "episodes": 200
+      },
+      "35000000": {
+       "mean": 45.645,
+       "stderr": 2.0093112085148275,
+       "episodes": 200
+      },
+      "40000000": {
+       "mean": 47.285,
+       "stderr": 2.131356912023925,
+       "episodes": 200
+      },
+      "45000000": {
+       "mean": 48.96,
+       "stderr": 1.928141761714198,
+       "episodes": 200
+      },
+      "50000000": {
+       "mean": 46.215,
+       "stderr": 1.7799818967517111,
+       "episodes": 200
+      },
+      "55000000": {
+       "mean": 42.0,
+       "stderr": 1.987485975425377,
+       "episodes": 200
+      },
+      "60000000": {
+       "mean": 46.345,
+       "stderr": 2.244721306469601,
+       "episodes": 200
+      },
+      "65000000": {
+       "mean": 43.465,
+       "stderr": 1.989619764941338,
+       "episodes": 200
+      },
+      "70000000": {
+       "mean": 43.795,
+       "stderr": 2.051832095895944,
+       "episodes": 200
+      },
+      "75000000": {
+       "mean": 46.665,
+       "stderr": 2.0307841580242867,
+       "episodes": 200
+      },
+      "80000000": {
+       "mean": 45.565,
+       "stderr": 1.992707527826722,
+       "episodes": 200
+      },
+      "85000000": {
+       "mean": 44.44,
+       "stderr": 1.9786630682580706,
+       "episodes": 200
+      },
+      "90000000": {
+       "mean": 42.645,
+       "stderr": 1.9346210658270284,
+       "episodes": 200
+      },
+      "95000000": {
+       "mean": 49.84,
+       "stderr": 2.1692163325697686,
+       "episodes": 200
+      },
+      "100000000": {
+       "mean": 45.625,
+       "stderr": 1.9142475265662025,
+       "episodes": 200
+      },
+      "105000000": {
+       "mean": 42.78,
+       "stderr": 1.9611831112825493,
+       "episodes": 200
+      },
+      "110000000": {
+       "mean": 44.67,
+       "stderr": 2.1103014859988716,
+       "episodes": 200
+      },
+      "115000000": {
+       "mean": 44.795,
+       "stderr": 2.1899989387574585,
+       "episodes": 200
+      },
+      "120000000": {
+       "mean": 51.52,
+       "stderr": 2.1390008469179196,
+       "episodes": 200
+      },
+      "125000000": {
+       "mean": 47.125,
+       "stderr": 1.9868403427902035,
+       "episodes": 200
+      },
+      "130000000": {
+       "mean": 47.62,
+       "stderr": 2.0793741810757926,
+       "episodes": 200
+      },
+      "135000000": {
+       "mean": 48.885,
+       "stderr": 2.074167236174097,
+       "episodes": 200
+      },
+      "140000000": {
+       "mean": 55.295,
+       "stderr": 2.2053816941938704,
+       "episodes": 200
+      },
+      "145000000": {
+       "mean": 52.185,
+       "stderr": 2.130952526064743,
+       "episodes": 200
+      },
+      "150000000": {
+       "mean": 50.47,
+       "stderr": 2.21052655224744,
+       "episodes": 200
+      },
+      "155000000": {
+       "mean": 49.43,
+       "stderr": 2.2472597495415494,
+       "episodes": 200
+      },
+      "160000000": {
+       "mean": 49.025,
+       "stderr": 2.2299631281175523,
+       "episodes": 200
+      },
+      "165000000": {
+       "mean": 53.81,
+       "stderr": 2.1608949151152292,
+       "episodes": 200
+      },
+      "170000000": {
+       "mean": 48.785,
+       "stderr": 2.2253550052738746,
+       "episodes": 200
+      },
+      "175000000": {
+       "mean": 55.39,
+       "stderr": 2.363082796160037,
+       "episodes": 200
+      },
+      "180000000": {
+       "mean": 47.715,
+       "stderr": 1.968589749799352,
+       "episodes": 200
+      },
+      "185000000": {
+       "mean": 50.73,
+       "stderr": 2.164209907243996,
+       "episodes": 200
+      },
+      "190000000": {
+       "mean": 51.44,
+       "stderr": 2.004462859916322,
+       "episodes": 200
+      },
+      "195000000": {
+       "mean": 52.87,
+       "stderr": 2.2060026606270147,
+       "episodes": 200
+      },
+      "200000000": {
+       "mean": 54.54,
+       "stderr": 2.1800815991367095,
+       "episodes": 200
+      }
+     },
+     "ck_min": 38.915,
+     "ck_min_step": 15000000,
+     "ck_best": 55.39,
+     "ck_best_step": 175000000,
+     "back_to_hand_step": 140000000,
+     "improve10_step": null,
+     "train_dip": 36.00479046951647,
+     "train_dip_step": 8929280,
+     "gain": -4.025000000000006,
+     "gain_rel": -0.0733913170322558,
+     "warm_reach_level": 0,
+     "scratch_reach_final": null,
+     "theta0_norm": 1451.250260499546,
+     "move": 32.62549873812915,
+     "move_rel": 0.02248095978077474,
+     "move_rel_layers": [
+      0.13784971866812712,
+      0.07088488033820105,
+      0.00138973074901856
+     ],
+     "grad": {
+      "first": 0.9988,
+      "first1M": 0.7665500000000001,
+      "last10M": 0.2433,
+      "pg_first1M": 0.6898500000000001,
+      "ent_first1M": 0.28575,
+      "clipped_first1M": 1.0,
+      "clipped_last10M": 0.7327252032520325
+     },
+     "entropy_first": 0.3066,
+     "entropy_last": 0.6863544,
+     "hand_zeros_now_nonzero": 0.42052496347423046,
+     "agree_on_hand_states": 0.6766435061464458,
+     "agree_on_own_states": 0.7002849002849003,
+     "saved_steps_level": 160000000,
+     "saved_hours_level": 1.4281814339222485
+    }
+   }
+  },
+  {
+   "game": "low_tide",
+   "hand": "gpt",
+   "hand_score": {
+    "mean": 79.914,
+    "stderr": 0.9496319337613064,
+    "episodes": 500
+   },
+   "scratch": "ppo_arch_gpt",
+   "scratch_final": {
+    "mean": 166.856,
+    "stderr": 2.6674611949291607,
+    "episodes": 500
+   },
+   "scratch_steps": 99999744,
+   "scratch_hours": 0.8720833333333333,
+   "scratch_sec_per_step": 3.139508037140575e-05,
+   "scratch_reach_hand": 5000000,
+   "level95": 158.51319999999998,
+   "scratch_reach_level": 95000000,
+   "scratch_move": 39.91661009911892,
+   "scratch_move_rel": 2.3940370033343457,
+   "scratch_checkpoints": {
+    "0": {
+     "mean": 1.92,
+     "stderr": 0.179804472250292,
+     "episodes": 200
+    },
+    "5000000": {
+     "mean": 93.32,
+     "stderr": 3.290795446904416,
+     "episodes": 200
+    },
+    "10000000": {
+     "mean": 97.87,
+     "stderr": 3.853852148423645,
+     "episodes": 200
+    },
+    "15000000": {
+     "mean": 114.885,
+     "stderr": 4.115494545222821,
+     "episodes": 200
+    },
+    "20000000": {
+     "mean": 111.38,
+     "stderr": 4.518435492123619,
+     "episodes": 200
+    },
+    "25000000": {
+     "mean": 114.475,
+     "stderr": 4.406424829027422,
+     "episodes": 200
+    },
+    "30000000": {
+     "mean": 105.65,
+     "stderr": 4.749433978441839,
+     "episodes": 200
+    },
+    "35000000": {
+     "mean": 116.99,
+     "stderr": 4.748810959349528,
+     "episodes": 200
+    },
+    "40000000": {
+     "mean": 98.815,
+     "stderr": 4.91563027290494,
+     "episodes": 200
+    },
+    "45000000": {
+     "mean": 117.985,
+     "stderr": 5.005356314406683,
+     "episodes": 200
+    },
+    "50000000": {
+     "mean": 120.775,
+     "stderr": 4.815946279584023,
+     "episodes": 200
+    },
+    "55000000": {
+     "mean": 123.57,
+     "stderr": 4.820056037122911,
+     "episodes": 200
+    },
+    "60000000": {
+     "mean": 125.82,
+     "stderr": 4.830263473779733,
+     "episodes": 200
+    },
+    "65000000": {
+     "mean": 137.68,
+     "stderr": 4.870951533758174,
+     "episodes": 200
+    },
+    "70000000": {
+     "mean": 131.97,
+     "stderr": 4.895110420629013,
+     "episodes": 200
+    },
+    "75000000": {
+     "mean": 137.175,
+     "stderr": 5.148944554481591,
+     "episodes": 200
+    },
+    "80000000": {
+     "mean": 139.94,
+     "stderr": 5.023490748123501,
+     "episodes": 200
+    },
+    "85000000": {
+     "mean": 141.975,
+     "stderr": 4.8947076203224045,
+     "episodes": 200
+    },
+    "90000000": {
+     "mean": 152.65,
+     "stderr": 4.778278689672767,
+     "episodes": 200
+    },
+    "95000000": {
+     "mean": 159.555,
+     "stderr": 4.574792729467417,
+     "episodes": 200
+    },
+    "100000000": {
+     "mean": 161.135,
+     "stderr": 4.626120277197241,
+     "episodes": 200
+    }
+   },
+   "scratch_grad": {
+    "first": 0.07562,
+    "first1M": 0.1845,
+    "last10M": 0.4263,
+    "pg_first1M": 0.18525000000000003,
+    "ent_first1M": 0.012480000000000002,
+    "clipped_first1M": 0.72395,
+    "clipped_last10M": 1.0
+   },
+   "warm": {
+    "ppo_from_gpt": {
+     "start_ckpt": {
+      "mean": 79.695,
+      "stderr": 1.491722512827497,
+      "episodes": 200
+     },
+     "final": {
+      "mean": 147.26,
+      "stderr": 2.903043941840446,
+      "episodes": 500
+     },
+     "steps": 99999744,
+     "hours": 0.8703888888888889,
+     "checkpoints": {
+      "0": {
+       "mean": 79.695,
+       "stderr": 1.491722512827497,
+       "episodes": 200
+      },
+      "5000000": {
+       "mean": 46.105,
+       "stderr": 2.492737163809934,
+       "episodes": 200
+      },
+      "10000000": {
+       "mean": 77.82,
+       "stderr": 2.7667785087684407,
+       "episodes": 200
+      },
+      "15000000": {
+       "mean": 104.56,
+       "stderr": 3.0817719891265196,
+       "episodes": 200
+      },
+      "20000000": {
+       "mean": 122.93,
+       "stderr": 2.791070740665128,
+       "episodes": 200
+      },
+      "25000000": {
+       "mean": 119.56,
+       "stderr": 3.614068268203602,
+       "episodes": 200
+      },
+      "30000000": {
+       "mean": 133.635,
+       "stderr": 3.292065819786877,
+       "episodes": 200
+      },
+      "35000000": {
+       "mean": 122.355,
+       "stderr": 4.28200569110942,
+       "episodes": 200
+      },
+      "40000000": {
+       "mean": 128.8,
+       "stderr": 3.9031941564717965,
+       "episodes": 200
+      },
+      "45000000": {
+       "mean": 145.99,
+       "stderr": 3.4932525771606033,
+       "episodes": 200
+      },
+      "50000000": {
+       "mean": 137.095,
+       "stderr": 4.026598733647177,
+       "episodes": 200
+      },
+      "55000000": {
+       "mean": 131.7,
+       "stderr": 4.224146906231734,
+       "episodes": 200
+      },
+      "60000000": {
+       "mean": 131.285,
+       "stderr": 4.597794847784268,
+       "episodes": 200
+      },
+      "65000000": {
+       "mean": 143.755,
+       "stderr": 3.9204943892679407,
+       "episodes": 200
+      },
+      "70000000": {
+       "mean": 133.345,
+       "stderr": 4.498612837565771,
+       "episodes": 200
+      },
+      "75000000": {
+       "mean": 136.615,
+       "stderr": 4.596490235760018,
+       "episodes": 200
+      },
+      "80000000": {
+       "mean": 132.59,
+       "stderr": 4.710525955121079,
+       "episodes": 200
+      },
+      "85000000": {
+       "mean": 138.83,
+       "stderr": 4.358069451802445,
+       "episodes": 200
+      },
+      "90000000": {
+       "mean": 149.225,
+       "stderr": 4.178765641482202,
+       "episodes": 200
+      },
+      "95000000": {
+       "mean": 139.955,
+       "stderr": 4.682944020431213,
+       "episodes": 200
+      },
+      "100000000": {
+       "mean": 149.505,
+       "stderr": 4.42764838555758,
+       "episodes": 200
+      }
+     },
+     "ck_min": 46.105,
+     "ck_min_step": 5000000,
+     "ck_best": 149.505,
+     "ck_best_step": 100000000,
+     "back_to_hand_step": 15000000,
+     "improve10_step": 15000000,
+     "train_dip": 1.3306930173661362,
+     "train_dip_step": 1064960,
+     "gain": 67.34599999999999,
+     "gain_rel": 0.8427309357559375,
+     "warm_reach_level": null,
+     "scratch_reach_final": 90000000,
+     "theta0_norm": 1600.4047183447067,
+     "move": 27.455746537613088,
+     "move_rel": 0.01715550211949542,
+     "move_rel_layers": [
+      0.3694917421280645,
+      0.02241965889660403,
+      0.016045813042753997,
+      0.002359727667293585
+     ],
+     "grad": {
+      "first": 18.65,
+      "first1M": 3.8035,
+      "last10M": 0.9167,
+      "pg_first1M": 3.024,
+      "ent_first1M": 0.08451,
+      "clipped_first1M": 1.0,
+      "clipped_last10M": 1.0
+     },
+     "entropy_first": 0.23012,
+     "entropy_last": 0.289312,
+     "hand_zeros_now_nonzero": 0.7964613601925306,
+     "agree_on_hand_states": 0.3062253743104807,
+     "agree_on_own_states": 0.3572961373390558
+    },
+    "ppo_from_gpt_cw": {
+     "start_ckpt": {
+      "mean": 79.695,
+      "stderr": 1.491722512827497,
+      "episodes": 200
+     },
+     "final": {
+      "mean": 0.0,
+      "stderr": 0.0,
+      "episodes": 500
+     },
+     "steps": 99999744,
+     "hours": 0.8758055555555556,
+     "checkpoints": {
+      "0": {
+       "mean": 79.695,
+       "stderr": 1.491722512827497,
+       "episodes": 200
+      },
+      "5000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "10000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "15000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "20000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "25000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "30000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "35000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "40000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "45000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "50000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "55000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "60000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "65000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "70000000": {
+       "mean": 0.02,
+       "stderr": 0.01410655786768593,
+       "episodes": 200
+      },
+      "75000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "80000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "85000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "90000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "95000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      },
+      "100000000": {
+       "mean": 0.0,
+       "stderr": 0.0,
+       "episodes": 200
+      }
+     },
+     "ck_min": 0.0,
+     "ck_min_step": 5000000,
+     "ck_best": 79.695,
+     "ck_best_step": 0,
+     "back_to_hand_step": null,
+     "improve10_step": null,
+     "train_dip": 0.0,
+     "train_dip_step": 4177920,
+     "gain": -79.914,
+     "gain_rel": -1.0,
+     "warm_reach_level": null,
+     "scratch_reach_final": 0,
+     "theta0_norm": 1600.4047183447067,
+     "move": 20.80831006874672,
+     "move_rel": 0.013001904974554616,
+     "move_rel_layers": [
+      0.28202195815187425,
+      0.018407136032268567,
+      0.008836656745836344,
+      0.0030632233887974685
+     ],
+     "grad": {
+      "first": 2.183,
+      "first1M": 1.5685,
+      "last10M": 0.8304,
+      "pg_first1M": 1.558,
+      "ent_first1M": 0.075575,
+      "clipped_first1M": 0.0260375,
+      "clipped_last10M": 0.9994926829268292
+     },
+     "entropy_first": 0.62201,
+     "entropy_last": 0.8486144,
+     "hand_zeros_now_nonzero": 0.6771102593814066,
+     "agree_on_hand_states": 0.1537693722090885,
+     "agree_on_own_states": 0.00405
+    }
+   },
+   "extra": {
+    "run": "ppo_100m",
+    "final": {
+     "mean": 162.72,
+     "stderr": 2.6185210530011056,
+     "episodes": 500
+    },
+    "checkpoints": {
+     "0": {
+      "mean": 1.925,
+      "stderr": 0.1787642533938407,
+      "episodes": 200
+     },
+     "5000000": {
+      "mean": 73.96,
+      "stderr": 2.9119304067005682,
+      "episodes": 200
+     },
+     "10000000": {
+      "mean": 88.575,
+      "stderr": 3.385725559287709,
+      "episodes": 200
+     },
+     "15000000": {
+      "mean": 101.135,
+      "stderr": 3.945856407542566,
+      "episodes": 200
+     },
+     "20000000": {
+      "mean": 113.025,
+      "stderr": 4.123419066623592,
+      "episodes": 200
+     },
+     "25000000": {
+      "mean": 124.985,
+      "stderr": 4.000618529438973,
+      "episodes": 200
+     },
+     "30000000": {
+      "mean": 118.155,
+      "stderr": 4.321734817659554,
+      "episodes": 200
+     },
+     "35000000": {
+      "mean": 100.675,
+      "stderr": 4.452479053697848,
+      "episodes": 200
+     },
+     "40000000": {
+      "mean": 114.495,
+      "stderr": 4.66833122831772,
+      "episodes": 200
+     },
+     "45000000": {
+      "mean": 106.205,
+      "stderr": 4.816519404181226,
+      "episodes": 200
+     },
+     "50000000": {
+      "mean": 116.035,
+      "stderr": 4.632436314298357,
+      "episodes": 200
+     },
+     "55000000": {
+      "mean": 133.07,
+      "stderr": 4.5443349790712,
+      "episodes": 200
+     },
+     "60000000": {
+      "mean": 129.225,
+      "stderr": 4.716012696523287,
+      "episodes": 200
+     },
+     "65000000": {
+      "mean": 138.97,
+      "stderr": 4.446900055151062,
+      "episodes": 200
+     },
+     "70000000": {
+      "mean": 139.185,
+      "stderr": 4.699476489073734,
+      "episodes": 200
+     },
+     "75000000": {
+      "mean": 136.28,
+      "stderr": 4.725011818336234,
+      "episodes": 200
+     },
+     "80000000": {
+      "mean": 147.55,
+      "stderr": 4.25313215945956,
+      "episodes": 200
+     },
+     "85000000": {
+      "mean": 143.255,
+      "stderr": 4.802538051246271,
+      "episodes": 200
+     },
+     "90000000": {
+      "mean": 137.16,
+      "stderr": 4.691939201155177,
+      "episodes": 200
+     },
+     "95000000": {
+      "mean": 144.6,
+      "stderr": 4.645757777438806,
+      "episodes": 200
+     },
+     "100000000": {
+      "mean": 155.535,
+      "stderr": 4.2731067246678975,
+      "episodes": 200
+     }
+    }
+   }
+  },
+  {
+   "game": "low_tide",
+   "hand": "claude",
+   "hand_score": {
+    "mean": 132.272,
+    "stderr": 0.8699365558605093,
+    "episodes": 500
+   },
+   "scratch": "ppo_arch_claude",
+   "scratch_final": {
+    "mean": 158.366,
+    "stderr": 2.8610871583114887,
+    "episodes": 500
+   },
+   "scratch_steps": 99999744,
+   "scratch_hours": 0.8266388888888889,
+   "scratch_sec_per_step": 2.975907618323503e-05,
+   "scratch_reach_hand": 30000000,
+   "level95": 150.4477,
+   "scratch_reach_level": 95000000,
+   "scratch_move": 42.31794697444453,
+   "scratch_move_rel": 3.3044715050144124,
+   "scratch_checkpoints": {
+    "0": {
+     "mean": 1.895,
+     "stderr": 0.1772766483501176,
+     "episodes": 200
+    },
+    "5000000": {
+     "mean": 90.595,
+     "stderr": 3.14169638185788,
+     "episodes": 200
+    },
+    "10000000": {
+     "mean": 117.595,
+     "stderr": 3.2707174807977495,
+     "episodes": 200
+    },
+    "15000000": {
+     "mean": 120.365,
+     "stderr": 3.8472477763020807,
+     "episodes": 200
+    },
+    "20000000": {
+     "mean": 127.585,
+     "stderr": 3.8691297081504596,
+     "episodes": 200
+    },
+    "25000000": {
+     "mean": 126.445,
+     "stderr": 4.124133516425787,
+     "episodes": 200
+    },
+    "30000000": {
+     "mean": 134.55,
+     "stderr": 4.15933743998951,
+     "episodes": 200
+    },
+    "35000000": {
+     "mean": 122.67,
+     "stderr": 4.481099952458056,
+     "episodes": 200
+    },
+    "40000000": {
+     "mean": 109.385,
+     "stderr": 4.475806979258365,
+     "episodes": 200
+    },
+    "45000000": {
+     "mean": 131.42,
+     "stderr": 4.50458928462025,
+     "episodes": 200
+    },
+    "50000000": {
+     "mean": 147.415,
+     "stderr": 3.997563815286309,
+     "episodes": 200
+    },
+    "55000000": {
+     "mean": 128.275,
+     "stderr": 4.731376808872623,
+     "episodes": 200
+    },
+    "60000000": {
+     "mean": 115.52,
+     "stderr": 4.7180129536867295,
+     "episodes": 200
+    },
+    "65000000": {
+     "mean": 132.765,
+     "stderr": 4.879070147324444,
+     "episodes": 200
+    },
+    "70000000": {
+     "mean": 135.72,
+     "stderr": 4.815433521501465,
+     "episodes": 200
+    },
+    "75000000": {
+     "mean": 139.89,
+     "stderr": 4.74187901394738,
+     "episodes": 200
+    },
+    "80000000": {
+     "mean": 141.525,
+     "stderr": 4.804195912619943,
+     "episodes": 200
+    },
+    "85000000": {
+     "mean": 145.335,
+     "stderr": 4.828101770731714,
+     "episodes": 200
+    },
+    "90000000": {
+     "mean": 145.095,
+     "stderr": 4.769356737912077,
+     "episodes": 200
+    },
+    "95000000": {
+     "mean": 154.815,
+     "stderr": 4.578807844997105,
+     "episodes": 200
+    },
+    "100000000": {
+     "mean": 154.435,
+     "stderr": 4.6667248126911165,
+     "episodes": 200
+    }
+   },
+   "scratch_grad": {
+    "first": 0.03737,
+    "first1M": 0.09650500000000001,
+    "last10M": 0.3582,
+    "pg_first1M": 0.09998499999999999,
+    "ent_first1M": 0.0067395,
+    "clipped_first1M": 0.23697916666666666,
+    "clipped_last10M": 1.0
+   },
+   "warm": {
+    "ppo_from_claude": {
+     "start_ckpt": {
+      "mean": 132.135,
+      "stderr": 1.3301618426485515,
+      "episodes": 200
+     },
+     "final": {
+      "mean": 31.026,
+      "stderr": 0.349764661790288,
+      "episodes": 500
+     },
+     "steps": 99999744,
+     "hours": 0.8384722222222222,
+     "checkpoints": {
+      "0": {
+       "mean": 132.135,
+       "stderr": 1.3301618426485515,
+       "episodes": 200
+      },
+      "5000000": {
+       "mean": 5.39,
+       "stderr": 0.3214907174508079,
+       "episodes": 200
+      },
+      "10000000": {
+       "mean": 22.295,
+       "stderr": 0.7425271766340952,
+       "episodes": 200
+      },
+      "15000000": {
+       "mean": 38.07,
+       "stderr": 1.0371130688540857,
+       "episodes": 200
+      },
+      "20000000": {
+       "mean": 25.16,
+       "stderr": 0.724046418456995,
+       "episodes": 200
+      },
+      "25000000": {
+       "mean": 26.64,
+       "stderr": 0.8426758051367169,
+       "episodes": 200
+      },
+      "30000000": {
+       "mean": 39.265,
+       "stderr": 0.6365531198351473,
+       "episodes": 200
+      },
+      "35000000": {
+       "mean": 44.675,
+       "stderr": 0.7006076866929639,
+       "episodes": 200
+      },
+      "40000000": {
+       "mean": 48.26,
+       "stderr": 0.7801314152920827,
+       "episodes": 200
+      },
+      "45000000": {
+       "mean": 44.86,
+       "stderr": 0.6406670518738917,
+       "episodes": 200
+      },
+      "50000000": {
+       "mean": 36.12,
+       "stderr": 0.6088773754143417,
+       "episodes": 200
+      },
+      "55000000": {
+       "mean": 37.585,
+       "stderr": 0.6253954527831243,
+       "episodes": 200
+      },
+      "60000000": {
+       "mean": 26.295,
+       "stderr": 0.5181042705632519,
+       "episodes": 200
+      },
+      "65000000": {
+       "mean": 26.61,
+       "stderr": 0.5241307712075615,
+       "episodes": 200
+      },
+      "70000000": {
+       "mean": 32.58,
+       "stderr": 0.5618687412661967,
+       "episodes": 200
+      },
+      "75000000": {
+       "mean": 33.26,
+       "stderr": 0.5779116797121673,
+       "episodes": 200
+      },
+      "80000000": {
+       "mean": 32.76,
+       "stderr": 0.5361429345157462,
+       "episodes": 200
+      },
+      "85000000": {
+       "mean": 31.18,
+       "stderr": 0.5588376307009373,
+       "episodes": 200
+      },
+      "90000000": {
+       "mean": 30.145,
+       "stderr": 0.5253569018979948,
+       "episodes": 200
+      },
+      "95000000": {
+       "mean": 30.475,
+       "stderr": 0.544268330031591,
+       "episodes": 200
+      },
+      "100000000": {
+       "mean": 30.62,
+       "stderr": 0.5694729997879067,
+       "episodes": 200
+      }
+     },
+     "ck_min": 5.39,
+     "ck_min_step": 5000000,
+     "ck_best": 132.135,
+     "ck_best_step": 0,
+     "back_to_hand_step": null,
+     "improve10_step": null,
+     "train_dip": 6.334644814090003,
+     "train_dip_step": 5734400,
+     "gain": -101.246,
+     "gain_rel": -0.7654378855691303,
+     "warm_reach_level": null,
+     "scratch_reach_final": 5000000,
+     "theta0_norm": 45620.667446344974,
+     "move": 40.78022221406664,
+     "move_rel": 0.0008938979742466232,
+     "move_rel_layers": [
+      0.001886716286244803,
+      0.00019174825829905908,
+      0.12912108088828075
+     ],
+     "grad": {
+      "first": 2.872,
+      "first1M": 2.286,
+      "last10M": 1.759,
+      "pg_first1M": 2.2904999999999998,
+      "ent_first1M": 0.029975,
+      "clipped_first1M": 0.7916666666666666,
+      "clipped_last10M": 0.9464008130081302
+     },
+     "entropy_first": 0.39188,
+     "entropy_last": 0.4897958,
+     "hand_zeros_now_nonzero": 0.6039573508304286,
+     "agree_on_hand_states": 0.16505,
+     "agree_on_own_states": 0.17905
+    },
+    "ppo_from_claude_cw": {
+     "start_ckpt": {
+      "mean": 132.135,
+      "stderr": 1.3301618426485515,
+      "episodes": 200
+     },
+     "final": {
+      "mean": 66.582,
+      "stderr": 0.5767702140016586,
+      "episodes": 500
+     },
+     "steps": 99999744,
+     "hours": 0.8359166666666668,
+     "checkpoints": {
+      "0": {
+       "mean": 132.135,
+       "stderr": 1.3301618426485515,
+       "episodes": 200
+      },
+      "5000000": {
+       "mean": 39.8,
+       "stderr": 1.1119949025587226,
+       "episodes": 200
+      },
+      "10000000": {
+       "mean": 72.62,
+       "stderr": 2.692046353211474,
+       "episodes": 200
+      },
+      "15000000": {
+       "mean": 67.885,
+       "stderr": 1.5598153720792962,
+       "episodes": 200
+      },
+      "20000000": {
+       "mean": 56.22,
+       "stderr": 1.30878669502151,
+       "episodes": 200
+      },
+      "25000000": {
+       "mean": 49.725,
+       "stderr": 0.9687825209324957,
+       "episodes": 200
+      },
+      "30000000": {
+       "mean": 41.24,
+       "stderr": 1.3226902690118703,
+       "episodes": 200
+      },
+      "35000000": {
+       "mean": 52.53,
+       "stderr": 1.3396900188975316,
+       "episodes": 200
+      },
+      "40000000": {
+       "mean": 46.75,
+       "stderr": 1.0061806485355584,
+       "episodes": 200
+      },
+      "45000000": {
+       "mean": 55.475,
+       "stderr": 0.8860430216309502,
+       "episodes": 200
+      },
+      "50000000": {
+       "mean": 57.24,
+       "stderr": 1.204352241500816,
+       "episodes": 200
+      },
+      "55000000": {
+       "mean": 62.555,
+       "stderr": 1.1570343631837128,
+       "episodes": 200
+      },
+      "60000000": {
+       "mean": 58.69,
+       "stderr": 1.270587052226817,
+       "episodes": 200
+      },
+      "65000000": {
+       "mean": 63.385,
+       "stderr": 1.244074952499722,
+       "episodes": 200
+      },
+      "70000000": {
+       "mean": 65.94,
+       "stderr": 1.113206243561146,
+       "episodes": 200
+      },
+      "75000000": {
+       "mean": 59.135,
+       "stderr": 0.8759396247063226,
+       "episodes": 200
+      },
+      "80000000": {
+       "mean": 60.06,
+       "stderr": 0.8437366042115466,
+       "episodes": 200
+      },
+      "85000000": {
+       "mean": 63.37,
+       "stderr": 1.0751021921743487,
+       "episodes": 200
+      },
+      "90000000": {
+       "mean": 64.495,
+       "stderr": 1.0539706569580782,
+       "episodes": 200
+      },
+      "95000000": {
+       "mean": 65.435,
+       "stderr": 1.0771630686121343,
+       "episodes": 200
+      },
+      "100000000": {
+       "mean": 65.22,
+       "stderr": 0.9671529995937124,
+       "episodes": 200
+      }
+     },
+     "ck_min": 39.8,
+     "ck_min_step": 5000000,
+     "ck_best": 132.135,
+     "ck_best_step": 0,
+     "back_to_hand_step": null,
+     "improve10_step": null,
+     "train_dip": 38.36105555555564,
+     "train_dip_step": 4259840,
+     "gain": -65.69,
+     "gain_rel": -0.49662816015483247,
+     "warm_reach_level": null,
+     "scratch_reach_final": 5000000,
+     "theta0_norm": 45620.667446344974,
+     "move": 32.9120825583061,
+     "move_rel": 0.0007214292205832895,
+     "move_rel_layers": [
+      0.0019250974290361972,
+      0.0001504263590647371,
+      0.08932973094758691
+     ],
+     "grad": {
+      "first": 14.39,
+      "first1M": 25.775,
+      "last10M": 1.643,
+      "pg_first1M": 25.86,
+      "ent_first1M": 1.1165,
+      "clipped_first1M": 0.13540833333333335,
+      "clipped_last10M": 0.972571544715447
+     },
+     "entropy_first": 0.35286,
+     "entropy_last": 0.06773559999999999,
+     "hand_zeros_now_nonzero": 0.6043674389993848,
+     "agree_on_hand_states": 0.1837,
+     "agree_on_own_states": 0.24169291738644447
+    }
+   },
+   "extra": {
+    "run": "ppo_100m",
+    "final": {
+     "mean": 162.72,
+     "stderr": 2.6185210530011056,
+     "episodes": 500
+    },
+    "checkpoints": {
+     "0": {
+      "mean": 1.925,
+      "stderr": 0.1787642533938407,
+      "episodes": 200
+     },
+     "5000000": {
+      "mean": 73.96,
+      "stderr": 2.9119304067005682,
+      "episodes": 200
+     },
+     "10000000": {
+      "mean": 88.575,
+      "stderr": 3.385725559287709,
+      "episodes": 200
+     },
+     "15000000": {
+      "mean": 101.135,
+      "stderr": 3.945856407542566,
+      "episodes": 200
+     },
+     "20000000": {
+      "mean": 113.025,
+      "stderr": 4.123419066623592,
+      "episodes": 200
+     },
+     "25000000": {
+      "mean": 124.985,
+      "stderr": 4.000618529438973,
+      "episodes": 200
+     },
+     "30000000": {
+      "mean": 118.155,
+      "stderr": 4.321734817659554,
+      "episodes": 200
+     },
+     "35000000": {
+      "mean": 100.675,
+      "stderr": 4.452479053697848,
+      "episodes": 200
+     },
+     "40000000": {
+      "mean": 114.495,
+      "stderr": 4.66833122831772,
+      "episodes": 200
+     },
+     "45000000": {
+      "mean": 106.205,
+      "stderr": 4.816519404181226,
+      "episodes": 200
+     },
+     "50000000": {
+      "mean": 116.035,
+      "stderr": 4.632436314298357,
+      "episodes": 200
+     },
+     "55000000": {
+      "mean": 133.07,
+      "stderr": 4.5443349790712,
+      "episodes": 200
+     },
+     "60000000": {
+      "mean": 129.225,
+      "stderr": 4.716012696523287,
+      "episodes": 200
+     },
+     "65000000": {
+      "mean": 138.97,
+      "stderr": 4.446900055151062,
+      "episodes": 200
+     },
+     "70000000": {
+      "mean": 139.185,
+      "stderr": 4.699476489073734,
+      "episodes": 200
+     },
+     "75000000": {
+      "mean": 136.28,
+      "stderr": 4.725011818336234,
+      "episodes": 200
+     },
+     "80000000": {
+      "mean": 147.55,
+      "stderr": 4.25313215945956,
+      "episodes": 200
+     },
+     "85000000": {
+      "mean": 143.255,
+      "stderr": 4.802538051246271,
+      "episodes": 200
+     },
+     "90000000": {
+      "mean": 137.16,
+      "stderr": 4.691939201155177,
+      "episodes": 200
+     },
+     "95000000": {
+      "mean": 144.6,
+      "stderr": 4.645757777438806,
+      "episodes": 200
+     },
+     "100000000": {
+      "mean": 155.535,
+      "stderr": 4.2731067246678975,
+      "episodes": 200
+     }
+    }
+   }
+  }
+ ],
+ "probes": {
+  "breakout/astra": {
+   "actor_grad": 4.2061666666666664e-13,
+   "actor_grad_full": 4.1849166666666664e-13,
+   "pg_grad_full": 1.2072583333333335e-14,
+   "ent_grad_full": 4.199416666666667e-13,
+   "critic_grad": 0.13991666666666666,
+   "value_loss": 0.12252750000000001,
+   "entropy": 0.0,
+   "mean_return": 466.71541666666667,
+   "actor_grad_full_first": 4.543e-13,
+   "pg_grad_full_first": 3.464e-14,
+   "theta_norm": 3587.7890142258925
+  },
+  "breakout/random": {
+   "actor_grad": 0.07647666666666665,
+   "actor_grad_full": 0.060059166666666663,
+   "pg_grad_full": 0.060175000000000006,
+   "ent_grad_full": 0.00013511666666666668,
+   "critic_grad": 0.06894083333333333,
+   "value_loss": 0.08481666666666667,
+   "entropy": 1.0986100000000003,
+   "mean_return": 0.38891666666666663,
+   "actor_grad_full_first": 0.05678,
+   "pg_grad_full_first": 0.0569,
+   "theta_norm": 11.313735008239746
+  },
+  "breakout/ppo_5M": {
+   "actor_grad": 0.4544583333333334,
+   "actor_grad_full": 0.16351999999999997,
+   "pg_grad_full": 0.18514166666666665,
+   "ent_grad_full": 0.05010916666666667,
+   "critic_grad": 0.4437,
+   "value_loss": 0.3001816666666666,
+   "entropy": 0.5276483333333333,
+   "mean_return": 10.947583333333334,
+   "actor_grad_full_first": 0.2101,
+   "pg_grad_full_first": 0.1987,
+   "theta_norm": 174.339698367584
+  },
+  "breakout/ppo_50M": {
+   "actor_grad": 0.33716666666666667,
+   "actor_grad_full": 0.14393666666666666,
+   "pg_grad_full": 0.14194166666666672,
+   "ent_grad_full": 0.022107500000000002,
+   "critic_grad": 0.5377000000000001,
+   "value_loss": 0.5482275,
+   "entropy": 0.7643266666666667,
+   "mean_return": 36.005250000000004,
+   "actor_grad_full_first": 0.1166,
+   "pg_grad_full_first": 0.1231,
+   "theta_norm": 177.82985477867228
+  },
+  "breakout/ppo_final": {
+   "actor_grad": 0.24029166666666668,
+   "actor_grad_full": 0.08498833333333333,
+   "pg_grad_full": 0.082315,
+   "ent_grad_full": 0.016241666666666665,
+   "critic_grad": 0.26829166666666665,
+   "value_loss": 0.195205,
+   "entropy": 0.7380758333333334,
+   "mean_return": 63.518249999999995,
+   "actor_grad_full_first": 0.04976,
+   "pg_grad_full_first": 0.04894,
+   "theta_norm": 181.20200306752224
+  },
+  "breakout/from_astra_final": {
+   "actor_grad": 4.2479166666666667e-13,
+   "actor_grad_full": 4.226083333333333e-13,
+   "pg_grad_full": 1.2239166666666665e-14,
+   "ent_grad_full": 4.240666666666666e-13,
+   "critic_grad": 0.13991666666666666,
+   "value_loss": 0.12252750000000001,
+   "entropy": 0.0,
+   "mean_return": 466.71541666666667,
+   "actor_grad_full_first": 4.595e-13,
+   "pg_grad_full_first": 3.536e-14,
+   "theta_norm": 3587.7890142258925
+  },
+  "seaquest/astra": {
+   "actor_grad": 0.9662416666666666,
+   "actor_grad_full": 0.3668666666666667,
+   "pg_grad_full": 0.34354166666666663,
+   "ent_grad_full": 0.0956625,
+   "critic_grad": 0.08515583333333333,
+   "value_loss": 0.13703,
+   "entropy": 0.14301083333333334,
+   "mean_return": 51.833416666666665,
+   "actor_grad_full_first": 0.3076,
+   "pg_grad_full_first": 0.2903,
+   "theta_norm": 498.2644992872761
+  },
+  "seaquest/random": {
+   "actor_grad": 0.07421416666666668,
+   "actor_grad_full": 0.05450583333333334,
+   "pg_grad_full": 0.054504166666666666,
+   "ent_grad_full": 4.1899999999999995e-05,
+   "critic_grad": 0.011459083333333335,
+   "value_loss": 0.015696666666666668,
+   "entropy": 1.79176,
+   "mean_return": 0.10033333333333334,
+   "actor_grad_full_first": 0.04188,
+   "pg_grad_full_first": 0.04189,
+   "theta_norm": 11.313735008239746
+  },
+  "seaquest/ppo_5M": {
+   "actor_grad": 0.225025,
+   "actor_grad_full": 0.08392916666666667,
+   "pg_grad_full": 0.08649833333333333,
+   "ent_grad_full": 0.026237499999999997,
+   "critic_grad": 0.03148,
+   "value_loss": 0.05822416666666666,
+   "entropy": 1.4794124999999998,
+   "mean_return": 3.6017500000000005,
+   "actor_grad_full_first": 0.07111,
+   "pg_grad_full_first": 0.07071,
+   "theta_norm": 21.09092171676364
+  },
+  "seaquest/ppo_50M": {
+   "actor_grad": 0.328375,
+   "actor_grad_full": 0.12632500000000002,
+   "pg_grad_full": 0.13593333333333332,
+   "ent_grad_full": 0.028833333333333336,
+   "critic_grad": 0.08962916666666666,
+   "value_loss": 0.20648583333333334,
+   "entropy": 1.2666241666666667,
+   "mean_return": 22.65391666666667,
+   "actor_grad_full_first": 0.1087,
+   "pg_grad_full_first": 0.1029,
+   "theta_norm": 45.008349373459
+  },
+  "seaquest/ppo_final": {
+   "actor_grad": 0.30995833333333334,
+   "actor_grad_full": 0.11452,
+   "pg_grad_full": 0.11694916666666666,
+   "ent_grad_full": 0.028637499999999996,
+   "critic_grad": 0.090775,
+   "value_loss": 0.21452666666666667,
+   "entropy": 1.2285433333333333,
+   "mean_return": 54.22591666666667,
+   "actor_grad_full_first": 0.1431,
+   "pg_grad_full_first": 0.1476,
+   "theta_norm": 57.05373014131495
+  },
+  "seaquest/from_astra_final": {
+   "actor_grad": 0.3498833333333333,
+   "actor_grad_full": 0.13123333333333334,
+   "pg_grad_full": 0.13278333333333334,
+   "ent_grad_full": 0.02298333333333333,
+   "critic_grad": 0.13254999999999997,
+   "value_loss": 0.237205,
+   "entropy": 0.6845008333333333,
+   "mean_return": 90.11866666666667,
+   "actor_grad_full_first": 0.1502,
+   "pg_grad_full_first": 0.1505,
+   "theta_norm": 499.79361314327616
+  },
+  "asterix/astra": {
+   "actor_grad": 2.2864999999999998,
+   "actor_grad_full": 1.1398166666666667,
+   "pg_grad_full": 1.0617916666666665,
+   "ent_grad_full": 0.9511083333333333,
+   "critic_grad": 0.2036916666666667,
+   "value_loss": 0.4738266666666667,
+   "entropy": 0.28641833333333333,
+   "mean_return": 52.7955,
+   "actor_grad_full_first": 1.456,
+   "pg_grad_full_first": 0.6148,
+   "theta_norm": 1759.5815748637515
+  },
+  "asterix/random": {
+   "actor_grad": 0.041849166666666666,
+   "actor_grad_full": 0.014609999999999998,
+   "pg_grad_full": 0.014611666666666667,
+   "ent_grad_full": 9.277250000000002e-06,
+   "critic_grad": 0.0152425,
+   "value_loss": 0.0350025,
+   "entropy": 1.60944,
+   "mean_return": 0.4994166666666667,
+   "actor_grad_full_first": 0.01339,
+   "pg_grad_full_first": 0.01339,
+   "theta_norm": 11.313735008239746
+  },
+  "asterix/ppo_5M": {
+   "actor_grad": 0.2065,
+   "actor_grad_full": 0.07618833333333332,
+   "pg_grad_full": 0.076305,
+   "ent_grad_full": 0.014015833333333333,
+   "critic_grad": 0.04194416666666667,
+   "value_loss": 0.12589666666666666,
+   "entropy": 1.275165,
+   "mean_return": 2.4185,
+   "actor_grad_full_first": 0.06909,
+   "pg_grad_full_first": 0.07094,
+   "theta_norm": 101.69426864605744
+  },
+  "asterix/ppo_50M": {
+   "actor_grad": 0.26714166666666667,
+   "actor_grad_full": 0.09968916666666666,
+   "pg_grad_full": 0.0987575,
+   "ent_grad_full": 0.013640833333333333,
+   "critic_grad": 0.07728249999999999,
+   "value_loss": 0.2091483333333333,
+   "entropy": 1.210845,
+   "mean_return": 10.781583333333336,
+   "actor_grad_full_first": 0.09758,
+   "pg_grad_full_first": 0.1017,
+   "theta_norm": 108.90723582205166
+  },
+  "asterix/ppo_final": {
+   "actor_grad": 0.31625,
+   "actor_grad_full": 0.1110166666666667,
+   "pg_grad_full": 0.11158333333333333,
+   "ent_grad_full": 0.016154166666666667,
+   "critic_grad": 0.0799325,
+   "value_loss": 0.2498883333333333,
+   "entropy": 1.190215,
+   "mean_return": 25.363249999999997,
+   "actor_grad_full_first": 0.1056,
+   "pg_grad_full_first": 0.106,
+   "theta_norm": 113.51347534954526
+  },
+  "asterix/from_astra_final": {
+   "actor_grad": 0.7462583333333334,
+   "actor_grad_full": 0.28920833333333335,
+   "pg_grad_full": 0.29285,
+   "ent_grad_full": 0.026851666666666666,
+   "critic_grad": 0.1493833333333333,
+   "value_loss": 0.40172250000000004,
+   "entropy": 0.6927816666666667,
+   "mean_return": 49.94683333333333,
+   "actor_grad_full_first": 0.282,
+   "pg_grad_full_first": 0.2936,
+   "theta_norm": 1451.4054773802638
+  },
+  "low_tide/gpt": {
+   "actor_grad": 4.409083333333333,
+   "actor_grad_full": 1.3158999999999998,
+   "pg_grad_full": 1.3111583333333334,
+   "ent_grad_full": 0.07503,
+   "critic_grad": 0.14974166666666666,
+   "value_loss": 0.3483525,
+   "entropy": 0.6198991666666667,
+   "mean_return": 81.24766666666667,
+   "actor_grad_full_first": 2.099,
+   "pg_grad_full_first": 2.144,
+   "theta_norm": 1600.4047183447067
+  },
+  "low_tide/random_arch_gpt": {
+   "actor_grad": 0.049955,
+   "actor_grad_full": 0.024665833333333335,
+   "pg_grad_full": 0.02466666666666667,
+   "ent_grad_full": 1.3978333333333333e-05,
+   "critic_grad": 0.09686666666666666,
+   "value_loss": 0.17626083333333334,
+   "entropy": 1.60944,
+   "mean_return": 1.9552500000000002,
+   "actor_grad_full_first": 0.03687,
+   "pg_grad_full_first": 0.03688,
+   "theta_norm": 16.673343658447266
+  },
+  "low_tide/from_gpt_final": {
+   "actor_grad": 2.68625,
+   "actor_grad_full": 1.0874416666666666,
+   "pg_grad_full": 1.0914333333333335,
+   "ent_grad_full": 0.017444166666666667,
+   "critic_grad": 0.3929416666666666,
+   "value_loss": 1.373948333333333,
+   "entropy": 0.29126083333333336,
+   "mean_return": 147.16799999999998,
+   "actor_grad_full_first": 1.541,
+   "pg_grad_full_first": 1.53,
+   "theta_norm": 1600.7051232965543
+  },
+  "low_tide/from_gpt_cw_final": {
+   "actor_grad": 3.1774166666666672,
+   "actor_grad_full": 1.4473416666666667,
+   "pg_grad_full": 1.4399833333333332,
+   "ent_grad_full": 0.0625825,
+   "critic_grad": 0.00049745,
+   "value_loss": 1e-05,
+   "entropy": 0.8471483333333333,
+   "mean_return": 0.0,
+   "actor_grad_full_first": 0.8836,
+   "pg_grad_full_first": 0.878,
+   "theta_norm": 1600.6074256791753
+  },
+  "low_tide/arch_gpt_final": {
+   "actor_grad": 1.2215,
+   "actor_grad_full": 0.40854999999999997,
+   "pg_grad_full": 0.4099833333333334,
+   "ent_grad_full": 0.011876666666666666,
+   "critic_grad": 0.37041666666666667,
+   "value_loss": 1.3284858333333334,
+   "entropy": 0.41405333333333333,
+   "mean_return": 160.76416666666668,
+   "actor_grad_full_first": 0.3277,
+   "pg_grad_full_first": 0.3304,
+   "theta_norm": 43.724924541989616
+  },
+  "low_tide/claude": {
+   "actor_grad": 77.71583333333332,
+   "actor_grad_full": 28.28916666666667,
+   "pg_grad_full": 28.31,
+   "ent_grad_full": 1.0928333333333333,
+   "critic_grad": 0.26375000000000004,
+   "value_loss": 0.6328416666666667,
+   "entropy": 0.35102666666666665,
+   "mean_return": 132.41925,
+   "actor_grad_full_first": 25.82,
+   "pg_grad_full_first": 26.02,
+   "theta_norm": 45620.667446344974
+  },
+  "low_tide/random_arch_claude": {
+   "actor_grad": 0.07570333333333334,
+   "actor_grad_full": 0.041546666666666655,
+   "pg_grad_full": 0.04155,
+   "ent_grad_full": 1.1179166666666668e-05,
+   "critic_grad": 0.0878,
+   "value_loss": 0.16214166666666666,
+   "entropy": 1.60943,
+   "mean_return": 1.9526666666666668,
+   "actor_grad_full_first": 0.04864,
+   "pg_grad_full_first": 0.04864,
+   "theta_norm": 12.806267738342285
+  },
+  "low_tide/from_claude_final": {
+   "actor_grad": 4.3765,
+   "actor_grad_full": 1.8787666666666667,
+   "pg_grad_full": 1.881,
+   "ent_grad_full": 0.010577416666666666,
+   "critic_grad": 0.10571333333333334,
+   "value_loss": 0.19185,
+   "entropy": 0.4929791666666666,
+   "mean_return": 29.736166666666662,
+   "actor_grad_full_first": 3.313,
+   "pg_grad_full_first": 3.319,
+   "theta_norm": 45620.90235054326
+  },
+  "low_tide/from_claude_cw_final": {
+   "actor_grad": 4.643083333333334,
+   "actor_grad_full": 2.4037166666666665,
+   "pg_grad_full": 2.416541666666667,
+   "ent_grad_full": 0.025848583333333338,
+   "critic_grad": 0.18581666666666666,
+   "value_loss": 0.39759416666666664,
+   "entropy": 0.06741083333333335,
+   "mean_return": 64.37883333333333,
+   "actor_grad_full_first": 3.593,
+   "pg_grad_full_first": 3.585,
+   "theta_norm": 45620.94368605102
+  },
+  "low_tide/arch_claude_final": {
+   "actor_grad": 0.9970333333333334,
+   "actor_grad_full": 0.3522833333333333,
+   "pg_grad_full": 0.35245,
+   "ent_grad_full": 0.008229,
+   "critic_grad": 0.39033333333333325,
+   "value_loss": 1.3908874999999998,
+   "entropy": 0.36259749999999996,
+   "mean_return": 159.79166666666666,
+   "actor_grad_full_first": 0.4539,
+   "pg_grad_full_first": 0.4548,
+   "theta_norm": 44.38944451457916
+  },
+  "low_tide/random_64x64": {
+   "actor_grad": 0.10760000000000002,
+   "actor_grad_full": 0.05243333333333334,
+   "pg_grad_full": 0.05243333333333333,
+   "ent_grad_full": 3.378333333333333e-05,
+   "critic_grad": 0.0943575,
+   "value_loss": 0.16848166666666664,
+   "entropy": 1.60943,
+   "mean_return": 2.0551666666666666,
+   "actor_grad_full_first": 0.07514,
+   "pg_grad_full_first": 0.07515,
+   "theta_norm": 16.000015258789062
+  },
+  "low_tide/ppo_100m_5M": {
+   "actor_grad": 0.6092083333333335,
+   "actor_grad_full": 0.23734166666666665,
+   "pg_grad_full": 0.2368416666666667,
+   "ent_grad_full": 0.0076138333333333336,
+   "critic_grad": 0.30178333333333335,
+   "value_loss": 0.9247633333333334,
+   "entropy": 0.45198916666666666,
+   "mean_return": 71.65233333333335,
+   "actor_grad_full_first": 0.2758,
+   "pg_grad_full_first": 0.2742,
+   "theta_norm": 26.824735720273598
+  },
+  "low_tide/ppo_100m_50M": {
+   "actor_grad": 0.61755,
+   "actor_grad_full": 0.23478333333333326,
+   "pg_grad_full": 0.23553333333333334,
+   "ent_grad_full": 0.005703,
+   "critic_grad": 0.4875083333333334,
+   "value_loss": 1.5964425,
+   "entropy": 0.39127833333333334,
+   "mean_return": 126.01683333333331,
+   "actor_grad_full_first": 0.2126,
+   "pg_grad_full_first": 0.2146,
+   "theta_norm": 52.32122114548381
+  },
+  "low_tide/ppo_100m_final": {
+   "actor_grad": 0.6999750000000001,
+   "actor_grad_full": 0.25245,
+   "pg_grad_full": 0.252875,
+   "ent_grad_full": 0.007150166666666666,
+   "critic_grad": 0.33769166666666667,
+   "value_loss": 1.21828,
+   "entropy": 0.3773933333333334,
+   "mean_return": 154.94441666666668,
+   "actor_grad_full_first": 0.2539,
+   "pg_grad_full_first": 0.2568,
+   "theta_norm": 56.99842316459481
+  }
+ }
+}
