@@ -45,7 +45,7 @@ from .render import (BAR_FILL, BAR_TRACK, DANGER, GOOD, MIN_H, MUTED, PANEL_BG, 
                      TEXT, Fonts, GridRenderer, Panel, darker)
 
 MODE_LABELS = {"human": "gioca tu", "net": "rete", "random": "casuale",
-               "heuristic": "euristica", "safe": "sicura"}
+               "heuristic": "euristica", "astra_code": "codice di Astra"}
 VEIL = (10, 30, 40, 170)
 
 

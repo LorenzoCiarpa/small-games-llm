@@ -1,7 +1,8 @@
 """Low Tide: the new game written for this project (see env.py for the rules)."""
 
+from ...code_policy import code_baseline
 from ...core import Game, NetSpec, Protocol, register
-from .baselines import heuristic_policy, safe_policy
+from .baselines import heuristic_policy
 from .env import ACTION_NAMES, MAX_STEPS, OBS_DIM, STICKY_PROB, LowTideEnv
 
 
@@ -18,7 +19,7 @@ GAME = register(Game(
     action_names=("fermo", "su", "giù", "sinistra", "destra"),
     protocol=Protocol(episodes=500, seed0=10_000, sticky_prob=STICKY_PROB, max_steps=MAX_STEPS),
     net=NetSpec(max_hidden_layers=3, max_hidden_units=64, hidden_activations=("relu", "tanh", "linear")),
-    baselines={"heuristic": heuristic_policy, "safe": safe_policy},
+    baselines={"heuristic": heuristic_policy, "astra_code": code_baseline("low_tide", len(ACTION_NAMES))},
     human_keys={"space": 0, "up": 1, "down": 2, "left": 3, "right": 4},
     human_help="frecce per muoverti, spazio per restare fermo",
     renderer="small_games.games.low_tide.render:LowTideRenderer",

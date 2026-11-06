@@ -18,7 +18,6 @@ Protocollo completo di ogni gioco (1000 episodi MinAtar, 500 Low Tide), media ±
 | `ppo_from_claude_cw` | PPO dai pesi a mano | 46-36 relu/tanh, ent 0.01, lr 0.0005, 100M passi, 2M passi di solo critico | 66.6 ± 0.6 |
 | `ppo_from_claude` | PPO dai pesi a mano | 46-36 relu/tanh, ent 0.01, lr 0.0005, 100M passi | 31.0 ± 0.3 |
 | `random` | baseline |  | 1.9 ± 0.1 |
-| `safe` | baseline |  | 0.0 ± 0.0 |
 | `ppo_from_gpt_cw` | PPO dai pesi a mano | 43-61-53 relu, ent 0.01, lr 0.0005, 100M passi, 2M passi di solo critico | 0.0 ± 0.0 |
 
 ### breakout

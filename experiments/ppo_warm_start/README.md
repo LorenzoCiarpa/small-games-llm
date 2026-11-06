@@ -245,7 +245,7 @@ Le architetture sono tutte 600-32-32-6 tanh.
 
 | modello (Low Tide) | architettura | punteggio |
 |---|---|---|
-| casuale / `safe` | | 1.9 ± 0.1 / 0.0 |
+| casuale | | 1.9 ± 0.1 |
 | euristica | | 164.0 ± 1.5 |
 | **Claude, scritta a mano** (`claude`) | 46-36 relu/tanh | 132.3 ± 0.9 |
 | **GPT, scritta a mano** (`gpt`) | 43-61-53 relu | 79.9 ± 0.9 |

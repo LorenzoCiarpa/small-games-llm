@@ -24,6 +24,7 @@ the previous action, so an episode depends only on its seed and the policy.
 
 import numpy as np
 
+from ..code_policy import code_baseline
 from ..core import Game, GridSpec, NetSpec, Protocol, register
 
 CHANNELS = ("player", "danger", "reward", "projectile", "trail", "gauge")
@@ -149,6 +150,7 @@ for _name in ("breakout", "seaquest", "asterix"):
         action_names=ACTION_NAMES,
         protocol=Protocol(episodes=1000, seed0=10_000, sticky_prob=STICKY_PROB, max_steps=MAX_STEPS),
         net=NetSpec(max_hidden_layers=2, max_hidden_units=32, hidden_activations=("tanh",)),
+        baselines={"astra_code": code_baseline(_name, len(ACTION_NAMES))},
         human_keys={"space": 0, "left": 1, "up": 2, "right": 3, "down": 4, "f": 5},
         human_help=HELP[_name],
         grid=GridSpec(H, W, CHANNELS, tuple(SOURCES[_name][ch][1] for ch in CHANNELS), layout="hwc"),

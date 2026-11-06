@@ -19,7 +19,6 @@ Il codice viene dagli LLM: va letto prima di eseguirlo.
 
 import argparse
 import ast
-import importlib.util
 import json
 import sys
 import time
@@ -27,39 +26,13 @@ from pathlib import Path
 
 import numpy as np
 
+from small_games.code_policy import CodePolicy, load_module
 from small_games.core import get_game
 from small_games.evaluate import evaluate
 from small_games.policy import policy_rng
 
 HERE = Path(__file__).resolve().parent
 GAMES = ("low_tide", "breakout", "seaquest", "asterix")
-
-
-def load_module(path, name="llm_policy"):
-    spec = importlib.util.spec_from_file_location(name, path)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
-
-
-class CodePolicy:
-    """La funzione policy(obs, rng) di un file; errori e azioni non valide diventano 0. Si può passare ai processi."""
-
-    def __init__(self, path, n_actions):
-        self.path, self.n_actions, self._fn = str(path), n_actions, None
-
-    def __getstate__(self):
-        return {"path": self.path, "n_actions": self.n_actions, "_fn": None}
-
-    def __call__(self, obs, rng):
-        if self._fn is None:
-            self._fn = load_module(self.path).policy
-        try:
-            a = self._fn(obs.copy(), rng)
-            a = int(a)
-            return a if 0 <= a < self.n_actions and a == a else 0
-        except Exception:
-            return 0
 
 
 def imports(path):

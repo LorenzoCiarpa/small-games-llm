@@ -11,11 +11,6 @@ import numpy as np
 from .env import CH_JELLY, CH_SHELL, CH_WATER, H, IDX_COUNTDOWN, IDX_RISING, IDX_STUN, MAX_INTERVAL, MOVES, STUN_STEPS, W
 
 
-def safe_policy(obs, rng):
-    """Walk to row 0 and stay there: never drowns, never scores."""
-    return 1
-
-
 def _decode(obs):
     g = obs[:400].reshape(4, H, W)
     ar, ac = map(int, np.argwhere(g[0] > 0.5)[0])

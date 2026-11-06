@@ -5,7 +5,7 @@ Score weight files and baselines on any registered game.
     uv run evaluate low_tide weights/low_tide/claude.json
     uv run evaluate low_tide claude gpt             # names of files in weights/low_tide/
     uv run evaluate breakout paper_astra --baseline random
-    uv run evaluate low_tide --baseline heuristic --baseline safe
+    uv run evaluate low_tide --baseline heuristic --baseline astra_code
 
 The scoring protocol (episodes, seeds, sticky actions, step cap) is the game's
 own (see `Game.protocol`); the options below override it. Episode k uses seed

@@ -13,9 +13,9 @@ uv run evaluate --list     # (anche `play --list`) protocolli, reti ammesse, cos
 ```
 
 **Baseline**: policy di riferimento scritte a mano, non reti, che fanno da scala per i punteggi.
-`random` (azione uniforme a caso) c'è per tutti i giochi; Low Tide ha anche `heuristic` (BFS verso la conchiglia
-più vicina evitando meduse e righe che si allagano: il riferimento alto) e `safe` (va alla riga 0 e resta lì:
-non annega mai, non segna mai). **Greedy** invece riguarda solo le reti: argmax dei logits invece di campionare
+`random` (azione uniforme a caso) e `astra_code` (la funzione `policy(obs, rng)` scritta come codice da GPT-6 Astra,
+senza tool, in [`experiments/code_policies/`](experiments/code_policies)) ci sono per tutti i giochi; Low Tide ha
+anche `heuristic` (BFS verso la conchiglia più vicina evitando meduse e righe che si allagano). **Greedy** invece riguarda solo le reti: argmax dei logits invece di campionare
 dalla softmax (il protocollo dell'articolo è campionato).
 
 ## Valutare
@@ -23,7 +23,7 @@ dalla softmax (il protocollo dell'articolo è campionato).
 ```bash
 uv run evaluate low_tide claude gpt                     # nomi dei file in weights/low_tide/
 uv run evaluate low_tide weights/low_tide/claude.json   # oppure un percorso qualsiasi
-uv run evaluate low_tide --baseline heuristic --baseline safe
+uv run evaluate low_tide --baseline heuristic --baseline astra_code
 uv run evaluate breakout paper_astra --baseline random
 ```
 
@@ -86,7 +86,7 @@ danno qui gli stessi punteggi dell'articolo, entro circa un errore standard:
 | Seaquest | 51.4 ± 1.4 | 53.1 ± 1.4 |
 | Asterix | 54.8 ± 1.1 | 53.2 ± 1.0 |
 
-**Low Tide** (500 episodi): euristica 164.0 ± 1.5, `claude` 132.3 ± 0.9, `gpt` 79.9 ± 1.0, casuale 2.0, `safe` 0;
+**Low Tide** (500 episodi): euristica 164.0 ± 1.5, `claude` 132.3 ± 0.9, `gpt` 79.9 ± 1.0, casuale 2.0, `astra_code` 188.9 ± 0.7;
 `bfs_net`, l'euristica scritta a mano come pesi in questo repo, 166.7 ± 2.0.
 
 ## Esperimenti
