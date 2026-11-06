@@ -86,7 +86,8 @@ danno qui gli stessi punteggi dell'articolo, entro circa un errore standard:
 | Seaquest | 51.4 ± 1.4 | 53.1 ± 1.4 |
 | Asterix | 54.8 ± 1.1 | 53.2 ± 1.0 |
 
-**Low Tide** (500 episodi): euristica 164.0 ± 1.5, `claude` 132.3 ± 0.9, `gpt` 79.9 ± 1.0, casuale 2.0, `safe` 0.
+**Low Tide** (500 episodi): euristica 164.0 ± 1.5, `claude` 132.3 ± 0.9, `gpt` 79.9 ± 1.0, casuale 2.0, `safe` 0;
+`bfs_net`, l'euristica scritta a mano come pesi in questo repo, 166.7 ± 2.0.
 
 ## Esperimenti
 
@@ -101,8 +102,20 @@ Gli esperimenti su un solo gioco stanno in `experiments/<gioco>/`, quelli che co
   leggibili andando avanti con l'addestramento, o con un'altra entropia? No: le misure principali su tutte le corse
   e su tutti i checkpoint, accanto alle reti scritte a mano.
   `uv run --group analysis python experiments/ppo_over_training/analyze.py`
+- [`experiments/ppo_warm_start/`](experiments/ppo_warm_start): PPO che parte dalle reti scritte a mano invece che
+  da pesi casuali. Misura quanto migliora, dopo quanti passi e quanto tempo si risparmia. Misura anche il gradiente
+  in quel punto e quanto si muovono i pesi. `uv run --group ppo --group analysis python
+  experiments/ppo_warm_start/analyze.py`
+- [`experiments/code_policies/`](experiments/code_policies): lo stesso LLM scrive l'algoritmo come codice Python
+  invece che come pesi. Il prompt è quello dell'articolo, con la sola parte sulla rete sostituita da una funzione
+  `policy(obs, rng)`, e il modello gira davvero senza tool (`run_codex.py`).
+  - Il codice di GPT-6 Astra batte la sua rete e il miglior PPO in tutti e quattro i giochi: Low Tide 188.9,
+    Breakout 786.0, Seaquest 187.3, Asterix 83.2.
+  - Le reti di Astra fanno 79.9, 512.5, 51.4 e 54.8.
+
+  `uv run python experiments/code_policies/evaluate_code.py`
 - [`experiments/ppo_runs.py`](experiments/ppo_runs.py): lancia, controlla e ferma in background tutti gli
-  addestramenti PPO (10 corse, ~2 ore su 8 core).
+  addestramenti PPO (10 corse da zero, ~2 ore su 8 core, più le 9 di experiments/ppo_warm_start/).
 
 **Low Tide**
 
@@ -111,6 +124,22 @@ Gli esperimenti su un solo gioco stanno in `experiments/<gioco>/`, quelli che co
   ~200.000 stati. `uv run python experiments/low_tide/decode_claude/check.py`
 - [`experiments/low_tide/decode_gpt/`](experiments/low_tide/decode_gpt): la stessa analisi per `gpt.json`, con un
   confronto tra le due reti. `uv run python experiments/low_tide/decode_gpt/check.py`
+- [`experiments/low_tide/bfs_net/`](experiments/low_tide/bfs_net): il contrario delle due precedenti. Parte
+  dall'euristica BFS e la scrive nei pesi di un MLP con gli stessi limiti (403 → 64 → 58 → 63 → 5), senza
+  addestramento.
+  - La BFS esatta non ci sta. Ci sta una versione a potenziale (la conchiglia più vicina pesa più di tutte le altre,
+    mai in una medusa), che fa 166.7 punti contro i 164.0 dell'euristica.
+  - Rete e specifica scelgono la stessa mossa in tutti i 456.230 stati controllati.
+
+  `uv run python experiments/low_tide/bfs_net/check.py`
+- [`experiments/low_tide/bfs_exact/`](experiments/low_tide/bfs_exact): la stessa BFS, esatta, togliendo i limiti del
+  gioco, per vedere quanti neuroni servono.
+  - Un'onda parte dalle conchiglie e avanza di una cella per strato.
+  - Servono 104 strati e 51.103 neuroni, contro i 192 ammessi.
+  - Fa la stessa mossa dell'euristica in ogni stato controllato, quindi ottiene lo stesso punteggio episodio per
+    episodio.
+
+  `uv run python experiments/low_tide/bfs_exact/check.py`
 - [`experiments/low_tide/ppo/`](experiments/low_tide/ppo): una rete addestrata con PPO (403-64-64-5) gioca bene
   quanto quella di Claude, e con 100M passi (`ppo_100m.json`) quanto l'euristica, ma i suoi pesi non si leggono come
   un algoritmo. Le stesse misure sulle reti: pesi, pruning, ablazione, quantità dell'algoritmo di Claude nei
@@ -173,7 +202,37 @@ gioco); l'albero imita la mossa più probabile della rete usando le grandezze de
 - **Anche il comportamento** è diverso: in Seaquest e Asterix Astra riduce il gioco a una dimensione (fermo nella
   colonna 5, sceglie la riga), PPO no.
 
+### Le reti scritte a mano sono un buon punto di partenza per PPO?
+
+Le reti di Astra sui giochi MinAtar sì, quelle di GPT e Claude su Low Tide no. Ogni corsa usa la configurazione della
+migliore corsa da zero del gioco e ne cambia solo l'attore iniziale; per Low Tide il confronto è con una corsa da
+zero con la stessa architettura della rete a mano
+([`experiments/ppo_warm_start/`](experiments/ppo_warm_start)).
+
+| gioco | rete a mano | PPO dalla rete a mano | PPO da zero | gradiente a pesi fissi: rete a mano / PPO da zero a fine corsa |
+|---|---|---|---|---|
+| Breakout | 512.5 | 512.5 (identica) | 63.2 | 4·10⁻¹³ / 0.085 |
+| Seaquest | 51.4 | **82.5** (+60%) | 55.9 | 0.37 / 0.12 |
+| Asterix | 54.8 | 50.8 (−7%) | 24.6 | 1.14 / 0.11 |
+| Low Tide | `gpt` 79.9 | 147.3 (+84%) | **166.9** | 1.32 / 0.41 |
+| Low Tide | `claude` 132.3 | 31.0 (−77%) | **158.4** | 28.3 / 0.35 |
+
+- **Breakout:** la rete di Astra è un plateau. La softmax è satura, il gradiente è praticamente zero e in 200M passi i
+  pesi si muovono di 7·10⁻⁶. PPO non la cambia, ma vale 8 volte la migliore corsa da zero.
+- **Seaquest:** PPO peggiora la rete per 5M passi, torna al suo livello a 20M e finisce a +60%. Per arrivare al
+  livello finale della corsa da zero risparmia 150M passi.
+- **Asterix:** PPO non la migliora, ma resta il doppio della corsa da zero.
+- **Low Tide:** nel primo milione di passi PPO cancella le reti scritte a mano (GPT scende a 1, Claude a 6), poi
+  impara più lentamente che da zero.
+  - I pesi delle reti a mano sono enormi: ‖θ‖ da 500 a 45.000, contro 11-17 di un'inizializzazione casuale. Con lo
+    stesso learning rate ogni aggiornamento cambia la policy molto di più: il KL è 20-45 volte quello di una corsa
+    da zero.
+  - Addestrare prima solo il critico non basta.
+
 ## Struttura
+
+La mappa completa, con il collegamento tra le sezioni dell'articolo e le cartelle, è in
+[`STRUCTURE.md`](STRUCTURE.md) (in inglese).
 
 ```
 src/small_games/
