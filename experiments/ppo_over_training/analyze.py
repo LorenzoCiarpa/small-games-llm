@@ -1,25 +1,25 @@
 """
-PPO diventa più sparso o più leggibile andando avanti con l'addestramento, o con un'altra entropia? Le misure
-principali di src/small_games/analysis.py, più leggere, su tutte le corse PPO e sui loro checkpoint, accanto alle
-reti scritte a mano dello stesso gioco (commento in README.md).
+Does PPO become sparser or more readable as training goes on, or with a different entropy coefficient? The main
+measures of src/small_games/analysis.py, in a lighter version, on all the PPO runs and their checkpoints, next to the
+hand-written networks of the same game (discussion in README.md).
 
     uv run --group analysis python experiments/ppo_over_training/analyze.py --workers 8   # ~5 min
-    uv run --group analysis python experiments/ppo_over_training/analyze.py --plot-only   # solo la figura
+    uv run --group analysis python experiments/ppo_over_training/analyze.py --plot-only   # figure and tables only
 
-Il primo strato è guardato solo sugli ingressi vivi del gioco (quelli che non sono sempre zero, presi da
-experiments/<gioco>/ppo/results/analysis/analysis.json): sugli altri PPO non riceve gradiente e lascia i pesi
-iniziali. Per ogni rete:
-  punteggio            media su `--episodes` episodi del protocollo (campionata)
-  massa nel 10%        quota della somma dei |w| (tutti gli strati) che sta nel 10% dei pesi più grandi
-  ingressi per il 90%  mediana, sui neuroni del primo strato, della frazione di ingressi vivi che fa il 90% del |w|
-  pruning 50%          punteggio tenendo il 50% dei pesi più grandi di ogni strato, diviso per il punteggio
-  primo strato 25%     punteggio tenendo il 25% dei pesi vivi più grandi del primo strato (gli altri strati interi),
-                       diviso per il punteggio
-  quantità chiave      media, sulle quantità dell'algoritmo scritto a mano (KEY_QUANTITIES), del miglior |r| di un
-                       neurone e dell'R² lineare dello strato migliore
-  albero               accordo di un albero di profondità 6 sulle grandezze del gioco con l'argmax della rete
+The first layer is examined only on the game's live inputs (those that are not always zero, taken from
+experiments/<game>/ppo/results/analysis/analysis.json): on the other inputs PPO receives no gradient and leaves the
+initial weights. For each network:
+  score                mean over `--episodes` protocol episodes (sampled actions)
+  mass in 10%          share of the sum of |w| (all layers) that lies in the largest 10% of the weights
+  inputs for 90%       median, over the first-layer neurons, of the fraction of live inputs that makes up 90% of |w|
+  pruning 50%          score keeping the largest 50% of the weights of each layer, divided by the score
+  first layer 25%      score keeping the largest 25% of the live first-layer weights (the other layers whole),
+                       divided by the score
+  key quantities       mean, over the quantities of the hand-written algorithm (KEY_QUANTITIES), of the best |r| of a
+                       neuron and of the linear R² of the best layer
+  tree                 agreement of a depth-6 tree on the game's features with the network's argmax
 
-Scrive results/sweep.json (tutti i numeri), results/sweep.md (le tabelle) e results/sweep.png.
+Writes results/sweep.json (all the numbers), results/sweep.md (the tables) and results/sweep.png.
 """
 
 from __future__ import annotations
@@ -120,26 +120,26 @@ def run_all(args):
 
 def fmt(m):
     p = lambda x: "—" if x is None else f"{x:.2f}"
-    return (f"punti {m['score']:.1f}, massa10 {m['top10_mass']:.2f}, ingr90 {m['inputs_for_90pct_frac']:.2f}, "
-            f"prune50 {p(m['prune50_rel'])}, primo25 {p(m['first25_rel'])}, r {m['key_best_r']:.2f}, "
-            f"R² {m['key_r2']:.2f}, albero {m['tree6_agreement']:.2f}")
+    return (f"score {m['score']:.1f}, mass10 {m['top10_mass']:.2f}, inputs90 {m['inputs_for_90pct_frac']:.2f}, "
+            f"prune50 {p(m['prune50_rel'])}, first25 {p(m['first25_rel'])}, r {m['key_best_r']:.2f}, "
+            f"R² {m['key_r2']:.2f}, tree {m['tree6_agreement']:.2f}")
 
 
 # ------------------------------------------------------------------------------------------------ report
-COLS = [("punteggio", "score", "{:.1f}"), ("massa nel 10% dei pesi", "top10_mass", "{:.0%}"),
-        ("ingressi vivi per il 90% (primo strato)", "inputs_for_90pct_frac", "{:.0%}"),
-        ("pruning 50%", "prune50_rel", "{:.0%}"), ("primo strato al 25%", "first25_rel", "{:.0%}"),
-        ("quantità chiave: miglior \\|r\\|", "key_best_r", "{:.2f}"), ("quantità chiave: R²", "key_r2", "{:.2f}"),
-        ("albero prof. 6: accordo", "tree6_agreement", "{:.0%}")]
+COLS = [("score", "score", "{:.1f}"), ("mass in 10% of the weights", "top10_mass", "{:.0%}"),
+        ("live inputs for 90% (first layer)", "inputs_for_90pct_frac", "{:.0%}"),
+        ("pruning 50%", "prune50_rel", "{:.0%}"), ("first layer at 25%", "first25_rel", "{:.0%}"),
+        ("key quantities: best \\|r\\|", "key_best_r", "{:.2f}"), ("key quantities: R²", "key_r2", "{:.2f}"),
+        ("depth-6 tree: agreement", "tree6_agreement", "{:.0%}")]
 
 
 def tables(res):
     out = []
     for g, r in res.items():
         out.append(f"### {g}\n")
-        out.append("| rete | " + " | ".join(c[0] for c in COLS) + " |")
+        out.append("| network | " + " | ".join(c[0] for c in COLS) + " |")
         out.append("|---|" + "---|" * len(COLS))
-        rows = [(f"`{h}` (a mano)", m) for h, m in r["hand"].items()]
+        rows = [(f"`{h}` (hand-written)", m) for h, m in r["hand"].items()]
         rows += [(f"`{run}` {s}M", m) for run, ckpts in r["runs"].items() for s, m in ckpts.items()]
         for name, m in rows:
             out.append(f"| {name} | " + " | ".join("—" if m[k] is None else f.format(m[k]) for _, k, f in COLS) + " |")
@@ -150,14 +150,14 @@ def tables(res):
 # reference palette (dataviz skill), light mode: categorical slots 1-3, ink and grid
 SERIES = ("#2a78d6", "#eb6834", "#1baf7a")
 INK, MUTED, GRID, SURFACE = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
-PLOTS = [("score", "punteggio"), ("top10_mass", "massa nel 10%\ndei pesi più grandi"),
-         ("first25_rel", "punteggio con il 25% dei\npesi del primo strato (rel.)"),
-         ("key_best_r", "quantità chiave:\nmiglior |r| di un neurone"),
-         ("tree6_agreement", "accordo di un albero\ndi profondità 6")]
+PLOTS = [("score", "score"), ("top10_mass", "mass in the largest\n10% of the weights"),
+         ("first25_rel", "score with 25% of the\nfirst-layer weights (rel.)"),
+         ("key_best_r", "key quantities:\nbest |r| of a neuron"),
+         ("tree6_agreement", "agreement of a\ndepth-6 tree")]
 TITLES = {"low_tide": "Low Tide", "breakout": "Breakout", "seaquest": "Seaquest", "asterix": "Asterix"}
 # colour = entropy coefficient (Low Tide's ppo_100m has the default 0.01)
 RUN_STYLE = {"ppo_100m": 0, "ppo_ent01": 0, "ppo_ent05": 1, "ppo_ent10": 2}
-ENTROPY_LABELS = ("PPO, entropia 0.01", "PPO, entropia 0.05", "PPO, entropia 0.1")
+ENTROPY_LABELS = ("PPO, entropy 0.01", "PPO, entropy 0.05", "PPO, entropy 0.1")
 
 
 def plot(res, path):
@@ -199,14 +199,14 @@ def plot(res, path):
             if c == 0:
                 ax.set_ylabel(label, fontsize=8, color=INK)
             if r == len(PLOTS) - 1:
-                ax.set_xlabel("milioni di passi", fontsize=8, color=MUTED)
+                ax.set_xlabel("millions of steps", fontsize=8, color=MUTED)
     from matplotlib.lines import Line2D
 
     handles = [Line2D([], [], color=c, lw=2, marker="o", ms=4.5, mec=SURFACE) for c in SERIES]
     handles.append(Line2D([], [], color=MUTED, lw=1.4, ls="--"))
-    fig.legend(handles, [*ENTROPY_LABELS, "rete scritta a mano (il nome è sulla linea)"], loc="upper center",
+    fig.legend(handles, [*ENTROPY_LABELS, "hand-written network (name on the line)"], loc="upper center",
                ncol=4, fontsize=8, frameon=False, labelcolor=INK, bbox_to_anchor=(0.5, 0.975))
-    fig.suptitle("PPO lungo l'addestramento, accanto alle reti scritte a mano", fontsize=10, color=INK)
+    fig.suptitle("PPO over training, next to the hand-written networks", fontsize=10, color=INK)
     fig.tight_layout(rect=(0, 0, 1, 0.965))
     fig.savefig(path, dpi=120, facecolor=SURFACE)
     plt.close(fig)
@@ -215,9 +215,10 @@ def plot(res, path):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--episodes", type=int, default=100)
-    ap.add_argument("--collect", type=int, default=10, help="episodi giocati dalla rete per le quantità e l'albero")
+    ap.add_argument("--collect", type=int, default=10,
+                    help="episodes played by the network for the key quantities and the tree")
     ap.add_argument("--workers", type=int, default=6)
-    ap.add_argument("--games", nargs="*", help=f"solo questi giochi (default: {' '.join(GAMES)})")
+    ap.add_argument("--games", nargs="*", help=f"only these games (default: {' '.join(GAMES)})")
     ap.add_argument("--plot-only", action="store_true")
     args = ap.parse_args()
     res = json.loads((OUT / "sweep.json").read_text()) if args.plot_only else run_all(args)

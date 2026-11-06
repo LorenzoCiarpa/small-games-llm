@@ -844,7 +844,7 @@
    ],
    "seconds": 303.3,
    "key_quantities": {
-    "margine (righe asciutte sotto l'agente)": [
+    "margin (dry rows below the agent)": [
      {
       "layer": 0,
       "best_unit": 0,
@@ -858,7 +858,7 @@
       "linear_r2": 0.9529172722758398
      }
     ],
-    "pericolo (sale e margine \u2264 2)": [
+    "danger (rising and margin \u2264 2)": [
      {
       "layer": 0,
       "best_unit": 1,
@@ -872,7 +872,7 @@
       "linear_r2": 0.9999999621545242
      }
     ],
-    "conchiglia a destra nella riga": [
+    "shell to the right in the row": [
      {
       "layer": 0,
       "best_unit": 21,
@@ -886,7 +886,7 @@
       "linear_r2": 0.9999955929722544
      }
     ],
-    "conchiglia a sinistra nella riga": [
+    "shell to the left in the row": [
      {
       "layer": 0,
       "best_unit": 14,
@@ -2381,7 +2381,7 @@
    ],
    "seconds": 477.5,
    "key_quantities": {
-    "margine (righe asciutte sotto l'agente)": [
+    "margin (dry rows below the agent)": [
      {
       "layer": 0,
       "best_unit": 42,
@@ -2401,7 +2401,7 @@
       "linear_r2": 0.2126407661222529
      }
     ],
-    "pericolo (sale e margine \u2264 2)": [
+    "danger (rising and margin \u2264 2)": [
      {
       "layer": 0,
       "best_unit": 35,
@@ -2421,7 +2421,7 @@
       "linear_r2": 1.0
      }
     ],
-    "conchiglia a destra nella riga": [
+    "shell to the right in the row": [
      {
       "layer": 0,
       "best_unit": 35,
@@ -2441,7 +2441,7 @@
       "linear_r2": 0.6355858354941843
      }
     ],
-    "conchiglia a sinistra nella riga": [
+    "shell to the left in the row": [
      {
       "layer": 0,
       "best_unit": 37,
@@ -3687,7 +3687,7 @@
    ],
    "seconds": 330.8,
    "key_quantities": {
-    "margine (righe asciutte sotto l'agente)": [
+    "margin (dry rows below the agent)": [
      {
       "layer": 0,
       "best_unit": 9,
@@ -3701,7 +3701,7 @@
       "linear_r2": 0.4057993450290286
      }
     ],
-    "pericolo (sale e margine \u2264 2)": [
+    "danger (rising and margin \u2264 2)": [
      {
       "layer": 0,
       "best_unit": 6,
@@ -3715,7 +3715,7 @@
       "linear_r2": 0.6995111348777927
      }
     ],
-    "conchiglia a destra nella riga": [
+    "shell to the right in the row": [
      {
       "layer": 0,
       "best_unit": 0,
@@ -3729,7 +3729,7 @@
       "linear_r2": 0.2671782643293693
      }
     ],
-    "conchiglia a sinistra nella riga": [
+    "shell to the left in the row": [
      {
       "layer": 0,
       "best_unit": 44,
@@ -4969,7 +4969,7 @@
    ],
    "seconds": 91.4,
    "key_quantities": {
-    "margine (righe asciutte sotto l'agente)": [
+    "margin (dry rows below the agent)": [
      {
       "layer": 0,
       "best_unit": 38,
@@ -4983,7 +4983,7 @@
       "linear_r2": 0.5309649410161283
      }
     ],
-    "pericolo (sale e margine \u2264 2)": [
+    "danger (rising and margin \u2264 2)": [
      {
       "layer": 0,
       "best_unit": 6,
@@ -4997,7 +4997,7 @@
       "linear_r2": 0.7549097490902971
      }
     ],
-    "conchiglia a destra nella riga": [
+    "shell to the right in the row": [
      {
       "layer": 0,
       "best_unit": 14,
@@ -5011,7 +5011,7 @@
       "linear_r2": 0.29412992643430813
      }
     ],
-    "conchiglia a sinistra nella riga": [
+    "shell to the left in the row": [
      {
       "layer": 0,
       "best_unit": 56,

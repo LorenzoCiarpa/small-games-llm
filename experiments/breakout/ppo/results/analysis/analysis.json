@@ -692,7 +692,7 @@
    ],
    "seconds": 224.4,
    "key_quantities": {
-    "colonna d'arrivo \u2212 racchetta": [
+    "landing column \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 4,
@@ -706,7 +706,7 @@
       "linear_r2": 0.2272603679516172
      }
     ],
-    "arrivo se scendesse a destra \u2212 racchetta": [
+    "landing if the ball came down to the right \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 0,
@@ -720,7 +720,7 @@
       "linear_r2": 0.10178392973265293
      }
     ],
-    "arrivo se scendesse a sinistra \u2212 racchetta": [
+    "landing if the ball came down to the left \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 1,
@@ -734,7 +734,7 @@
       "linear_r2": 0.1006790208578694
      }
     ],
-    "palla \u2212 racchetta (colonne)": [
+    "ball \u2212 paddle (columns)": [
      {
       "layer": 0,
       "best_unit": 1,
@@ -748,7 +748,7 @@
       "linear_r2": 0.10606081994678096
      }
     ],
-    "la palla scende": [
+    "the ball is coming down": [
      {
       "layer": 0,
       "best_unit": 5,
@@ -1476,7 +1476,7 @@
    ],
    "seconds": 173.8,
    "key_quantities": {
-    "colonna d'arrivo \u2212 racchetta": [
+    "landing column \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 29,
@@ -1490,7 +1490,7 @@
       "linear_r2": 0.16992579394209162
      }
     ],
-    "arrivo se scendesse a destra \u2212 racchetta": [
+    "landing if the ball came down to the right \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 11,
@@ -1504,7 +1504,7 @@
       "linear_r2": 0.21785720437321687
      }
     ],
-    "arrivo se scendesse a sinistra \u2212 racchetta": [
+    "landing if the ball came down to the left \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 21,
@@ -1518,7 +1518,7 @@
       "linear_r2": 0.327249963662253
      }
     ],
-    "palla \u2212 racchetta (colonne)": [
+    "ball \u2212 paddle (columns)": [
      {
       "layer": 0,
       "best_unit": 17,
@@ -1532,7 +1532,7 @@
       "linear_r2": 0.4862835521642944
      }
     ],
-    "la palla scende": [
+    "the ball is coming down": [
      {
       "layer": 0,
       "best_unit": 24,
@@ -2260,7 +2260,7 @@
    ],
    "seconds": 78.1,
    "key_quantities": {
-    "colonna d'arrivo \u2212 racchetta": [
+    "landing column \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 1,
@@ -2274,7 +2274,7 @@
       "linear_r2": 0.06422265040055941
      }
     ],
-    "arrivo se scendesse a destra \u2212 racchetta": [
+    "landing if the ball came down to the right \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 12,
@@ -2288,7 +2288,7 @@
       "linear_r2": 0.11887744426896918
      }
     ],
-    "arrivo se scendesse a sinistra \u2212 racchetta": [
+    "landing if the ball came down to the left \u2212 paddle": [
      {
       "layer": 0,
       "best_unit": 12,
@@ -2302,7 +2302,7 @@
       "linear_r2": 0.10495059858066291
      }
     ],
-    "palla \u2212 racchetta (colonne)": [
+    "ball \u2212 paddle (columns)": [
      {
       "layer": 0,
       "best_unit": 11,
@@ -2316,7 +2316,7 @@
       "linear_r2": 0.11905131465248986
      }
     ],
-    "la palla scende": [
+    "the ball is coming down": [
      {
       "layer": 0,
       "best_unit": 31,

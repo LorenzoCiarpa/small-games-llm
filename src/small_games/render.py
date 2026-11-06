@@ -121,7 +121,7 @@ class Renderer:
         return None
 
     def end_title(self, terminated):
-        return f"Partita finita al passo {self.env.t}" if terminated else f"Fine dei {self.env.t} passi"
+        return f"Game over at step {self.env.t}" if terminated else f"All {self.env.t} steps played"
 
     # ------------------------------------------------------------ shared
     def reset(self, obs):

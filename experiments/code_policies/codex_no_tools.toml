@@ -1,17 +1,17 @@
-# Codex senza tool, per far scrivere il codice agli LLM con le stesse condizioni dei pesi.
-# Parte dalla configurazione dell'articolo (lm_understand-logs, harness/codex_config.toml), adattata a Codex 0.164.
-# run_codex.py la usa come config.toml di una CODEX_HOME temporanea, quindi niente server MCP, skill, plugin o
-# istruzioni della configurazione personale.
+# Codex without tools, so that the LLMs write code under the same conditions as the weights.
+# It starts from the article's configuration (lm_understand-logs, harness/codex_config.toml), adapted to Codex 0.164.
+# run_codex.py uses it as the config.toml of a temporary CODEX_HOME, so no MCP servers, skills, plugins or
+# instructions from the personal configuration.
 #
-# Non basta: in Codex 0.164 il code mode, gli agenti, apply_patch, la shell, la ricerca e l'orologio li decide il
-# catalogo dei modelli (per gpt-6-astra tool_mode = "code_mode_only", multi_agent_version = "v2"). run_codex.py
-# scrive una copia del catalogo con quei campi tolti e la passa con -c model_catalog_json=..., poi controlla con
-# `codex debug prompt-input` che il modello non veda nessun tool.
+# This is not enough: in Codex 0.164 code mode, agents, apply_patch, the shell, search and the clock are decided by
+# the model catalog (for gpt-6-astra tool_mode = "code_mode_only", multi_agent_version = "v2"). run_codex.py
+# writes a copy of the catalog without those fields, passes it with -c model_catalog_json=..., and then checks with
+# `codex debug prompt-input` that the model sees no tool.
 approval_policy = "never"
 sandbox_mode = "read-only"
 web_search = "disabled"
 
-# niente blocchi di contesto aggiunti da Codex: ambiente, permessi, app
+# no context blocks added by Codex: environment, permissions, apps
 include_environment_context = false
 include_permissions_instructions = false
 include_apps_instructions = false

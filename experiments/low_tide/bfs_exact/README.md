@@ -81,8 +81,8 @@ shortest path starts, i.e. the first direction whose neighbor is at distance d �
 **The computation is exact.** All internal values are small integers, between 0 and 100, which float64 represents
 without error.
 - The only non-integer input is the countdown, k/5 in float32.
-- `relu(10 · countdown − 5)` is 0 for k ≤ 2 and at least 1 for k ≥ 3, so `relu(sale − ·)` (`sale`: the tide is
-  rising) gives an exact 0/1.
+- `relu(10 · countdown − 5)` is 0 for k ≤ 2 and at least 1 for k ≥ 3, so `relu(rising − ·)` (`rising`: the tide
+  is rising) gives an exact 0/1.
 
 **Even when sampling from the softmax the move is always the same.** The logits have margins ≥ 1000, and exp(−1000)
 is 0 in float64. The network therefore plays exactly the same episodes as the heuristic.

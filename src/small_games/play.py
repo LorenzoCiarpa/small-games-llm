@@ -44,8 +44,8 @@ from .policy import baselines, games_overview, load_mlp, policy_rng, sample_acti
 from .render import (BAR_FILL, BAR_TRACK, DANGER, GOOD, MIN_H, MUTED, PANEL_BG, PANEL_W, STICKY,
                      TEXT, Fonts, GridRenderer, Panel, darker)
 
-MODE_LABELS = {"human": "gioca tu", "net": "rete", "random": "casuale",
-               "heuristic": "euristica", "astra_code": "codice di Astra"}
+MODE_LABELS = {"human": "you play", "net": "network", "random": "random",
+               "heuristic": "heuristic", "astra_code": "Astra's code"}
 VEIL = (10, 30, 40, 170)
 
 
@@ -185,8 +185,8 @@ class App:
         veil.fill(VEIL)
         s.blit(veil, (0, 0))
         lines = [(self.fonts.title, self.renderer.end_title(self.terminated), TEXT),
-                 (self.fonts.text, f"punteggio {self.total:g}", TEXT),
-                 (self.fonts.small, "R per ricominciare, E per un nuovo seed", MUTED)]
+                 (self.fonts.text, f"score {self.total:g}", TEXT),
+                 (self.fonts.small, "R to restart, E for a new seed", MUTED)]
         y = h // 2 - 50
         for font, text, color in lines:
             img = font.render(text, True, color)
@@ -205,12 +205,12 @@ class App:
             return custom
         names = self.game.action_names
         if L["sticky"]:
-            return f"sticky: {names[L['executed']]} invece di {names[L['chosen']]}", STICKY
+            return f"sticky: {names[L['executed']]} instead of {names[L['chosen']]}", STICKY
         if L["reward"] > 0:
-            return f"ricompensa +{L['reward']:g}", GOOD
+            return f"reward +{L['reward']:g}", GOOD
         if L["reward"] < 0:
-            return f"penalità {L['reward']:g}", DANGER
-        return f"azione: {names[L['executed']]}", MUTED
+            return f"penalty {L['reward']:g}", DANGER
+        return f"action: {names[L['executed']]}", MUTED
 
     def draw_panel(self):
         p, f, env = self.panel, self.fonts, self.env
@@ -220,19 +220,19 @@ class App:
         y += 42
         mode = self.mode_label(self.mode)
         if self.mode == "human":
-            mode += ", in tempo reale" if self.realtime else ", a turni"
+            mode += ", real time" if self.realtime else ", turn-based"
         elif self.mode == "net":
-            mode += f" {self.weights_name}, " + ("greedy" if self.greedy else "campionata")
+            mode += f" {self.weights_name}, " + ("greedy" if self.greedy else "sampled")
         if self.paused and self.mode != "human":
-            mode += ", in pausa"
+            mode += ", paused"
         p.text(f.small, mode, MUTED, 0, y)
         y += 20
-        sticky = f"sticky {env.sticky_prob:g}" if env.sticky_prob > 0 else "sticky spente"
-        p.text(f.small, f"{sticky}, seed {self.seed}, {self.speed:.1f} passi/s", MUTED, 0, y)
+        sticky = f"sticky {env.sticky_prob:g}" if env.sticky_prob > 0 else "sticky off"
+        p.text(f.small, f"{sticky}, seed {self.seed}, {self.speed:.1f} steps/s", MUTED, 0, y)
 
         y += 32
         p.text(f.score, f"{self.total:g}", TEXT, 0, y)
-        details = self.renderer.score_details() + [f"passo {env.t} di {env.max_steps}"]
+        details = self.renderer.score_details() + [f"step {env.t} of {env.max_steps}"]
         for k, line in enumerate(details[-2:]):
             p.text(f.small, line, MUTED, 110, y + 14 + 20 * k + (10 if len(details) == 1 else 0))
 
@@ -248,7 +248,7 @@ class App:
         p.line(y)
         y += 12
         if self.probs is not None:
-            title = "la rete adesso sceglierebbe" if self.mode == "net" else "la rete qui sceglierebbe"
+            title = "the network would now choose" if self.mode == "net" else "here the network would choose"
             p.text(f.small, title, MUTED, 0, y)
             y += 22
             best = int(np.argmax(self.probs))
@@ -262,15 +262,15 @@ class App:
                 p.text(f.tiny, f"{100 * self.probs[a]:.0f}%  z {self.logits[a]:+.1f}", color, 72 + bw + 8, y + 4)
                 y += 20
         else:
-            p.text(f.small, "nessuna rete caricata (--weights)", MUTED, 0, y)
+            p.text(f.small, "no network loaded (--weights)", MUTED, 0, y)
 
         if self.mode == "human":
-            groups = [self.game.human_help.split(", "), ["T a turni o in tempo reale"]]
+            groups = [self.game.human_help.split(", "), ["T turn-based or real time"]]
         else:
-            groups = [["P pausa", "N un passo", "+ e - velocità"]]
-        groups += [[f"{k + 1} " + ("tu" if m == "human" else self.mode_label(m)) for k, m in enumerate(self.modes)],
-                   ["R ricomincia", "E nuovo seed"],
-                   ["S sticky", "G greedy", "C coordinate", "Esc esci"]]
+            groups = [["P pause", "N one step", "+ and - speed"]]
+        groups += [[f"{k + 1} " + ("you" if m == "human" else self.mode_label(m)) for k, m in enumerate(self.modes)],
+                   ["R restart", "E new seed"],
+                   ["S sticky", "G greedy", "C coords", "Esc quit"]]
         help_lines = [line for g in groups for line in p.wrap(f.small, g)]
         y = self.win_h - 14 - 19 * len(help_lines)
         for line in help_lines:
@@ -309,27 +309,27 @@ class App:
 
 def main(argv=None):
     ap = argparse.ArgumentParser(
-        description="Gioca a un gioco o guarda una policy",
-        epilog="giochi:\n" + games_overview() + "\n\n--list descrive ogni gioco e ogni baseline.",
+        description="Play a game or watch a policy play it.",
+        epilog="games:\n" + games_overview() + "\n\n--list describes every game and baseline.",
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("game", nargs="?", choices=list_games(), help="il gioco (vedi sotto)")
-    ap.add_argument("--list", action="store_true", help="descrive i giochi e le loro baseline ed esce")
-    ap.add_argument("--weights", help="la rete da guardare: un file, o un nome in weights/<game>/")
-    ap.add_argument("--baseline", help="una baseline da guardare (vedi sotto)")
+    ap.add_argument("game", nargs="?", choices=list_games(), help="the game (see below)")
+    ap.add_argument("--list", action="store_true", help="describe the games and their baselines, then exit")
+    ap.add_argument("--weights", help="the network to watch: a file, or a name in weights/<game>/")
+    ap.add_argument("--baseline", help="a baseline to watch (see below)")
     ap.add_argument("--seed", type=int,
-                    help="seed del primo episodio (default: il seed0 del gioco, cioè l'episodio 0 di "
-                         "evaluate); con lo stesso seed l'episodio si ripete identico, ed è l'episodio "
-                         "seed - seed0 di evaluate")
-    ap.add_argument("--sticky", type=float, help="probabilità di sticky action (default: quella del gioco)")
-    ap.add_argument("--speed", type=float, default=6.0, help="passi al secondo in riproduzione")
-    ap.add_argument("--greedy", action="store_true", help="argmax invece di campionare")
+                    help="seed of the first episode (default: the game's seed0, i.e. episode 0 of "
+                         "evaluate); the same seed repeats the identical episode, which is episode "
+                         "seed - seed0 of evaluate")
+    ap.add_argument("--sticky", type=float, help="sticky-action probability (default: the game's)")
+    ap.add_argument("--speed", type=float, default=6.0, help="steps per second when a policy plays")
+    ap.add_argument("--greedy", action="store_true", help="argmax instead of sampling")
     args = ap.parse_args(argv)
 
     if args.list:
         print(games_overview(verbose=True))
         return 0
     if not args.game:
-        ap.error(f"scegli un gioco: {', '.join(list_games())}")
+        ap.error(f"choose a game: {', '.join(list_games())}")
     game = get_game(args.game)
     if args.sticky is None:
         args.sticky = game.protocol.sticky_prob
@@ -337,7 +337,7 @@ def main(argv=None):
         args.seed = game.protocol.seed0
     known = baselines(game)
     if args.baseline and args.baseline not in known:
-        ap.error(f"{game.name}: baseline sconosciuta {args.baseline!r}; disponibili: {', '.join(known)}")
+        ap.error(f"{game.name}: unknown baseline {args.baseline!r}; available: {', '.join(known)}")
     try:
         App(game, args).run()
     except (FileNotFoundError, ValueError) as e:

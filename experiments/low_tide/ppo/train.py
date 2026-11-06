@@ -1,11 +1,11 @@
 """
-PPO su Low Tide: addestra una policy 403-64-64-5 tanh (due strati nascosti da 64, il massimo di unità ammesso), la
-salva in weights/low_tide/ppo.json e la valuta con il protocollo del gioco.
+PPO on Low Tide: trains a 403-64-64-5 tanh policy (two hidden layers of 64, the maximum number of units allowed),
+saves it to weights/low_tide/ppo.json and scores it with the game's protocol.
 
-    uv run --group ppo python experiments/low_tide/ppo/train.py                     # configurazione sotto
+    uv run --group ppo python experiments/low_tide/ppo/train.py                     # configuration below
     uv run --group ppo python experiments/low_tide/ppo/train.py --total-steps 2000000
 
-L'algoritmo è in src/small_games/ppo.py; i risultati (curva di training, checkpoint, valutazione) in results/ppo/.
+The algorithm is in src/small_games/ppo.py; the results (training curve, checkpoints, evaluation) in results/ppo/.
 """
 
 from pathlib import Path

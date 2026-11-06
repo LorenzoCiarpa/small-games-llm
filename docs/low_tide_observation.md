@@ -51,14 +51,14 @@ column = index % 10
 Examples for the cell in row 3 and column 6: agent → 36, water → 136, shell → 236, jellyfish → 336.
 
 > **Warning: the order differs from that of the MinAtar games.** In Breakout, Seaquest and Asterix the index is
-> `(riga · 10 + colonna) · 6 + canale`: the channels of a cell are adjacent. In Low Tide the cells of the same
+> `(row · 10 + column) · 6 + channel`: the channels of a cell are adjacent. In Low Tide the cells of the same
 > plane are adjacent. Whoever writes the weights must use the right formula for each game.
 
 ## The four planes
 
 ### Agent (indices 0–99)
 
-- There is always **exactly one 1**, in the agent's cell: index `10 · riga + colonna`.
+- There is always **exactly one 1**, in the agent's cell: index `10 · row + column`.
 - At the start of every episode the agent is in **row 1**, in a random column.
 - It can be on any dry row, i.e. from 0 to `9 − livello`. With the tide at 0 it can reach
   row 9.
@@ -139,7 +139,7 @@ Examples for the cell in row 3 and column 6: agent → 36, water → 136, shell 
 
 ## The order of events in a step
 
-`step(azione)` runs, in order:
+`step(action)` runs, in order:
 
 1. **Sticky action:** with probability 0.1 the chosen action is replaced by the previous one.
 2. **Movement.** If the agent is stunned, it does not move and the stun decreases by 1. Otherwise it moves, unless
@@ -205,22 +205,22 @@ value 400 goes back to 0.
 import numpy as np
 
 grid = obs[:400].reshape(4, 10, 10)          # [plane, row, column]
-agente, acqua, conchiglie, meduse = grid
-riga, colonna = np.argwhere(agente)[0]
-livello = int(acqua.sum()) // 10               # 0..7; lowest dry row = 9 - livello
-sale = obs[400] == 1.0
-passi_al_cambio = round(obs[401] * 5)          # 1..5
-passi_di_paralisi = round(obs[402] * 3)        # 0..3
+agent, water, shells, jellyfish = grid
+row, column = np.argwhere(agent)[0]
+level = int(water.sum()) // 10                 # 0..7; lowest dry row = 9 - level
+rising = obs[400] == 1.0
+steps_to_change = round(obs[401] * 5)          # 1..5
+stun_steps = round(obs[402] * 3)               # 0..3
 ```
 
 ## How a network reads it: two examples
 
-A network does not receive variables like `livello` or `riga` (row): it must derive them with weighted sums of these
-403 numbers. Each unit computes `attivazione(Σ peso · ingresso + bias)` (activation(Σ weight · input + bias)).
+A network does not receive variables like `level` or `row`: it must derive them with weighted sums of these
+403 numbers. Each unit computes `activation(Σ weight · input + bias)`.
 
 - In `weights/low_tide/gpt.json` unit 0 of the first layer has weight +1 on input 236 (shell in row 3,
-  column 6), −1 on 336 (jellyfish in the same cell) and bias 1. So it computes `relu(1 + conchiglia − medusa)`
-  (relu(1 + shell − jellyfish)): it is 2 if the cell has a shell, 1 if it is empty, 0 if it has a jellyfish. In
+  column 6), −1 on 336 (jellyfish in the same cell) and bias 1. So it computes `relu(1 + shell − jellyfish)`:
+  it is 2 if the cell has a shell, 1 if it is empty, 0 if it has a jellyfish. In
   practice it is a judgment of that cell.
 - A unit with weight 1 on inputs 0–9, i.e. row 0 of the agent plane, is 1 if and only if the agent is in row 0.
   With 10 such units, one per row, the network knows which row the agent is in. For the water level one cell per

@@ -342,14 +342,14 @@ these wasted moves play a part in 29 of the 102 lost balls (section 9).
 
 | check | result |
 |---|---|
-| weights rewritten from the formulas of sections 4-6, against the file | **0** different parameters out of 20,486 (815 nonzero in both) |
+| weights rewritten from the formulas of the README: parameters different from the file | **0** out of 20,486 (815 nonzero in both) |
 | states visited | 1,456,882 |
-| h0-h3: states where the value is wrong (by more than 10⁻⁹) | **0** (maximum difference 3·10⁻¹⁷) |
-| h4, h5 (direction): states where the sign is wrong | **0** |
-| h6-h31, g8-g31 different from 0 | **0** |
-| g0-g7: states where on/off is wrong | **0** |
-| logits: maximum difference | 0.003 (tanh never reaches exactly ±1) |
-| different highest-logit move | **0** (near-ties below 0.5: none) |
+| h0..h3, states where the value is wrong (> 1e-9) | **0** (maximum difference 3·10⁻¹⁷) |
+| h4, h5 (direction), states where the sign is wrong | **0** |
+| unused neurons (h6..h31, g8..g31) different from 0 | **0** |
+| g0..g7, states where on/off is wrong | **0** |
+| logits, maximum difference | 0.003 (tanh never reaches exactly ±1) |
+| move with the highest logit differs, excluding near-ties < 0.5 | **0** (near-ties: none) |
 
 The network stays still in 50.7% of the states and goes left or right in 24.7% each. The score over the 200
 episodes is 512.66 ± 16.87, the same as `evaluate`.
@@ -359,9 +359,9 @@ prediction. "Correct" means that the columns where the network would stay still 
 
 | phase (direction read) | states | correct prediction |
 |---|---|---|
-| the ball goes up | 722,118 | 42.6% |
-| the ball goes down, rows 0-2 | 89,868 | 88.4% |
-| the ball goes down, rows 3-8 | 644,896 | **100%** |
+| up | 722,118 | 42.6% |
+| down, rows 0-2 | 89,868 | 88.4% |
+| down, rows 3-8 | 644,896 | **100%** |
 
 - **Ball going up:** the prediction is correct only when the bricks are really where the network imagines them. But
   the real flight is never shorter than the predicted one: 0 states.
@@ -417,9 +417,9 @@ Without sticky actions the network never loses the ball, and the score is limite
 
     | flight | lost balls |
     |---|---|
-    | from one corner to the other (margin 1), the network's choices always right | 46 |
-    | larger margin, the network's choices always right: sticky only | 27 |
-    | the network made at least one move that does not bring the paddle closer to the real landing point, then the sticky actions | 29 |
+    | margin 1, all of the network's choices correct (from one corner to the other) | 46 |
+    | margin > 1, all of the network's choices correct: sticky only | 27 |
+    | the network made wrong moves (at least one move that does not bring the paddle closer to the real landing point), then the sticky actions | 29 |
 
     The network's wrong moves all fall in the two phases in which the prediction can be wrong: 201,115 while the
     ball is going up, 3,835 while it is going down in rows 0-2, none from row 3 down. It makes them in 43.5% of the

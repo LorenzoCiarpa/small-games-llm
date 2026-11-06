@@ -1,90 +1,90 @@
-=== profondità 1: accordo 78.7%, 2 foglie
+=== depth 1: agreement 78.7%, 2 leaves
 |--- gold_dy <= -0.5
-|   |--- azione: 0 fermo
+|   |--- action: 0 no-op
 |--- gold_dy >  -0.5
-|   |--- azione: 0 fermo
+|   |--- action: 0 no-op
 
-=== profondità 2: accordo 82.6%, 4 foglie, punteggio 2.17
+=== depth 2: agreement 82.6%, 4 leaves, score 2.17
 |--- gold_dy <= -0.5
 |   |--- enemy_eta_up2 <= 2.5
-|   |   |--- azione: 0 fermo
+|   |   |--- action: 0 no-op
 |   |--- enemy_eta_up2 >  2.5
-|   |   |--- azione: 2 su
+|   |   |--- action: 2 up
 |--- gold_dy >  -0.5
 |   |--- enemy_eta_same <= 3.5
-|   |   |--- azione: 2 su
+|   |   |--- action: 2 up
 |   |--- enemy_eta_same >  3.5
-|   |   |--- azione: 0 fermo
+|   |   |--- action: 0 no-op
 
-=== profondità 3: accordo 86.1%, 8 foglie
+=== depth 3: agreement 86.1%, 8 leaves
 |--- gold_dy <= -0.5
 |   |--- enemy_eta_up2 <= 2.5
 |   |   |--- enemy_eta_same <= 3.5
-|   |   |   |--- azione: 4 giù
+|   |   |   |--- action: 4 down
 |   |   |--- enemy_eta_same >  3.5
-|   |   |   |--- azione: 0 fermo
+|   |   |   |--- action: 0 no-op
 |   |--- enemy_eta_up2 >  2.5
 |   |   |--- enemy_eta_up1 <= 2.5
-|   |   |   |--- azione: 0 fermo
+|   |   |   |--- action: 0 no-op
 |   |   |--- enemy_eta_up1 >  2.5
-|   |   |   |--- azione: 2 su
+|   |   |   |--- action: 2 up
 |--- gold_dy >  -0.5
 |   |--- enemy_eta_same <= 3.5
 |   |   |--- enemy_eta_up2 <= 2.5
-|   |   |   |--- azione: 4 giù
+|   |   |   |--- action: 4 down
 |   |   |--- enemy_eta_up2 >  2.5
-|   |   |   |--- azione: 2 su
+|   |   |   |--- action: 2 up
 |   |--- enemy_eta_same >  3.5
 |   |   |--- gold_eta_down2 <= 52.0
-|   |   |   |--- azione: 4 giù
+|   |   |   |--- action: 4 down
 |   |   |--- gold_eta_down2 >  52.0
-|   |   |   |--- azione: 0 fermo
+|   |   |   |--- action: 0 no-op
 
-=== profondità 4: accordo 88.4%, 16 foglie, punteggio 3.29
+=== depth 4: agreement 88.4%, 16 leaves, score 3.29
 |--- gold_dy <= -0.5
 |   |--- enemy_eta_up2 <= 2.5
 |   |   |--- enemy_eta_same <= 3.5
 |   |   |   |--- player_y <= 6.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |   |--- player_y >  6.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |--- enemy_eta_same >  3.5
 |   |   |   |--- gold_dy <= -2.0
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- gold_dy >  -2.0
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |--- enemy_eta_up2 >  2.5
 |   |   |--- enemy_eta_up1 <= 2.5
 |   |   |   |--- enemy_eta_same <= 3.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |   |--- enemy_eta_same >  3.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |--- enemy_eta_up1 >  2.5
 |   |   |   |--- gold_eta_same <= 52.0
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- gold_eta_same >  52.0
-|   |   |   |   |--- azione: 2 su
+|   |   |   |   |--- action: 2 up
 |--- gold_dy >  -0.5
 |   |--- enemy_eta_same <= 3.5
 |   |   |--- enemy_eta_up2 <= 2.5
 |   |   |   |--- player_y <= 3.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |   |--- player_y >  3.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |--- enemy_eta_up2 >  2.5
 |   |   |   |--- enemy_eta_up1 <= 2.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |   |--- enemy_eta_up1 >  2.5
-|   |   |   |   |--- azione: 2 su
+|   |   |   |   |--- action: 2 up
 |   |--- enemy_eta_same >  3.5
 |   |   |--- gold_eta_down2 <= 52.0
 |   |   |   |--- gold_eta_same <= 51.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- gold_eta_same >  51.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |--- gold_eta_down2 >  52.0
 |   |   |   |--- gold_eta_down1 <= 4.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- gold_eta_down1 >  4.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 

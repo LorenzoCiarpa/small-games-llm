@@ -1,20 +1,20 @@
 """
-Valuta il codice scritto dagli LLM (answers/<modello>/<gioco>/policy.py) con il protocollo di `evaluate`.
+Evaluates the code written by the LLMs (answers/<model>/<game>/policy.py) with the protocol of `evaluate`.
 
-Per ogni policy.py:
-1. **import:** quali moduli importa (il prompt ammette solo standard library e numpy);
-2. **controlli su 2000 stati** raccolti giocando:
-   - errori ed azioni non valide (nel punteggio valgono come azione 0, come dice il prompt);
-   - tempo medio per chiamata;
-   - **memoria tra chiamate:** gli stessi stati, in ordine inverso e con il modulo ricaricato, devono dare le stesse
-     azioni (con un generatore nuovo e uguale per ogni stato, così il caso non conta);
-3. **punteggio:** `small_games.evaluate.evaluate`, stessi seed, sticky actions e limite di passi delle reti.
-   L'azione è quella restituita dalla funzione.
+For each policy.py:
+1. **imports:** which modules it imports (the prompt allows only the standard library and numpy);
+2. **checks on 2000 states** collected by playing:
+   - errors and invalid actions (in the score they count as action 0, as the prompt says);
+   - mean time per call;
+   - **memory between calls:** the same states, in reverse order and with the module reloaded, must give the same
+     actions (with a new and identical generator for every state, so randomness does not matter);
+3. **score:** `small_games.evaluate.evaluate`, with the same seeds, sticky actions and step limit as the networks.
+   The action is the one returned by the function.
 
-Il codice viene dagli LLM: va letto prima di eseguirlo.
+The code comes from the LLMs: read it before running it.
 
     uv run python experiments/code_policies/evaluate_code.py [--model gpt-6-astra] [--games low_tide breakout]
-    uv run python experiments/code_policies/evaluate_code.py --games breakout --file percorso/policy.py
+    uv run python experiments/code_policies/evaluate_code.py --games breakout --file path/to/policy.py
 """
 
 import argparse
@@ -46,7 +46,7 @@ def imports(path):
 
 
 def collect_states(game, path, n=2000):
-    """Stati raccolti giocando con la policy (episodi del protocollo, dal primo)."""
+    """States collected by playing with the policy (protocol episodes, starting from the first)."""
     pol = CodePolicy(path, game.n_actions)
     env = game.make_env(sticky_prob=game.protocol.sticky_prob, max_steps=game.protocol.max_steps)
     states, seed = [], game.protocol.seed0
@@ -94,30 +94,30 @@ def main():
     ap.add_argument("--model", default="gpt-6-astra")
     ap.add_argument("--games", nargs="+", default=list(GAMES), choices=GAMES)
     ap.add_argument("--workers", type=int, default=8)
-    ap.add_argument("--file", type=Path, help="un file qualsiasi invece di answers/: serve un solo gioco in --games")
+    ap.add_argument("--file", type=Path, help="any file instead of answers/: requires a single game in --games")
     args = ap.parse_args()
     if args.file and len(args.games) != 1:
-        ap.error("con --file serve un solo gioco in --games")
+        ap.error("--file requires a single game in --games")
     rows = []
     for name in args.games:
         path = args.file.resolve() if args.file else HERE / "answers" / args.model / name / "policy.py"
         if not path.exists():
-            print(f"{name}: manca {path}")
+            print(f"{name}: missing {path}")
             continue
         game = get_game(name)
-        print(f"{name}: import {imports(path)}", flush=True)
+        print(f"{name}: imports {imports(path)}", flush=True)
         c = checks(game, path)
-        print(f"  controlli su {c['states']} stati: errori {c['errors']}, azioni non valide {c['invalid']}, "
-              f"{c['us_per_call']} µs per chiamata, azioni diverse con l'ordine inverso {c['order_dependent']}, "
-              f"azioni {c['action_counts']}", flush=True)
+        print(f"  checks on {c['states']} states: errors {c['errors']}, invalid actions {c['invalid']}, "
+              f"{c['us_per_call']} µs per call, actions that differ in reverse order {c['order_dependent']}, "
+              f"actions {c['action_counts']}", flush=True)
         s = evaluate(game, CodePolicy(path, game.n_actions), workers=args.workers)
-        print(f"  punteggio {s['mean_return']:.2f} ± {s['stderr']:.2f} su {s['protocol']['episodes']} episodi "
-              f"(lunghezza media {s['mean_length']:.0f}, {s['seconds']:.0f} s)", flush=True)
+        print(f"  score {s['mean_return']:.2f} ± {s['stderr']:.2f} over {s['protocol']['episodes']} episodes "
+              f"(mean length {s['mean_length']:.0f}, {s['seconds']:.0f} s)", flush=True)
         result = {"game": name, "model": args.model, "imports": imports(path), "checks": c, "score": s}
         json.dump(result, open(path.with_name(path.stem + "_score.json" if args.file else "score.json"), "w"), indent=1)
         rows.append(result)
     if rows:
-        print("\n| gioco | punteggio | µs/chiamata | errori | dipende dall'ordine |\n|---|---|---|---|---|")
+        print("\n| game | score | µs/call | errors | order-dependent |\n|---|---|---|---|---|")
         for r in rows:
             s, c = r["score"], r["checks"]
             print(f"| {r['game']} | {s['mean_return']:.1f} ± {s['stderr']:.1f} | {c['us_per_call']} | "

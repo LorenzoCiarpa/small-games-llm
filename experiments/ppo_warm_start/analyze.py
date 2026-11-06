@@ -1,16 +1,16 @@
 """
-PPO che parte dai pesi scritti a mano: migliora? quanto si muovono i pesi? quanto tempo si risparmia?
+PPO starting from the hand-written weights: does it improve? how much do the weights move? how much time is saved?
 
-Confronta ogni corsa che parte da una rete scritta a mano (experiments/ppo_runs.py: <gioco>/ppo_from_<rete>,
-e su Low Tide anche _cw, con 2M passi di solo critico all'inizio) con la corsa da zero di riferimento: per i giochi
-MinAtar la migliore delle tre (ppo_ent05, stessa configurazione e stessa architettura), per Low Tide quella con la
-stessa architettura della rete a mano (ppo_arch_<rete>).
+Compares every run that starts from a hand-written network (experiments/ppo_runs.py: <game>/ppo_from_<net>, and on
+Low Tide also _cw, with 2M critic-only steps at the start) with the reference run from scratch: for the MinAtar games
+the best of the three (ppo_ent05, same configuration and same architecture), for Low Tide the one with the same
+architecture as the hand-written network (ppo_arch_<net>).
 
     uv run --group ppo --group analysis python experiments/ppo_warm_start/analyze.py
     uv run --group ppo --group analysis python experiments/ppo_warm_start/analyze.py --workers 8
 
-Scrive results/: summary.json (tutti i numeri), tables.md (le tabelle del README), curves.png, scores.json (cache
-delle valutazioni: si rifanno solo quelle che mancano).
+Writes results/: summary.json (all the numbers), tables.md (the README tables), curves.png, scores.json (cache of the
+evaluations: only the missing ones are redone).
 """
 
 import argparse
@@ -332,17 +332,17 @@ def all_scores(scores):
         for b in baselines(g):
             rows.append((game, b, "baseline", "", scores.baseline(game, b)))
         for h in HAND[game]:
-            rows.append((game, h, "scritta a mano", "", scores.net(game, ROOT / "weights" / game / f"{h}.json")))
+            rows.append((game, h, "hand-written", "", scores.net(game, ROOT / "weights" / game / f"{h}.json")))
         for d in sorted((ROOT / "experiments" / game / "ppo" / "results").iterdir()):
             fin = final_eval(game, d.name)
             if fin is None or not (ROOT / "weights" / game / f"{d.name}.json").is_file():
                 continue
             cfg = run_config(game, d.name)
-            kind = "PPO dai pesi a mano" if cfg.get("init") else "PPO da zero"
+            kind = "PPO from the hand-written weights" if cfg.get("init") else "PPO from scratch"
             arch = "-".join(map(str, cfg["hidden"]))
             acts = cfg.get("activations") or [cfg["activation"]]
             desc = (f"{arch} {'/'.join(acts)}, ent {cfg['ent_coef']}, lr {cfg['lr']}, "
-                    f"{cfg['total_steps'] / 1e6:.0f}M passi" + (", 2M passi di solo critico"
+                    f"{cfg['total_steps'] / 1e6:.0f}M steps" + (", 2M critic-only steps"
                                                                if cfg.get("critic_warmup") else ""))
             rows.append((game, d.name, kind, desc, fin))
     return rows
@@ -350,57 +350,58 @@ def all_scores(scores):
 
 def fmt_steps(s):
     if s is None:
-        return "mai"
+        return "never"
     if s == 0:
         return "0"
     return f"{s / 1e6:.1f}M" if s < 10_000_000 else f"{s / 1e6:.0f}M"
 
 
 def tables(rows, comps, probes):
-    out = ["## Punteggi di tutti i modelli\n",
-           "Protocollo completo di ogni gioco (1000 episodi MinAtar, 500 Low Tide), media ± errore standard.\n"]
+    out = ["## Scores of all models\n",
+           "Full protocol of each game (1000 MinAtar episodes, 500 Low Tide), mean ± standard error.\n"]
     for game in GAMES:
-        out += [f"\n### {game}\n", "| modello | tipo | configurazione | punteggio |", "|---|---|---|---|"]
+        out += [f"\n### {game}\n", "| model | type | configuration | score |", "|---|---|---|---|"]
         for gm, name, kind, desc, s in sorted((r for r in rows if r[0] == game), key=lambda r: -r[4]["mean"]):
             out.append(f"| `{name}` | {kind} | {desc} | {s['mean']:.1f} ± {s['stderr']:.1f} |")
-    out += ["\n## Partire dai pesi scritti a mano: quanto migliora\n",
-            f"Checkpoint ogni 5M passi valutati su {CKPT_EPISODES} episodi; inizio e fine con il protocollo completo. "
-            "La curva di addestramento (media sugli ultimi 1M passi) vede anche quello che succede fra due checkpoint, "
-            "ma è più rumorosa: su Breakout la policy non cambia e oscilla comunque di ±15%.\n",
-            "| gioco | corsa | rete a mano | minimo della curva di addestramento nel primo 10% (passo) | "
-            "checkpoint peggiore (passo) | "
-            "torna al livello della rete a mano a | +10% a | miglior checkpoint (passo) | fine | fine − rete a mano | "
-            "da zero, stessa arch. |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+    out += ["\n## Starting from the hand-written weights: how much it improves\n",
+            f"Checkpoints every 5M steps evaluated on {CKPT_EPISODES} episodes; start and end with the full protocol. "
+            "The training curve (mean over the last 1M steps) also sees what happens between two checkpoints, "
+            "but it is noisier: on Breakout the policy does not change and the curve still oscillates by ±15%.\n",
+            "| game | run | hand-written network | minimum of the training curve in the first 10% (step) | "
+            "worst checkpoint (step) | "
+            "back to the hand-written network's level at | +10% at | best checkpoint (step) | end | "
+            "end − hand-written network | from scratch, same arch. |", "|---|---|---|---|---|---|---|---|---|---|---|"]
     for c in comps:
         for run, w in c["warm"].items():
             hand = c["hand_score"]["mean"]
             out.append(f"| {c['game']} | `{run}` | {LABEL[c['hand']]} {hand:.1f} | "
                        f"{w['train_dip']:.1f} ({fmt_steps(w['train_dip_step'])}) | "
-                       f"{w['ck_min']:.1f} ({fmt_steps(w['ck_min_step'])}) | {fmt_steps(w['back_to_hand_step']) if w['ck_min'] < hand else 'non scende'} | "
+                       f"{w['ck_min']:.1f} ({fmt_steps(w['ck_min_step'])}) | {fmt_steps(w['back_to_hand_step']) if w['ck_min'] < hand else 'does not drop'} | "
                        f"{fmt_steps(w['improve10_step'])} | {w['ck_best']:.1f} ({fmt_steps(w['ck_best_step'])}) | "
                        f"{w['final']['mean']:.1f} ± {w['final']['stderr']:.1f} | {w['gain']:+.1f} ({w['gain_rel']:+.0%}) | "
                        f"{c['scratch_final']['mean']:.1f} ± {c['scratch_final']['stderr']:.1f} |")
-    out += ["\n## Partire dai pesi scritti a mano: quanto tempo si risparmia\n",
-            "Soglia: 95% del punteggio finale della corsa da zero; passi al primo checkpoint che la supera. Le ore "
-            "sono quelle della corsa da zero su questa macchina (1 core per corsa).\n",
-            "| gioco | corsa | soglia | da mano la supera a | da zero la supera a | risparmio | "
-            "da zero raggiunge la rete a mano a | da zero raggiunge il finale di questa corsa a |",
+    out += ["\n## Starting from the hand-written weights: how much time is saved\n",
+            "Threshold: 95% of the final score of the run from scratch; steps at the first checkpoint that passes it. "
+            "The hours are those of the run from scratch on this machine (1 core per run).\n",
+            "| game | run | threshold | from the hand-written network, passes it at | from scratch, passes it at | "
+            "saving | from scratch, reaches the hand-written network at | "
+            "from scratch, reaches the final score of this run at |",
             "|---|---|---|---|---|---|---|---|"]
     for c in comps:
         for run, w in c["warm"].items():
             if w.get("saved_steps_level") is not None:
-                saved = (f"{fmt_steps(w['saved_steps_level'])} passi ≈ {w['saved_hours_level']:.1f} h"
-                         if w["saved_steps_level"] > 0 else "nessuno")
+                saved = (f"{fmt_steps(w['saved_steps_level'])} steps ≈ {w['saved_hours_level']:.1f} h"
+                         if w["saved_steps_level"] > 0 else "none")
             else:
-                saved = "nessuno: non ci arriva"
+                saved = "none: it does not get there"
             out.append(f"| {c['game']} | `{run}` | {c['level95']:.1f} | {fmt_steps(w['warm_reach_level'])} | "
                        f"{fmt_steps(c['scratch_reach_level'])} | {saved} | {fmt_steps(c['scratch_reach_hand'])} | "
                        f"{fmt_steps(w['scratch_reach_final'])} |")
-    out += ["\n## Il gradiente durante l'addestramento\n",
-            "Norma del gradiente dell'attore sul batch intero (8192 passi), prima del clipping; mediane. Il clipping "
-            "taglia la norma congiunta di attore e critico a 0.5.\n",
-            "| gioco | corsa | primo aggiornamento (critico casuale) | primi 1M passi | di cui policy gradient / "
-            "entropia | ultimi 10M passi | minibatch tagliati: primi 1M / ultimi 10M |",
+    out += ["\n## The gradient during training\n",
+            "Norm of the actor's gradient on the full batch (8192 steps), before clipping; medians. Clipping "
+            "cuts the joint norm of actor and critic at 0.5.\n",
+            "| game | run | first update (random critic) | first 1M steps | of which policy gradient / "
+            "entropy | last 10M steps | minibatches cut: first 1M / last 10M |",
             "|---|---|---|---|---|---|---|"]
     seen = set()
     for c in comps:
@@ -409,15 +410,16 @@ def tables(rows, comps, probes):
                 continue
             seen.add((c["game"], run))
             if gs is None:
-                out.append(f"| {c['game']} | `{run}` | non registrato (corsa precedente: vedi la tabella a pesi fissi) "
+                out.append(f"| {c['game']} | `{run}` | not logged (earlier run: see the fixed-weight table) "
                            "| | | | |")
                 continue
             out.append(f"| {c['game']} | `{run}` | {gs['first']:.3g} | {gs['first1M']:.3g} | "
                        f"{gs['pg_first1M']:.3g} / {gs['ent_first1M']:.3g} | {gs['last10M']:.3g} | "
                        f"{gs['clipped_first1M']:.0%} / {gs['clipped_last10M']:.0%} |")
-    out += ["\n## Quanto si muovono i pesi\n",
-            "| gioco | corsa | ‖θ₀‖ | ‖θ_fine − θ₀‖ | relativo | per strato | da zero: ‖θ_fine − θ₀‖ (relativo) | "
-            "zeri della rete a mano ora ≠ 0 | stessa mossa della rete a mano (sui suoi stati / sui propri) |",
+    out += ["\n## How much the weights move\n",
+            "| game | run | ‖θ₀‖ | ‖θ_end − θ₀‖ | relative | per layer | from scratch: ‖θ_end − θ₀‖ (relative) | "
+            "zeros of the hand-written network now ≠ 0 | "
+            "same move as the hand-written network (on its states / on its own) |",
             "|---|---|---|---|---|---|---|---|---|"]
     for c in comps:
         for run, w in c["warm"].items():
@@ -426,11 +428,12 @@ def tables(rows, comps, probes):
             out.append(f"| {c['game']} | `{run}` | {w['theta0_norm']:.1f} | {w['move']:.3g} | {w['move_rel']:.2%} | "
                        f"{' · '.join(f'{x:.1%}' for x in w['move_rel_layers'])} | {c['scratch_move']:.3g} ({c['scratch_move_rel']:.0%}) | "
                        f"{w['hand_zeros_now_nonzero']:.0%} | {ag} |")
-    out += ["\n## Il gradiente a pesi fissi\n",
-            "Attore fermo, critico adattato per 2M passi; media dell'ultimo quarto. Norme prima del clipping "
-            "(max_grad_norm 0.5 su attore + critico).\n",
-            "| gioco | rete | entropia | ‖θ‖ | ‖g‖ minibatch | ‖g‖ batch intero | di cui policy gradient | "
-            "di cui entropia | ‖g‖/‖θ‖ | batch intero col critico casuale |", "|---|---|---|---|---|---|---|---|---|---|"]
+    out += ["\n## The gradient at fixed weights\n",
+            "Actor frozen, critic adapted for 2M steps; mean of the last quarter. Norms before clipping "
+            "(max_grad_norm 0.5 on actor + critic).\n",
+            "| game | network | entropy | ‖θ‖ | ‖g‖ minibatch | ‖g‖ full batch | of which policy gradient | "
+            "of which entropy | ‖g‖/‖θ‖ | full batch with the random critic |",
+            "|---|---|---|---|---|---|---|---|---|---|"]
     for (game, label), p in probes.items():
         th = p.get("theta_norm")
         out.append(f"| {game} | `{label}` | {p['entropy']:.3f} | {th:.1f} | {p['actor_grad']:.3g} | "
@@ -463,10 +466,10 @@ def plot(comps, probes, path):
     fig, axes = plt.subplots(len(comps), 3, figsize=(16, 3.6 * len(comps)), squeeze=False)
     for row, c in zip(axes, comps):
         game = c["game"]
-        runs = [(r, f"da {LABEL[c['hand']]}" + (" + 2M solo critico" if r.endswith("_cw") else ""))
-                for r in c["warm"]] + [(c["scratch"], "da zero, stessa arch.")]
+        runs = [(r, f"from {LABEL[c['hand']]}" + (" + 2M critic only" if r.endswith("_cw") else ""))
+                for r in c["warm"]] + [(c["scratch"], "from scratch, same arch.")]
         if c.get("extra"):
-            runs.append((c["extra"]["run"], "da zero, 64-64"))
+            runs.append((c["extra"]["run"], "from scratch, 64-64"))
         g = get_game(game)
         for i, (run, lab) in enumerate(runs):
             log = read_log(game, run)
@@ -488,24 +491,24 @@ def plot(comps, probes, path):
                             "o", color=COLORS[i], ms=4, label=lab + " (checkpoint)")
                 pts = [(0, "random"), (5, "ppo_5M"), (50, "ppo_50M"), (200, "ppo_final")]
                 pts = [(x, probes[game, k]["actor_grad_full"]) for x, k in pts if (game, k) in probes]
-                row[2].plot(*zip(*pts), "o", color=COLORS[i], ms=6, label=lab + " (a pesi fissi)")
+                row[2].plot(*zip(*pts), "o", color=COLORS[i], ms=6, label=lab + " (at fixed weights)")
         row[0].axhline(c["hand_score"]["mean"], color="#52514e", ls="--", lw=1.2,
-                       label=f"rete a mano ({LABEL[c['hand']]}) {c['hand_score']['mean']:.0f}")
-        row[0].set_title(f"{game}: punteggio (linea: checkpoint; sottile: addestramento)", fontsize=10, loc="left")
-        row[1].set_title("distanza dei pesi dalla partenza ‖θ − θ₀‖", fontsize=10, loc="left")
-        row[2].set_title("‖gradiente dell'attore‖, batch intero (mediana su 1M passi)", fontsize=10, loc="left")
+                       label=f"hand-written network ({LABEL[c['hand']]}) {c['hand_score']['mean']:.0f}")
+        row[0].set_title(f"{game}: score (line: checkpoints; thin: training)", fontsize=10, loc="left")
+        row[1].set_title("distance of the weights from the start ‖θ − θ₀‖", fontsize=10, loc="left")
+        row[2].set_title("‖actor gradient‖, full batch (median over 1M steps)", fontsize=10, loc="left")
         row[1].set_yscale("log")
         row[2].set_yscale("log")
         for ax in row:
-            ax.set_xlabel("milioni di passi", fontsize=9)
+            ax.set_xlabel("millions of steps", fontsize=9)
             ax.grid(alpha=0.25, lw=0.6)
             ax.spines[["top", "right"]].set_visible(False)
             ax.tick_params(labelsize=8)
         legend = dict(fontsize=7.5, frameon=True, framealpha=0.85, edgecolor="none", loc="best")
         row[1].legend(*row[0].get_legend_handles_labels(), **legend)    # same colours across the row
         if c["scratch_grad"] is None:
-            row[2].legend(*[[x for x, lab in zip(*row[2].get_legend_handles_labels()) if "pesi fissi" in lab],
-                            [lab for lab in row[2].get_legend_handles_labels()[1] if "pesi fissi" in lab]], **legend)
+            row[2].legend(*[[x for x, lab in zip(*row[2].get_legend_handles_labels()) if "fixed weights" in lab],
+                            [lab for lab in row[2].get_legend_handles_labels()[1] if "fixed weights" in lab]], **legend)
     fig.tight_layout()
     fig.savefig(path, dpi=110)
     plt.close(fig)

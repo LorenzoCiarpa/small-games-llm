@@ -1,8 +1,9 @@
 """
-Verifica la lettura a mano di weights/low_tide/gpt.json (vedi README.md).
+Checks the hand reading of weights/low_tide/gpt.json (see README.md).
 
-Per ogni stato visitato giocando con la rete ricalcola, direttamente dallo stato del gioco e senza usare i pesi,
-i 43 neuroni del primo strato e i 5 logit come li descrive il README, e li confronta con il forward pass vero.
+For every state visited while playing with the network it recomputes, directly from the game state and without using
+the weights, the 43 neurons of the first layer and the 5 logits as the README describes them, and compares them with
+the real forward pass.
 
     uv run python experiments/low_tide/decode_gpt/check.py [--episodes 200]
 """
@@ -18,8 +19,8 @@ from small_games.games.low_tide.env import LowTideEnv
 from small_games.weights import load_weights
 
 ROOT = Path(__file__).resolve().parents[3]
-ACTIONS = ("fermo", "su", "giu", "sx", "dx")
-WINDOW = [(R, C) for R in range(3, 9) for C in range(6, 10)]   # la finestra che la rete guarda: righe 3-8, colonne 6-9
+ACTIONS = ("no-op", "up", "down", "left", "right")
+WINDOW = [(R, C) for R in range(3, 9) for C in range(6, 10)]   # the window the network looks at: rows 3-8, columns 6-9
 
 
 def forward(layers, obs):
@@ -39,50 +40,50 @@ def relu(x):
 
 
 def decode(env):
-    """Primo strato e logit ricostruiti dalle regole del README, a partire dallo stato del gioco."""
+    """First layer and logits rebuilt from the rules of the README, starting from the game state."""
     r, c, L = env.agent_r, env.agent_c, env.level
     rising = env.direction > 0
     m = 9 - r - L
     shell, jelly = env.shell, env.jelly
 
     h = np.zeros(43)
-    for i, (R, C) in enumerate(WINDOW):            # 0..23: 2 conchiglia, 1 vuota, 0 medusa
+    for i, (R, C) in enumerate(WINDOW):            # 0..23: 2 shell, 1 empty, 0 jellyfish
         h[i] = 1 + shell[R, C] - jelly[R, C]
-    for k in range(7):                             # 24..30: rampe sulla riga dell'agente
+    for k in range(7):                             # 24..30: ramps on the agent's row
         h[24 + k] = relu(r - 2 - k)
-    for k in range(4):                             # 31..34: rampe sulla colonna dell'agente
+    for k in range(4):                             # 31..34: ramps on the agent's column
         h[31 + k] = relu(c - 5 - k)
-    h[35] = L + 10 * rising                        # livello + 10 se sale
-    h[36] = relu(2 - r)                            # 2 in riga 0, 1 in riga 1
-    for k in range(5):                             # 37..41: sale e livello >= 5, 4, 3, 2, 1
+    h[35] = L + 10 * rising                        # level + 10 if rising
+    h[36] = relu(2 - r)                            # 2 in row 0, 1 in row 1
+    for k in range(5):                             # 37..41: rising and level >= 5, 4, 3, 2, 1
         h[37 + k] = rising and L >= 5 - k
     h[42] = rising
 
-    # distanza di Manhattan dalla posizione dell'agente "schiacciata" in righe >= 2, colonne >= 5
+    # Manhattan distance from the agent's position "clamped" to rows >= 2, columns >= 5
     re, ce = max(r, 2), max(c, 5)
-    attr = collections.Counter()                   # attrazione delle conchiglie, per direzione
-    jel = collections.Counter()                    # meduse adiacenti, per direzione
+    attr = collections.Counter()                   # attraction of the shells, by direction
+    jel = collections.Counter()                    # adjacent jellyfish, by direction
     for R, C in WINDOW:
         d = abs(re - R) + abs(ce - C)
         if shell[R, C] and not (rising and 9 - R - L <= 1):
             a = relu(6 - d)
-            attr["su"] += a * (R < r); attr["giu"] += a * (R > r)
-            attr["sx"] += a * (C < c); attr["dx"] += a * (C > c)
+            attr["up"] += a * (R < r); attr["down"] += a * (R > r)
+            attr["left"] += a * (C < c); attr["right"] += a * (C > c)
         if jelly[R, C]:
             j = relu(2 - d)
-            jel["su"] += j * (R < r); jel["giu"] += j * (R > r)
-            jel["sx"] += j * (C < c); jel["dx"] += j * (C > c)
+            jel["up"] += j * (R < r); jel["down"] += j * (R > r)
+            jel["left"] += j * (C < c); jel["right"] += j * (C > c)
 
-    danger1 = relu(2 - m) if rising else 0.0       # sale e m <= 1
-    danger2 = relu(3 - m) if rising else 0.0       # sale e m <= 2
+    danger1 = relu(2 - m) if rising else 0.0       # rising and m <= 1
+    danger2 = relu(3 - m) if rising else 0.0       # rising and m <= 2
     logits = np.array([
         -4.0,
         -12 + 12 * (r >= 4) + 0.75 * (r >= 7) + 12 * (r == 9)
-        + 0.9 * attr["su"] - 25 * jel["su"] + 1000 * danger1,
+        + 0.9 * attr["up"] - 25 * jel["up"] + 1000 * danger1,
         12.75 - 12 * (r >= 3) - 0.75 * (r >= 6) - 12 * (r >= 8)
-        + 0.9 * attr["giu"] - 25 * jel["giu"] - 1000 * danger2,
-        -12 + 12 * (c >= 7) + 0.75 * (c == 9) + 0.9 * attr["sx"] - 25 * jel["sx"],
-        12.75 - 12 * (c >= 6) - 0.75 * relu(c - 7) - 11.25 * relu(c - 8) + 0.9 * attr["dx"] - 25 * jel["dx"],
+        + 0.9 * attr["down"] - 25 * jel["down"] - 1000 * danger2,
+        -12 + 12 * (c >= 7) + 0.75 * (c == 9) + 0.9 * attr["left"] - 25 * jel["left"],
+        12.75 - 12 * (c >= 6) - 0.75 * relu(c - 7) - 11.25 * relu(c - 8) + 0.9 * attr["right"] - 25 * jel["right"],
     ])
     return h, logits
 
@@ -126,13 +127,13 @@ def main():
             obs, _, term, trunc, _ = env.step(rng.choice(5, p=p / p.sum()))
             done = term or trunc
 
-    print(f"stati visitati: {n} ({args.episodes} episodi)")
-    print(f"primo strato, stati in cui la lettura sbaglia: {bad_h}")
-    print(f"logit, differenza massima: {max_diff:.2e}")
-    print(f"azione (argmax) diversa, esclusi i quasi-pareggi < 0.5: {bad_arg}  (quasi-pareggi: {ties})")
-    print("colonna dell'agente:", " ".join(f"{k}:{cols[k] / n:.1%}" for k in range(10)))
-    print("riga dell'agente:   ", " ".join(f"{k}:{rows[k] / n:.1%}" for k in range(10)))
-    print(f"conchiglie sulla griglia dentro la finestra: {shells_win / max(shells_all, 1):.1%}")
+    print(f"states visited: {n} ({args.episodes} episodes)")
+    print(f"first layer, states in which the reading is wrong: {bad_h}")
+    print(f"logits, maximum difference: {max_diff:.2e}")
+    print(f"move with the highest logit differs, excluding near-ties < 0.5: {bad_arg}  (near-ties: {ties})")
+    print("agent's column:", " ".join(f"{k}:{cols[k] / n:.1%}" for k in range(10)))
+    print("agent's row:   ", " ".join(f"{k}:{rows[k] / n:.1%}" for k in range(10)))
+    print(f"shells on the grid inside the window: {shells_win / max(shells_all, 1):.1%}")
 
 
 if __name__ == "__main__":

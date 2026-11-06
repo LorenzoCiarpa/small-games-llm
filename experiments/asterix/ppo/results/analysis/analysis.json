@@ -699,7 +699,7 @@
    ],
    "seconds": 314.6,
    "key_quantities": {
-    "nemico in arrivo nella mia riga (\u2264 3)": [
+    "enemy coming in my row (\u2264 3)": [
      {
       "layer": 0,
       "best_unit": 19,
@@ -713,7 +713,7 @@
       "linear_r2": 0.44956081568588335
      }
     ],
-    "nemico in arrivo nella riga sotto (\u2264 2)": [
+    "enemy coming in the row below (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 9,
@@ -727,7 +727,7 @@
       "linear_r2": 0.4253080078176281
      }
     ],
-    "nemico in arrivo nella riga sopra (\u2264 2)": [
+    "enemy coming in the row above (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 6,
@@ -741,7 +741,7 @@
       "linear_r2": 0.4764765050560841
      }
     ],
-    "tesoro in arrivo nella mia riga": [
+    "treasure coming in my row": [
      {
       "layer": 0,
       "best_unit": 29,
@@ -1469,7 +1469,7 @@
    ],
    "seconds": 219.5,
    "key_quantities": {
-    "nemico in arrivo nella mia riga (\u2264 3)": [
+    "enemy coming in my row (\u2264 3)": [
      {
       "layer": 0,
       "best_unit": 13,
@@ -1483,7 +1483,7 @@
       "linear_r2": 0.03725464637458786
      }
     ],
-    "nemico in arrivo nella riga sotto (\u2264 2)": [
+    "enemy coming in the row below (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 5,
@@ -1497,7 +1497,7 @@
       "linear_r2": 0.05535526048478534
      }
     ],
-    "nemico in arrivo nella riga sopra (\u2264 2)": [
+    "enemy coming in the row above (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 9,
@@ -1511,7 +1511,7 @@
       "linear_r2": 0.042222023056200486
      }
     ],
-    "tesoro in arrivo nella mia riga": [
+    "treasure coming in my row": [
      {
       "layer": 0,
       "best_unit": 25,
@@ -2239,7 +2239,7 @@
    ],
    "seconds": 78.2,
    "key_quantities": {
-    "nemico in arrivo nella mia riga (\u2264 3)": [
+    "enemy coming in my row (\u2264 3)": [
      {
       "layer": 0,
       "best_unit": 10,
@@ -2253,7 +2253,7 @@
       "linear_r2": 0.06353512713396137
      }
     ],
-    "nemico in arrivo nella riga sotto (\u2264 2)": [
+    "enemy coming in the row below (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 12,
@@ -2267,7 +2267,7 @@
       "linear_r2": 0.15810294229429023
      }
     ],
-    "nemico in arrivo nella riga sopra (\u2264 2)": [
+    "enemy coming in the row above (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 29,
@@ -2281,7 +2281,7 @@
       "linear_r2": 0.10983527157033757
      }
     ],
-    "tesoro in arrivo nella mia riga": [
+    "treasure coming in my row": [
      {
       "layer": 0,
       "best_unit": 25,

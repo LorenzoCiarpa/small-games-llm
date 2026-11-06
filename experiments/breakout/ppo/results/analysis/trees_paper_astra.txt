@@ -1,87 +1,87 @@
-=== profondità 1: accordo 58.9%, 2 foglie
+=== depth 1: agreement 58.9%, 2 leaves
 |--- ball_dy <= 0.5
-|   |--- azione: 1 sinistra
+|   |--- action: 1 left
 |--- ball_dy >  0.5
-|   |--- azione: 0 fermo
+|   |--- action: 0 no-op
 
-=== profondità 2: accordo 71.7%, 4 foglie, punteggio 1.06
+=== depth 2: agreement 71.7%, 4 leaves, score 1.06
 |--- ball_dy <= 0.5
 |   |--- ball_x <= 5.5
-|   |   |--- azione: 3 destra
+|   |   |--- action: 3 right
 |   |--- ball_x >  5.5
-|   |   |--- azione: 1 sinistra
+|   |   |--- action: 1 left
 |--- ball_dy >  0.5
 |   |--- landing_rel_x <= 1.5
-|   |   |--- azione: 0 fermo
+|   |   |--- action: 0 no-op
 |   |--- landing_rel_x >  1.5
-|   |   |--- azione: 3 destra
+|   |   |--- action: 3 right
 
-=== profondità 3: accordo 74.6%, 8 foglie
+=== depth 3: agreement 74.6%, 8 leaves
 |--- ball_dy <= 0.5
 |   |--- ball_x <= 5.5
 |   |   |--- ball_dx <= -0.5
-|   |   |   |--- azione: 1 sinistra
+|   |   |   |--- action: 1 left
 |   |   |--- ball_dx >  -0.5
-|   |   |   |--- azione: 3 destra
+|   |   |   |--- action: 3 right
 |   |--- ball_x >  5.5
 |   |   |--- ball_dx <= 0.5
-|   |   |   |--- azione: 1 sinistra
+|   |   |   |--- action: 1 left
 |   |   |--- ball_dx >  0.5
-|   |   |   |--- azione: 1 sinistra
+|   |   |   |--- action: 1 left
 |--- ball_dy >  0.5
 |   |--- landing_rel_x <= 1.5
 |   |   |--- landing_rel_x <= -1.5
-|   |   |   |--- azione: 1 sinistra
+|   |   |   |--- action: 1 left
 |   |   |--- landing_rel_x >  -1.5
-|   |   |   |--- azione: 0 fermo
+|   |   |   |--- action: 0 no-op
 |   |--- landing_rel_x >  1.5
 |   |   |--- ball_x <= 8.5
-|   |   |   |--- azione: 3 destra
+|   |   |   |--- action: 3 right
 |   |   |--- ball_x >  8.5
-|   |   |   |--- azione: 0 fermo
+|   |   |   |--- action: 0 no-op
 
-=== profondità 4: accordo 82.4%, 15 foglie, punteggio 5.62
+=== depth 4: agreement 82.4%, 15 leaves, score 5.62
 |--- ball_dy <= 0.5
 |   |--- ball_x <= 5.5
 |   |   |--- ball_dx <= -0.5
 |   |   |   |--- ball_x <= 2.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- ball_x >  2.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 |   |   |--- ball_dx >  -0.5
 |   |   |   |--- landing_rel_x <= -4.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- landing_rel_x >  -4.5
-|   |   |   |   |--- azione: 3 destra
+|   |   |   |   |--- action: 3 right
 |   |--- ball_x >  5.5
 |   |   |--- ball_dx <= 0.5
 |   |   |   |--- ball_rel_x <= 4.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 |   |   |   |--- ball_rel_x >  4.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |--- ball_dx >  0.5
 |   |   |   |--- ball_y <= 7.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- ball_y >  7.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 |--- ball_dy >  0.5
 |   |--- landing_rel_x <= 1.5
 |   |   |--- landing_rel_x <= -1.5
 |   |   |   |--- ball_x <= 0.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- ball_x >  0.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 |   |   |--- landing_rel_x >  -1.5
 |   |   |   |--- ball_y <= 5.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- ball_y >  5.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |--- landing_rel_x >  1.5
 |   |   |--- ball_x <= 8.5
-|   |   |   |--- azione: 3 destra
+|   |   |   |--- action: 3 right
 |   |   |--- ball_x >  8.5
 |   |   |   |--- ball_y <= 1.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 |   |   |   |--- ball_y >  1.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 

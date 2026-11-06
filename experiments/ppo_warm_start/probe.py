@@ -1,19 +1,19 @@
 """
-Il gradiente di PPO a pesi fissi: quanto spinge l'addestramento in un certo punto dello spazio dei pesi?
+PPO's gradient at fixed weights: how hard does training push at a given point of weight space?
 
-Per ogni rete (scritta a mano, iniziale casuale di PPO, PPO a metà e a fine addestramento) gira PPO con la
-configurazione della migliore corsa da zero del gioco, ma con l'attore fermo per tutta la corsa
-(critic_warmup = total_steps): il critico impara il valore di quella policy, e ogni 5 aggiornamenti il log
-registra il gradiente dell'attore (norma per minibatch, norma sul batch intero, parte policy-gradient e parte
-entropia), senza mai applicarlo. Il gradiente con il critico già adattato è la media dell'ultimo quarto del log
-(analyze.py); la prima riga è quello che vede PPO al primo passo, con il critico ancora casuale.
+For each network (hand-written, PPO's random initialization, PPO halfway through and at the end of training) runs PPO
+with the configuration of the game's best run from scratch, but with the actor frozen for the whole run
+(critic_warmup = total_steps): the critic learns the value of that policy, and every 5 updates the log records the
+actor's gradient (norm per minibatch, norm on the full batch, policy-gradient part and entropy part), without ever
+applying it. The gradient with the critic already adapted is the mean of the last quarter of the log (analyze.py);
+the first row is what PPO sees at its first step, with the critic still random.
 
-    uv run --group ppo python experiments/ppo_warm_start/probe.py                  # tutte le reti che esistono
+    uv run --group ppo python experiments/ppo_warm_start/probe.py                  # all the networks that exist
     uv run --group ppo python experiments/ppo_warm_start/probe.py --only low_tide/gpt breakout/astra
-    uv run --group ppo python experiments/ppo_warm_start/probe.py --steps 500000   # più veloce, critico meno adattato
+    uv run --group ppo python experiments/ppo_warm_start/probe.py --steps 500000   # faster, critic less adapted
 
-Scrive results/probe/<gioco>/<rete>/train_log.csv; salta le reti già misurate (`--force` per rifarle). Le reti
-finali delle corse che partono dai pesi scritti a mano si misurano quando quelle corse sono finite.
+Writes results/probe/<game>/<network>/train_log.csv; skips the networks already measured (`--force` to redo them).
+The final networks of the runs that start from the hand-written weights are measured once those runs have finished.
 """
 
 import argparse
@@ -70,14 +70,14 @@ def probes():
 def run(game, label, changes, init, steps, force):
     d = OUT / game / label
     if (d / "done").is_file() and not force:
-        print(f"{game}/{label}: già misurata")
+        print(f"{game}/{label}: already measured")
         return
     if init is not None and not (ROOT / init).is_file():
-        print(f"{game}/{label}: manca {init}, salto")
+        print(f"{game}/{label}: {init} is missing, skipping")
         return
     cfg = replace(base_config(game), **changes, init=init, total_steps=steps, critic_warmup=steps,
                   log_every=5, save_every=10 ** 12)
-    print(f"{game}/{label}: {init or 'iniziale casuale'}", flush=True)
+    print(f"{game}/{label}: {init or 'random initialization'}", flush=True)
     if d.exists():
         shutil.rmtree(d)
     train(cfg, d / "actor.json", d)
@@ -88,7 +88,7 @@ def run(game, label, changes, init, steps, force):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--only", nargs="*", help="gioco/rete (default: tutte)")
+    ap.add_argument("--only", nargs="*", help="game/network (default: all)")
     ap.add_argument("--steps", type=int, default=2_000_000)
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()

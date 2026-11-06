@@ -89,7 +89,7 @@ class Game:
     summary: str
     make_env: Callable[..., Any]           # make_env(sticky_prob=..., max_steps=...) -> env
     obs_dim: int
-    action_names: tuple[str, ...]          # Italian labels, shown by `play`
+    action_names: tuple[str, ...]          # display labels, shown by `play`
     protocol: Protocol
     net: NetSpec
     baselines: dict[str, PolicyFn] = field(default_factory=dict)  # "random" is always added

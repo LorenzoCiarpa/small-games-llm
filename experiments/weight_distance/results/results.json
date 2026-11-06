@@ -1941,22 +1941,22 @@
      "cos": 1.0,
      "unit_a": 1,
      "unit_b": 42,
-     "reads_a": "1 ingressi: rising",
-     "reads_b": "1 ingressi: rising"
+     "reads_a": "1 input: rising",
+     "reads_b": "1 input: rising"
     },
     {
      "cos": 0.9999999999999999,
      "unit_a": 35,
      "unit_b": 34,
-     "reads_a": "10 ingressi: agent",
-     "reads_b": "10 ingressi: agent"
+     "reads_a": "10 inputs: agent",
+     "reads_b": "10 inputs: agent"
     },
     {
      "cos": 0.9137274413259576,
      "unit_a": 18,
      "unit_b": 30,
-     "reads_a": "19 ingressi: agent, shell",
-     "reads_b": "10 ingressi: agent"
+     "reads_a": "19 inputs: agent, shell",
+     "reads_b": "10 inputs: agent"
     }
    ]
   },
@@ -2123,7 +2123,7 @@
     0.028405298620987472
    ],
    "states": 6000,
-   "states_from": "Low Tide, giocato da euristica, claude e gpt (in parti uguali)"
+   "states_from": "Low Tide, played by the heuristic, claude and gpt (in equal parts)"
   },
   {
    "a": "astra/breakout",
@@ -2151,7 +2151,7 @@
     0.10121048953397926
    ],
    "states": 5219,
-   "states_from": "i tre giochi MinAtar, giocati dalla loro rete e a caso"
+   "states_from": "the three MinAtar games, played by their own network and at random"
   },
   {
    "a": "astra/breakout",
@@ -2179,7 +2179,7 @@
     0.09569979684248958
    ],
    "states": 5219,
-   "states_from": "i tre giochi MinAtar, giocati dalla loro rete e a caso"
+   "states_from": "the three MinAtar games, played by their own network and at random"
   },
   {
    "a": "astra/seaquest",
@@ -2207,7 +2207,7 @@
     0.18248802258702124
    ],
    "states": 5219,
-   "states_from": "i tre giochi MinAtar, giocati dalla loro rete e a caso"
+   "states_from": "the three MinAtar games, played by their own network and at random"
   }
  ],
  "agreement": [
@@ -2224,7 +2224,7 @@
   {
    "states": "Low Tide",
    "a": "claude/low_tide",
-   "b": "euristica",
+   "b": "heuristic",
    "sampled": 0.4267557019134603,
    "sampled_chance": 0.19380937273801568,
    "greedy": 0.4083333333333333,
@@ -2234,7 +2234,7 @@
   {
    "states": "Low Tide",
    "a": "gpt/low_tide",
-   "b": "euristica",
+   "b": "heuristic",
    "sampled": 0.34597883375651517,
    "sampled_chance": 0.1844287051115055,
    "greedy": 0.34044444444444444,

@@ -212,7 +212,7 @@ class _StopFlag:
         if self.stop:                        # second signal: give up immediately
             raise KeyboardInterrupt
         self.stop = True
-        print(f"segnale {signum}: salvo lo stato alla fine dell'aggiornamento in corso ed esco", flush=True)
+        print(f"signal {signum}: saving the state at the end of the current update, then exiting", flush=True)
 
     def __exit__(self, *exc):
         for sig, h in self.old.items():
@@ -261,7 +261,7 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path, resume=False):
         st = torch.load(state_path, weights_only=False)
         if st["config"] != asdict(cfg):
             diff = {k: (st["config"].get(k), v) for k, v in asdict(cfg).items() if st["config"].get(k) != v}
-            raise SystemExit(f"--resume: la configurazione è diversa da quella salvata {diff}; usa un altro --name")
+            raise SystemExit(f"--resume: the configuration differs from the saved one {diff}; use another --name")
         actor.load_state_dict(st["actor"])
         critic.load_state_dict(st["critic"])
         opt.load_state_dict(st["opt"])
@@ -275,7 +275,7 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path, resume=False):
         with open(log_path, "w", newline="") as f:          # drop log lines written after the saved state
             csv.writer(f).writerows(rows)
         log_f = open(log_path, "a", newline="")
-        print(f"[{cfg.game}] riprendo da {st['update'] * batch / 1e6:.2f}M passi", flush=True)
+        print(f"[{cfg.game}] resuming from {st['update'] * batch / 1e6:.2f}M steps", flush=True)
     else:
         sticky = proto.sticky_prob if cfg.sticky is None else cfg.sticky
         envs = [game.make_env(sticky_prob=sticky, max_steps=proto.max_steps) for _ in range(N)]
@@ -412,8 +412,8 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path, resume=False):
                               *[round(float(x), 5) for x in s], opt.param_groups[0]["lr"],
                               *[f"{x:.4g}" for x in (g[0], full[1], full[0], full[2], g[1], g[2], dist_init)]])
                 log_f.flush()
-                print(f"[{cfg.game}] {steps / 1e6:7.2f}M passi  {seconds:6.0f}s  "
-                      f"ritorno {mr:8.2f} ({len(finished)} ep)  entropia {s[2]:.3f}  kl {s[3]:.4f}", flush=True)
+                print(f"[{cfg.game}] {steps / 1e6:7.2f}M steps  {seconds:6.0f}s  "
+                      f"return {mr:8.2f} ({len(finished)} ep)  entropy {s[2]:.3f}  kl {s[3]:.4f}", flush=True)
                 finished = []
             if steps // cfg.save_every > (steps - batch) // cfg.save_every and update < n_updates:
                 export_actor(actor, cfg, game, results_dir / f"checkpoint_{steps // 1_000_000:04d}M.json",
@@ -422,8 +422,8 @@ def train(cfg: PPOConfig, weights_out: Path, results_dir: Path, resume=False):
             if flag.stop and update < n_updates:
                 save_state(update, seconds)
                 log_f.close()
-                print(f"[{cfg.game}] fermato a {steps / 1e6:.2f}M passi, stato in {state_path}: "
-                      f"riprendi con --resume", flush=True)
+                print(f"[{cfg.game}] stopped at {steps / 1e6:.2f}M steps, state in {state_path}: "
+                      f"continue with --resume", flush=True)
                 return "stopped"
 
     log_f.close()
@@ -483,7 +483,7 @@ def main(cfg: PPOConfig, here: Path):
     ap.add_argument("--resume", action="store_true",
                     help="continue from results/<name>/state.pt if it exists (else start); if training already "
                          "finished, only run the missing evaluation")
-    ap.add_argument("--set", action="append", default=[], metavar="CAMPO=VALORE",
+    ap.add_argument("--set", action="append", default=[], metavar="FIELD=VALUE",
                     help="change a PPOConfig field, e.g. --set ent_coef=0.05 --set sticky=0.0 (repeatable)")
     args = ap.parse_args()
     cfg = replace(cfg, total_steps=args.total_steps, seed=args.seed, **_parse_sets(cfg, args.set))
@@ -495,12 +495,12 @@ def main(cfg: PPOConfig, here: Path):
     finished = (results_dir / "final.pt").is_file() and weights_out.is_file() \
         and not (results_dir / "state.pt").is_file()
     if args.resume and finished:
-        print(f"[{cfg.game}] addestramento già finito: {weights_out.relative_to(root)}", flush=True)
+        print(f"[{cfg.game}] training already finished: {weights_out.relative_to(root)}", flush=True)
     else:
         t0 = time.time()
         if train(cfg, weights_out, results_dir, resume=args.resume) == "stopped":
             return
-        print(f"[{cfg.game}] training: {(time.time() - t0) / 60:.1f} min, pesi in {weights_out.relative_to(root)}",
+        print(f"[{cfg.game}] training: {(time.time() - t0) / 60:.1f} min, weights in {weights_out.relative_to(root)}",
               flush=True)
     if args.no_eval or (args.resume and (results_dir / "eval.json").is_file()):
         return
@@ -512,7 +512,7 @@ def main(cfg: PPOConfig, here: Path):
     summary = {"final": evaluate(game, MLPPolicy(ReferenceMLP(load_weights(weights_out, game))),
                                  workers=args.eval_workers)}
     fin = summary["final"]
-    print(f"[{cfg.game}] valutazione ({fin['protocol']['episodes']} episodi): "
+    print(f"[{cfg.game}] evaluation ({fin['protocol']['episodes']} episodes): "
           f"{fin['mean_return']:.2f} ± {fin['stderr']:.2f}", flush=True)
     if args.eval_checkpoints:
         for ck in sorted(results_dir.glob("checkpoint_*.json")):

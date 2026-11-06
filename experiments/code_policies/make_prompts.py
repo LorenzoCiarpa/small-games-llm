@@ -1,17 +1,17 @@
 """
-Scrive i prompt per far scrivere a un LLM un algoritmo (codice Python) invece dei pesi di una rete.
+Writes the prompts that ask an LLM to write an algorithm (Python code) instead of the weights of a network.
 
-Un prompt per gioco, in prompts/<gioco>.txt. Per Breakout, Seaquest e Asterix il prompt è quello dell'Esperimento 5
-dell'articolo (github.com/RikiyaT/lm_understand-logs, exp5_write_from_scratch/runs/<gioco>/message.txt, CC BY 4.0).
-Restano identici:
-- il gioco, con il sorgente esatto di MinAtar 1.0.15;
-- l'input;
-- la mappatura dei canali.
+One prompt per game, in prompts/<game>.txt. For Breakout, Seaquest and Asterix the prompt is the one of Experiment 5
+of the article (github.com/RikiyaT/lm_understand-logs, exp5_write_from_scratch/runs/<game>/message.txt, CC BY 4.0).
+These stay identical:
+- the game, with the exact source of MinAtar 1.0.15;
+- the input;
+- the channel mapping.
 
-Cambiano solo le parti sulla rete: il compito, l'output, la rete al posto della funzione, come si valuta e come
-si scrive la risposta. Per Low Tide il prompt ha la stessa struttura, con il sorgente di env.py.
+Only the parts about the network change: the task, the output, the function in place of the network, how it is
+scored and how the answer is written. For Low Tide the prompt has the same structure, with the source of env.py.
 
-I prompt contengono il sorgente di MinAtar (GPL-3.0): prompts/ non è versionata, si rigenera con
+The prompts contain the MinAtar source (GPL-3.0): prompts/ is not versioned, it is regenerated with
 
     uv run python experiments/code_policies/make_prompts.py
 """
@@ -32,7 +32,7 @@ TASK = (
     "describe your algorithm briefly, then write the python block."
 )
 
-# dall'articolo (exp5_write_from_scratch/runs/<gioco>/message.txt), parola per parola
+# from the article (exp5_write_from_scratch/runs/<game>/message.txt), word for word
 MINATAR = {
     "breakout": {
         "game": (
@@ -209,7 +209,7 @@ def main():
     for game, text in prompts.items():
         path = OUT / f"{game}.txt"
         path.write_text(text)
-        print(f"{path.relative_to(ROOT)}: {len(text):,} caratteri")
+        print(f"{path.relative_to(ROOT)}: {len(text):,} characters")
 
 
 if __name__ == "__main__":

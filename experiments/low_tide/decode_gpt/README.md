@@ -262,20 +262,20 @@ pass.
 | check | result |
 |---|---|
 | states visited | 186,768 |
-| first layer: states in which the reading is wrong | **0** |
-| logits: maximum difference | 1.1·10⁻¹³ (the network is all relu and linear: the formulas are exact) |
-| move with the highest logit differs, excluding near-ties (< 0.5) | **0** |
+| first layer, states in which the reading is wrong | **0** |
+| logits, maximum difference | 1.1·10⁻¹³ (the network is all relu and linear: the formulas are exact) |
+| move with the highest logit differs, excluding near-ties < 0.5 | **0** |
 
 The near-ties are 61,158 states. They are mostly the agent inside the empty window, where the logits are 0 or 0.75
 and the network wanders.
 
 Where the agent is:
 
-| column | 0-4 | 5 | 6 | 7 | 8 | 9 |
+| agent's column | 0-4 | 5 | 6 | 7 | 8 | 9 |
 |---|---|---|---|---|---|---|
 | % of states | 0.4% | 1.1% | 14.3% | 27.7% | 36.1% | 20.5% |
 
-| row | 0-1 | 2 | 3 | 4 | 5 | 6 | 7 | 8-9 |
+| agent's row | 0-1 | 2 | 3 | 4 | 5 | 6 | 7 | 8-9 |
 |---|---|---|---|---|---|---|---|---|
 | % of states | 3.7% | 10.4% | 25.7% | 21.6% | 18.7% | 13.5% | 5.1% | 1.2% |
 

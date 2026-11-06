@@ -245,7 +245,7 @@ def tree_text(tree, names, action_names):
 
     txt = export_text(tree, feature_names=list(names), decimals=1)
     for k, a in enumerate(action_names):
-        txt = txt.replace(f"class: {k}\n", f"azione: {k} {a}\n")
+        txt = txt.replace(f"class: {k}\n", f"action: {k} {a}\n")
     return txt
 
 
@@ -263,8 +263,8 @@ def plot_fields(game, layers, units, path, title):
                   for c in range(6) if game.grid.labels[c] is not None]
     else:
         planes = [(n, (lambda w, c=c: w[c * 100:(c + 1) * 100].reshape(10, 10)))
-                  for c, n in enumerate(("agente", "acqua", "conchiglie", "meduse"))]
-        planes.append(("sale | countd. | stun", lambda w: w[400:403].reshape(1, 3)))
+                  for c, n in enumerate(("agent", "water", "shells", "jellyfish"))]
+        planes.append(("rising | countd. | stun", lambda w: w[400:403].reshape(1, 3)))
     fig, axes = plt.subplots(len(units), len(planes), figsize=(1.9 * len(planes), 1.9 * len(units)),
                              squeeze=False)
     for i, (u, label) in enumerate(units):
@@ -313,7 +313,7 @@ def analyse(game_name, nets, out_dir: Path, *, score_episodes=200, ablation_epis
         g = evaluate(game, MLPPolicy(ReferenceMLP(layers), greedy=True), episodes=score_episodes, seed0=seed0,
                      workers=workers)
         r["score_greedy"] = {"mean": g["mean_return"], "stderr": g["stderr"]}
-        log(f"[{net_name}] punteggio {base[0]:.2f} ± {base[1]:.2f} (greedy {g['mean_return']:.2f})")
+        log(f"[{net_name}] score {base[0]:.2f} ± {base[1]:.2f} (greedy {g['mean_return']:.2f})")
 
         r["pruning"] = []
         for keep in prune_keeps:
@@ -350,7 +350,7 @@ def analyse(game_name, nets, out_dir: Path, *, score_episodes=200, ablation_epis
             info["ablation"] = abl
             abl_all += [(li, j, m) for j, m in enumerate(abl)]
             r["layers"].append(info)
-            log(f"[{net_name}] strato {li}: ablazione fatta")
+            log(f"[{net_name}] layer {li}: ablation done")
         ref = evaluate(game, ResamplePolicy(layers, -1, 0, [0.0]), episodes=ablation_episodes, seed0=seed0,
                        workers=workers)
         r["ablation_reference"] = ref["mean_return"]
@@ -367,20 +367,20 @@ def analyse(game_name, nets, out_dir: Path, *, score_episodes=200, ablation_epis
                     row["score"], row["stderr"] = s["mean_return"], s["stderr"]
                 r["distill"].append(row)
                 if d <= 4:
-                    f.write(f"=== profondità {d}: accordo {agree:.1%}, {row['leaves']} foglie"
-                            + (f", punteggio {row['score']:.2f}" if "score" in row else "") + "\n")
+                    f.write(f"=== depth {d}: agreement {agree:.1%}, {row['leaves']} leaves"
+                            + (f", score {row['score']:.2f}" if "score" in row else "") + "\n")
                     f.write(tree_text(tree, names, game.action_names) + "\n")
-                log(f"[{net_name}] albero d={d}: accordo {agree:.1%}" +
-                    (f", punteggio {row['score']:.2f}" if "score" in row else ""))
+                log(f"[{net_name}] tree d={d}: agreement {agree:.1%}" +
+                    (f", score {row['score']:.2f}" if "score" in row else ""))
 
         top = sorted(((li, j, m) for li, j, m in abl_all if li == 0 and m is not None), key=lambda t: t[2])[:8]
         probe0 = {p["unit"]: p for p in r["layers"][0]["probe"]}
         units = [(j, f"u{j}  abl {m:.1f}\n{probe0[j]['best_feature']} r={probe0[j]['best_r']:.2f}")
                  for _, j, m in top]
         plot_fields(game, layers, units, out_dir / f"fields_{net_name}.png",
-                    f"{game_name} / {net_name}: primo strato, le 8 unità più importanti (ablazione)")
+                    f"{game_name} / {net_name}: first layer, the 8 most important units (ablation)")
         r["seconds"] = round(time.time() - t0, 1)
-        log(f"[{net_name}] fatto in {r['seconds']:.0f}s")
+        log(f"[{net_name}] done in {r['seconds']:.0f}s")
         with open(out_dir / "analysis.json", "w") as f:
             json.dump(report, f, indent=1)
     return report
@@ -440,34 +440,37 @@ def _hypothetical_landing(F, names, dx):
 
 
 # The quantities the hand-written algorithms compute (from the decode_* analyses), as functions of the features.
+# The names are keys of nets[name]["key_quantities"] in experiments/<game>/ppo/results/analysis/analysis.json.
 KEY_QUANTITIES = {
     "low_tide": {
-        "margine (righe asciutte sotto l'agente)": lambda F, n: _col(F, n, "margin"),
-        "pericolo (sale e margine ≤ 2)": lambda F, n: _col(F, n, "rising") * np.maximum(0, 3 - _col(F, n, "margin")),
-        "conchiglia a destra nella riga": lambda F, n: (_col(F, n, "shells_right") > 0).astype(float),
-        "conchiglia a sinistra nella riga": lambda F, n: (_col(F, n, "shells_left") > 0).astype(float),
+        "margin (dry rows below the agent)": lambda F, n: _col(F, n, "margin"),
+        "danger (rising and margin ≤ 2)": lambda F, n: _col(F, n, "rising") * np.maximum(0, 3 - _col(F, n, "margin")),
+        "shell to the right in the row": lambda F, n: (_col(F, n, "shells_right") > 0).astype(float),
+        "shell to the left in the row": lambda F, n: (_col(F, n, "shells_left") > 0).astype(float),
     },
     "breakout": {
-        "colonna d'arrivo − racchetta": lambda F, n: _col(F, n, "landing_rel_x"),
+        "landing column − paddle": lambda F, n: _col(F, n, "landing_rel_x"),
         # what Astra's lookup neurons compute: the landing column for one direction, whatever the real one is
-        "arrivo se scendesse a destra − racchetta": lambda F, n: _hypothetical_landing(F, n, +1),
-        "arrivo se scendesse a sinistra − racchetta": lambda F, n: _hypothetical_landing(F, n, -1),
-        "palla − racchetta (colonne)": lambda F, n: _col(F, n, "ball_rel_x"),
-        "la palla scende": lambda F, n: (_col(F, n, "ball_dy") > 0).astype(float),
+        # landing column if the ball came down to the right − paddle
+        "landing if the ball came down to the right − paddle": lambda F, n: _hypothetical_landing(F, n, +1),
+        # landing column if the ball came down to the left − paddle
+        "landing if the ball came down to the left − paddle": lambda F, n: _hypothetical_landing(F, n, -1),
+        "ball − paddle (columns)": lambda F, n: _col(F, n, "ball_rel_x"),
+        "the ball is coming down": lambda F, n: (_col(F, n, "ball_dy") > 0).astype(float),
     },
     "asterix": {
-        "nemico in arrivo nella mia riga (≤ 3)": lambda F, n: _within(F, n, "enemy_eta_same", 3),
-        "nemico in arrivo nella riga sotto (≤ 2)": lambda F, n: _within(F, n, "enemy_eta_down1", 2),
-        "nemico in arrivo nella riga sopra (≤ 2)": lambda F, n: _within(F, n, "enemy_eta_up1", 2),
-        "tesoro in arrivo nella mia riga": lambda F, n: _within(F, n, "gold_eta_same", 9),
+        "enemy coming in my row (≤ 3)": lambda F, n: _within(F, n, "enemy_eta_same", 3),
+        "enemy coming in the row below (≤ 2)": lambda F, n: _within(F, n, "enemy_eta_down1", 2),
+        "enemy coming in the row above (≤ 2)": lambda F, n: _within(F, n, "enemy_eta_up1", 2),
+        "treasure coming in my row": lambda F, n: _within(F, n, "gold_eta_same", 9),
     },
     "seaquest": {
-        "ossigeno basso (< 60)": lambda F, n: (_col(F, n, "oxygen") < 3).astype(float),
-        "almeno un sub a bordo": lambda F, n: (_col(F, n, "divers") >= 1).astype(float),
-        "ora di emergere (ossigeno < 60 e almeno un sub)":
+        "low oxygen (< 60)": lambda F, n: (_col(F, n, "oxygen") < 3).astype(float),
+        "at least one diver on board": lambda F, n: (_col(F, n, "divers") >= 1).astype(float),
+        "time to surface (oxygen < 60 and at least one diver)":
             lambda F, n: ((_col(F, n, "oxygen") < 3) & (_col(F, n, "divers") >= 1)).astype(float),
-        "nemico vicino nella mia riga (≤ 2)": lambda F, n: _within(F, n, "enemy_near_same", 2),
-        "sub da salvare nella mia riga": lambda F, n: _within(F, n, "diver_near_same", 9),
+        "enemy near in my row (≤ 2)": lambda F, n: _within(F, n, "enemy_near_same", 2),
+        "diver to rescue in my row": lambda F, n: _within(F, n, "diver_near_same", 9),
     },
 }
 
@@ -515,7 +518,7 @@ def key_quantities(game_name, nets, out_dir: Path, collect_episodes=40, seed0=No
         for qname, fn in KEY_QUANTITIES[game_name].items():
             rows = res[qname] = key_fit(acts, fn(F, names), test)
             log(f"[{net_name}] {qname}: " + "  ".join(
-                f"strato {x['layer']}: r {x['best_r']:.2f}, R² {x['linear_r2']:.2f}" for x in rows))
+                f"layer {x['layer']}: r {x['best_r']:.2f}, R² {x['linear_r2']:.2f}" for x in rows))
         report["nets"].setdefault(net_name, {})["key_quantities"] = res
     path.write_text(json.dumps(report, indent=1))
     return report
@@ -534,7 +537,7 @@ def live_input_stats(game_name, nets, out_dir: Path, live_from=None, collect_epi
     game = get_game(game_name)
     seed0 = game.protocol.seed0 if seed0 is None else seed0
     live = live_inputs(game, [load_weights(p, game) for p in (live_from or nets).values()], collect_episodes)
-    log(f"[{game_name}] ingressi vivi: {live.sum()} su {game.obs_dim}")
+    log(f"[{game_name}] live inputs: {live.sum()} of {game.obs_dim}")
     path = out_dir / "analysis.json"
     report = json.loads(path.read_text())
     report["live_inputs"] = np.flatnonzero(live).tolist()
@@ -552,7 +555,7 @@ def live_input_stats(game_name, nets, out_dir: Path, live_from=None, collect_epi
         for keep in keeps:
             m, se = score(game, prune_first_layer(layers, keep, live), score_episodes, seed0, workers)
             res["pruning_first_layer"].append({"keep": keep, "mean": m, "stderr": se})
-        log(f"[{net_name}] primo strato sugli ingressi vivi: " + ", ".join(
+        log(f"[{net_name}] first layer on the live inputs: " + ", ".join(
             f"{100 * p['keep']:g}% {p['mean']:.1f}" for p in res["pruning_first_layer"]))
         report["nets"][net_name]["live"] = res
     path.write_text(json.dumps(report, indent=1))
@@ -565,15 +568,15 @@ def _f(x, nd=1):
 
 
 def markdown_tables(report, order=None):
-    """The comparison tables of the READMEs, generated from analysis.json (Italian headers)."""
+    """The comparison tables of the READMEs, generated from analysis.json."""
     nets = order or list(report["nets"])
     R = report["nets"]
     out = {}
 
     rows = ["| | " + " | ".join(f"`{n}`" for n in nets) + " |", "|---|" + "---|" * len(nets)]
-    rows.append("| punteggio (200 episodi, campionata) | " + " | ".join(
+    rows.append("| score (200 episodes, sampled) | " + " | ".join(
         f"{R[n]['score']['mean']:.1f} ± {R[n]['score']['stderr']:.1f}" for n in nets) + " |")
-    rows.append("| punteggio greedy | " + " | ".join(_f(R[n]["score_greedy"]["mean"]) for n in nets) + " |")
+    rows.append("| greedy score | " + " | ".join(_f(R[n]["score_greedy"]["mean"]) for n in nets) + " |")
     out["score"] = "\n".join(rows)
 
     rows = ["| | " + " | ".join(f"`{n}`" for n in nets) + " |", "|---|" + "---|" * len(nets)]
@@ -581,45 +584,45 @@ def markdown_tables(report, order=None):
         return R[n]["weights"][0][key]
     tot = {n: sum(L["nonzero_frac"] * L["shape"][0] * L["shape"][1] for L in R[n]["weights"])
            / sum(L["shape"][0] * L["shape"][1] for L in R[n]["weights"]) for n in nets}
-    rows.append("| pesi diversi da zero | " + " | ".join(f"{100 * tot[n]:.1f}%" for n in nets) + " |")
-    rows.append("| valori diversi nel primo strato | " + " | ".join(f"{wsum(n, 'distinct_values'):,}".replace(",", ".")
-                                                                 for n in nets) + " |")
-    rows.append("| neuroni del primo strato con tutti i pesi a zero | " + " | ".join(
-        str(wsum(n, "zero_units")) if "zero_units" in R[n]["weights"][0] else "—" for n in nets) + " |")
-    rows.append(f"| ingressi che fanno il 90% del peso di un neurone (mediana, su {R[nets[0]]['weights'][0]['shape'][1]})"
-                " | " + " | ".join(_f(wsum(n, "inputs_for_90pct_median"), 0) for n in nets) + " |")
-    rows.append("| peso più grande in valore assoluto | " + " | ".join(_f(max(L["max_abs"] for L in R[n]["weights"]), 2)
+    rows.append("| nonzero weights | " + " | ".join(f"{100 * tot[n]:.1f}%" for n in nets) + " |")
+    rows.append("| distinct values in the first layer | " + " | ".join(f"{wsum(n, 'distinct_values'):,}"
                                                                     for n in nets) + " |")
+    rows.append("| first-layer neurons with all weights at zero | " + " | ".join(
+        str(wsum(n, "zero_units")) if "zero_units" in R[n]["weights"][0] else "—" for n in nets) + " |")
+    rows.append(f"| inputs that make up 90% of a neuron's weight (median, out of {R[nets[0]]['weights'][0]['shape'][1]})"
+                " | " + " | ".join(_f(wsum(n, "inputs_for_90pct_median"), 0) for n in nets) + " |")
+    rows.append("| largest weight (in absolute value) | " + " | ".join(_f(max(L["max_abs"] for L in R[n]["weights"]), 2)
+                                                                     for n in nets) + " |")
     out["weights"] = "\n".join(rows)
 
     if all("live" in R[n] for n in nets):
         lv = {n: R[n]["live"] for n in nets}
         k = lv[nets[0]]
-        rows = ["| primo strato, solo i " + f"{k['inputs']} ingressi vivi su {k['of']}" + " | "
+        rows = ["| first layer, only the " + f"{k['inputs']} live inputs out of {k['of']}" + " | "
                 + " | ".join(f"`{n}`" for n in nets) + " |", "|---|" + "---|" * len(nets)]
-        rows.append("| pesi diversi da zero | " + " | ".join(f"{100 * lv[n]['nonzero_frac']:.1f}%" for n in nets) + " |")
-        rows.append("| valori diversi | " + " | ".join(f"{lv[n]['distinct_values']:,}".replace(",", ".")
-                                                       for n in nets) + " |")
-        rows.append(f"| ingressi che fanno il 90% del peso di un neurone (mediana, su {k['inputs']}) | "
+        rows.append("| nonzero weights | " + " | ".join(f"{100 * lv[n]['nonzero_frac']:.1f}%" for n in nets) + " |")
+        rows.append("| distinct values | " + " | ".join(f"{lv[n]['distinct_values']:,}"
+                                                        for n in nets) + " |")
+        rows.append(f"| inputs that make up 90% of a neuron's weight (median, out of {k['inputs']}) | "
                     + " | ".join(_f(lv[n]["inputs_for_90pct_median"], 0) for n in nets) + " |")
-        rows.append("| \\|w\\| medio sugli ingressi morti / vivi | " + " | ".join(
+        rows.append("| mean \\|w\\| on dead / live inputs | " + " | ".join(
             f"{_f(lv[n]['mean_abs_dead'], 3)} / {_f(lv[n]['mean_abs_live'], 3)}" for n in nets) + " |")
         out["live"] = "\n".join(rows)
         keeps = [p["keep"] for p in k["pruning_first_layer"]]
-        rows = ["| pesi vivi del primo strato tenuti | " + " | ".join(f"{100 * x:g}%" for x in keeps) + " |",
+        rows = ["| live first-layer weights kept | " + " | ".join(f"{100 * x:g}%" for x in keeps) + " |",
                 "|---|" + "---|" * len(keeps)]
         for n in nets:
             rows.append(f"| `{n}` | " + " | ".join(_f(p["mean"]) for p in lv[n]["pruning_first_layer"]) + " |")
         out["pruning_first_layer"] = "\n".join(rows)
 
     keeps = [p["keep"] for p in R[nets[0]]["pruning"]]
-    rows = ["| pesi tenuti | " + " | ".join(f"{100 * k:g}%" for k in keeps) + " |", "|---|" + "---|" * len(keeps)]
+    rows = ["| weights kept | " + " | ".join(f"{100 * k:g}%" for k in keeps) + " |", "|---|" + "---|" * len(keeps)]
     for n in nets:
         rows.append(f"| `{n}` | " + " | ".join(_f(p["mean"]) for p in R[n]["pruning"]) + " |")
     out["pruning"] = "\n".join(rows)
 
-    rows = ["| | neuroni (costanti) | che fanno perdere più del 10% | perdita massima | riferimento | "
-            "quota dei 5 peggiori sulla perdita totale |", "|---|---|---|---|---|---|"]
+    rows = ["| | neurons (constant) | neurons that lose more than 10% | maximum loss | reference | "
+            "share of the 5 worst neurons in the total loss |", "|---|---|---|---|---|---|"]
     for n in nets:
         ref = R[n]["ablation_reference"]
         se = R[n].get("ablation_reference_stderr")
@@ -633,22 +636,22 @@ def markdown_tables(report, order=None):
                     f"{ref:.1f} ± {_f(se)} | {_f(100 * share if share is not None else None, 0)}% |")
     out["ablation"] = "\n".join(rows)
 
-    rows = ["| | " + " | ".join(f"`{n}` strato {L['layer']}" for n in nets for L in R[n]["layers"]) + " |",
+    rows = ["| | " + " | ".join(f"`{n}` layer {L['layer']}" for n in nets for L in R[n]["layers"]) + " |",
             "|---|" + "---|" * sum(len(R[n]["layers"]) for n in nets)]
-    rows.append("| neuroni tanh saturi (\\|a\\| > 0.95) | " + " | ".join(
+    rows.append("| saturated tanh neurons (\\|a\\| > 0.95) | " + " | ".join(
         "relu" if L.get("saturation") is None else f"{100 * L['saturation']:.0f}%"
         for n in nets for L in R[n]["layers"]) + " |")
-    rows.append("| neuroni con \\|r\\| ≥ 0.8 con una grandezza del gioco | " + " | ".join(
+    rows.append("| neurons with \\|r\\| ≥ 0.8 with a game quantity | " + " | ".join(
         f"{sum(p['best_r'] >= 0.8 for p in L['probe'] if not p['constant'])}/"
         f"{sum(not p['constant'] for p in L['probe'])}" for n in nets for L in R[n]["layers"]) + " |")
-    rows.append("| R² medio di un neurone sulle grandezze del gioco | " + " | ".join(
+    rows.append("| mean R² of a neuron on the game quantities | " + " | ".join(
         _f(float(np.mean([p['r2'] for p in L['probe'] if not p['constant']])), 2)
         for n in nets for L in R[n]["layers"]) + " |")
     out["probe"] = "\n".join(rows)
 
     qs = list(next(iter(R[n].get("key_quantities", {}) for n in nets if "key_quantities" in R[n])))
     if qs:
-        rows = ["| quantità | " + " | ".join(f"`{n}` r / R²" for n in nets) + " |", "|---|" + "---|" * len(nets)]
+        rows = ["| quantity | " + " | ".join(f"`{n}` r / R²" for n in nets) + " |", "|---|" + "---|" * len(nets)]
         for q in qs:
             cells = []
             for n in nets:
@@ -662,7 +665,7 @@ def markdown_tables(report, order=None):
         out["key"] = "\n".join(rows)
 
     depths = [d["depth"] for d in R[nets[0]]["distill"]]
-    rows = ["| profondità | " + " | ".join(f"`{n}` accordo / foglie / punti" for n in nets) + " |",
+    rows = ["| depth | " + " | ".join(f"`{n}` agreement / leaves / points" for n in nets) + " |",
             "|---|" + "---|" * len(nets)]
     for i, d in enumerate(depths):
         cells = []
@@ -670,6 +673,6 @@ def markdown_tables(report, order=None):
             t = R[n]["distill"][i]
             cells.append(f"{100 * t['agreement']:.1f}% / {t['leaves']}" + (f" / {t['score']:.1f}" if "score" in t else ""))
         rows.append(f"| {d} | " + " | ".join(cells) + " |")
-    rows.append("| la rete, greedy | " + " | ".join(_f(R[n]["score_greedy"]["mean"]) for n in nets) + " |")
+    rows.append("| the network itself, greedy | " + " | ".join(_f(R[n]["score_greedy"]["mean"]) for n in nets) + " |")
     out["distill"] = "\n".join(rows)
     return out

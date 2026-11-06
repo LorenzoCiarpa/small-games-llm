@@ -1,90 +1,90 @@
-=== profondità 1: accordo 36.2%, 2 foglie
+=== depth 1: agreement 36.2%, 2 leaves
 |--- sub_y <= 5.5
-|   |--- azione: 4 giù
+|   |--- action: 4 down
 |--- sub_y >  5.5
-|   |--- azione: 5 fuoco
+|   |--- action: 5 fire
 
-=== profondità 2: accordo 44.2%, 4 foglie, punteggio 1.14
+=== depth 2: agreement 44.2%, 4 leaves, score 1.14
 |--- sub_y <= 5.5
 |   |--- target_ahead <= 52.0
-|   |   |--- azione: 5 fuoco
+|   |   |--- action: 5 fire
 |   |--- target_ahead >  52.0
-|   |   |--- azione: 4 giù
+|   |   |--- action: 4 down
 |--- sub_y >  5.5
 |   |--- target_ahead <= 52.0
-|   |   |--- azione: 5 fuoco
+|   |   |--- action: 5 fire
 |   |--- target_ahead >  52.0
-|   |   |--- azione: 2 su
+|   |   |--- action: 2 up
 
-=== profondità 3: accordo 45.3%, 8 foglie
+=== depth 3: agreement 45.3%, 8 leaves
 |--- sub_y <= 5.5
 |   |--- target_ahead <= 52.0
 |   |   |--- torpedo_same_row <= 0.5
-|   |   |   |--- azione: 5 fuoco
+|   |   |   |--- action: 5 fire
 |   |   |--- torpedo_same_row >  0.5
-|   |   |   |--- azione: 5 fuoco
+|   |   |   |--- action: 5 fire
 |   |--- target_ahead >  52.0
 |   |   |--- sub_x <= 3.5
-|   |   |   |--- azione: 4 giù
+|   |   |   |--- action: 4 down
 |   |   |--- sub_x >  3.5
-|   |   |   |--- azione: 4 giù
+|   |   |   |--- action: 4 down
 |--- sub_y >  5.5
 |   |--- target_ahead <= 52.0
 |   |   |--- enemy_eta_same <= 4.5
-|   |   |   |--- azione: 5 fuoco
+|   |   |   |--- action: 5 fire
 |   |   |--- enemy_eta_same >  4.5
-|   |   |   |--- azione: 5 fuoco
+|   |   |   |--- action: 5 fire
 |   |--- target_ahead >  52.0
 |   |   |--- enemy_near_down1 <= 6.5
-|   |   |   |--- azione: 4 giù
+|   |   |   |--- action: 4 down
 |   |   |--- enemy_near_down1 >  6.5
-|   |   |   |--- azione: 2 su
+|   |   |   |--- action: 2 up
 
-=== profondità 4: accordo 46.1%, 16 foglie, punteggio 0.83
+=== depth 4: agreement 46.1%, 16 leaves, score 0.83
 |--- sub_y <= 5.5
 |   |--- target_ahead <= 52.0
 |   |   |--- torpedo_same_row <= 0.5
 |   |   |   |--- diver_near_up1 <= 52.0
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |   |   |--- diver_near_up1 >  52.0
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |   |--- torpedo_same_row >  0.5
 |   |   |   |--- sub_y <= 4.5
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |   |   |--- sub_y >  4.5
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |--- target_ahead >  52.0
 |   |   |--- sub_x <= 3.5
 |   |   |   |--- sub_y <= 4.5
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |   |   |--- sub_y >  4.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |--- sub_x >  3.5
 |   |   |   |--- enemies <= 0.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |   |--- enemies >  0.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |--- sub_y >  5.5
 |   |--- target_ahead <= 52.0
 |   |   |--- enemy_near_same <= 4.5
 |   |   |   |--- diver_dy <= -5.5
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |   |   |--- diver_dy >  -5.5
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |   |--- enemy_near_same >  4.5
 |   |   |   |--- sub_y <= 7.5
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |   |   |--- sub_y >  7.5
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |--- target_ahead >  52.0
 |   |   |--- enemy_near_down1 <= 6.5
 |   |   |   |--- enemy_near_down1 <= 3.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |   |--- enemy_near_down1 >  3.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |--- enemy_near_down1 >  6.5
 |   |   |   |--- sub_y <= 6.5
-|   |   |   |   |--- azione: 5 fuoco
+|   |   |   |   |--- action: 5 fire
 |   |   |   |--- sub_y >  6.5
-|   |   |   |   |--- azione: 2 su
+|   |   |   |   |--- action: 2 up
 

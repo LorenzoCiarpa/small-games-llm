@@ -1,17 +1,17 @@
 """
-Verifica bfs_exact.json (vedi README.md): la rete deve fare la stessa mossa di `heuristic_policy` in ogni stato.
+Verifies bfs_exact.json (see README.md): the network must make the same move as `heuristic_policy` in every state.
 
-La rete supera i limiti del gioco (3 strati da 64), quindi `uv run evaluate` non la carica. Qui la si legge con lo
-stesso `load_weights` del repo, solo con i limiti di strati e unità tolti, e si usa il forward di riferimento
-(`ReferenceMLP`, float64 denso).
+The network exceeds the game's limits (3 layers of 64), so `uv run evaluate` does not load it. Here it is read with
+the repo's own `load_weights`, with only the limits on layers and units removed, and evaluated with the reference
+forward pass (`ReferenceMLP`, dense float64).
 
-1. Riscrive i pesi con build.py e controlla che coincidano con il file.
-2. Gioca gli episodi del protocollo (seed 10000.., sticky 0.1, azioni campionate dalla softmax, come `evaluate`).
-   In ogni stato confronta la mossa della rete con quella dell'euristica e misura il margine dei logit.
-   Gioca gli stessi episodi con l'euristica e confronta i punteggi episodio per episodio.
-3. Stati costruiti apposta, anche lontani da quelli del gioco, per controllare distanze che negli episodi non
-   capitano: metà casuali (fino al 45% di meduse, 1-3 conchiglie), un quarto labirinti di meduse e un quarto
-   serpentine (corridoi lunghi fino a ~60 passi), con agente e conchiglia in celle a caso.
+1. Rewrites the weights with build.py and checks that they match the file.
+2. Plays the protocol episodes (seeds 10000.., sticky 0.1, actions sampled from the softmax, like `evaluate`).
+   In every state it compares the network's move with the heuristic's and measures the logit margin.
+   It plays the same episodes with the heuristic and compares the scores episode by episode.
+3. Purpose-built states, some far from those of the game, to check distances that do not occur in the episodes:
+   half random (up to 45% jellyfish, 1-3 shells), a quarter jellyfish mazes and a quarter serpentines (corridors up
+   to ~60 steps long), with agent and shell in random cells.
 
     uv run python experiments/low_tide/bfs_exact/check.py [--episodes 500] [--random 20000]
 """
@@ -38,13 +38,13 @@ MLP = None
 
 
 def load(path):
-    """load_weights del repo, con i limiti di strati e unità tolti (attivazioni e forma restano controllate)."""
+    """The repo's load_weights, with the layer and unit limits removed (activations and shapes are still checked)."""
     net = dataclasses.replace(GAME.net, max_hidden_layers=10**6, max_hidden_units=10**6)
     return ReferenceMLP(load_weights(path, dataclasses.replace(GAME, net=net)))
 
 
 def bfs_depth(obs):
-    """Distanza dall'agente della conchiglia trovata da heuristic_policy (None se non ce n'è o se sale)."""
+    """Distance from the agent of the shell found by heuristic_policy (None if there is none or if it moves up)."""
     g, ar, ac, level, rising, countdown, stun = _decode(obs)
     deepest = H - level - 1 - ((1 if countdown > 2 else 2) if rising else 0)
     if ar > deepest:
@@ -75,7 +75,7 @@ def margin(logits):
 
 
 def episode(seed):
-    """Un episodio del protocollo con la rete: (punteggio, stati, mosse diverse, campionata ≠ argmax, margine min, d max)."""
+    """One protocol episode with the network: (score, states, differing moves, sampled ≠ argmax, min margin, max d)."""
     env = LowTideEnv(sticky_prob=GAME.protocol.sticky_prob, max_steps=GAME.protocol.max_steps)
     obs, _ = env.reset(seed=seed)
     rng = policy_rng(seed)
@@ -106,7 +106,7 @@ def heuristic_episode(seed):
 
 
 def random_state(rng):
-    """Uno stato valido qualsiasi: livello 0..7, marea che sale o scende, meduse fino al 45%, 1-3 conchiglie."""
+    """Any valid state: level 0..7, tide rising or falling, up to 45% jellyfish, 1-3 shells."""
     level = int(rng.integers(0, 8))
     rising = bool(rng.random() < 0.5) or level == 0
     countdown = int(rng.integers(1, MAX_INTERVAL + 1))
@@ -132,15 +132,15 @@ def random_state(rng):
 
 
 def maze_state(rng, kind):
-    """Marea ferma (livello 0 o 1, scende): pareti di meduse a labirinto o a serpentina, una conchiglia."""
+    """Calm tide (level 0 or 1, falling): jellyfish walls forming a maze or a serpentine, one shell."""
     level = int(rng.integers(0, 2))
     dry = H - level
     jelly = np.ones((H, W), dtype=bool)
-    if kind == "serpentina":
+    if kind == "serpentine":
         jelly[0::2, :] = False
         for i, r in enumerate(range(1, dry, 2)):
             jelly[r, W - 1 if i % 2 == 0 else 0] = False
-    else:  # labirinto perfetto (DFS) su una griglia 5x5 di celle nelle righe e colonne pari
+    else:  # perfect maze (DFS) on a 5x5 grid of cells in the even rows and columns
         n = 5
         seen, stack = {(0, 0)}, [(0, 0)]
         jelly[0, 0] = False
@@ -174,7 +174,7 @@ def random_batch(args):
     rng = np.random.default_rng(seed)
     diff, min_margin, depths = 0, np.inf, []
     for i in range(n):
-        obs = random_state(rng) if i % 4 < 2 else maze_state(rng, "serpentina" if i % 4 == 2 else "labirinto")
+        obs = random_state(rng) if i % 4 < 2 else maze_state(rng, "serpentine" if i % 4 == 2 else "maze")
         logits = MLP.logits(obs)
         diff += int(np.argmax(logits)) != heuristic_policy(obs, None)
         min_margin = min(min_margin, margin(logits))
@@ -191,11 +191,11 @@ def main():
     t0 = time.time()
 
     data = json.load(open(OUT))
-    print(f"pesi riscritti dalle formule uguali al file: {data['layers'] == [L.to_json() for L in build(K_ALL)]}")
+    print(f"weights rewritten from the formulas equal to the file: {data['layers'] == [L.to_json() for L in build(K_ALL)]}")
     MLP = load(OUT)
     sizes = [Wm.shape[0] for Wm, _, _ in MLP.layers[:-1]]
-    print(f"rete: {len(sizes)} strati nascosti, {sum(sizes)} neuroni, {MLP.n_nonzero()} pesi diversi da zero "
-          f"su {MLP.n_params()}")
+    print(f"network: {len(sizes)} hidden layers, {sum(sizes)} neurons, {MLP.n_nonzero()} non-zero weights "
+          f"out of {MLP.n_params()}")
 
     seeds = [GAME.protocol.seed0 + i for i in range(args.episodes)]
     with mp.get_context("fork").Pool(8) as pool:
@@ -206,20 +206,20 @@ def main():
 
     net = np.array([r[0] for r in res])
     se = lambda x: x.std(ddof=1) / np.sqrt(len(x))
-    print(f"\nepisodi del protocollo: {args.episodes}, stati {sum(r[1] for r in res)}")
-    print(f"  mosse diverse dall'euristica: {sum(r[2] for r in res)}")
-    print(f"  azione campionata ≠ argmax: {sum(r[3] for r in res)}; margine minimo dei logit: {min(r[4] for r in res):.0f}")
-    print(f"  punteggio rete {net.mean():.2f} ± {se(net):.2f}, euristica {heur.mean():.2f} ± {se(heur):.2f}, "
-          f"episodi con punteggio diverso: {int(np.sum(net != heur))}")
+    print(f"\nprotocol episodes: {args.episodes}, states {sum(r[1] for r in res)}")
+    print(f"  moves different from the heuristic: {sum(r[2] for r in res)}")
+    print(f"  sampled action ≠ argmax: {sum(r[3] for r in res)}; smallest logit margin: {min(r[4] for r in res):.0f}")
+    print(f"  network score {net.mean():.2f} ± {se(net):.2f}, heuristic {heur.mean():.2f} ± {se(heur):.2f}, "
+          f"episodes with a different score: {int(np.sum(net != heur))}")
     dmax = max(r[5] for r in res)
-    print(f"  distanza massima della conchiglia trovata dalla BFS: {dmax} "
-          f"(per questi stati basterebbero K = {dmax - 1} passi, {dmax - 1 + 6} strati)")
+    print(f"  largest distance of the shell found by the BFS: {dmax} "
+          f"(for these states K = {dmax - 1} steps, {dmax - 1 + 6} layers, would be enough)")
 
     depths = np.concatenate([r[2] for r in rnd])
-    print(f"\nstati costruiti (casuali, labirinti, serpentine): {len(depths)}")
-    print(f"  mosse diverse dall'euristica: {sum(r[0] for r in rnd)}; margine minimo: {min(r[1] for r in rnd):.0f}")
-    print(f"  distanza della conchiglia: mediana {np.median(depths[depths > 0]):.0f}, massima {depths.max()}, "
-          f"stati con distanza > {dmax}: {int(np.sum(depths > dmax))}")
+    print(f"\nconstructed states (random, mazes, serpentines): {len(depths)}")
+    print(f"  moves different from the heuristic: {sum(r[0] for r in rnd)}; smallest margin: {min(r[1] for r in rnd):.0f}")
+    print(f"  shell distance: median {np.median(depths[depths > 0]):.0f}, largest {depths.max()}, "
+          f"states with distance > {dmax}: {int(np.sum(depths > dmax))}")
     print(f"\n({time.time() - t0:.0f} s)")
 
 

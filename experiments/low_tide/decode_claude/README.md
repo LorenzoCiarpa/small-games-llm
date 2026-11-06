@@ -287,25 +287,26 @@ pass.
 | check | result |
 |---|---|
 | states visited | 197,920 |
-| first layer: states in which the reading (on/off, value of h0) is wrong | **0** |
-| logits: maximum difference | 0.315 (tanh never reaches exactly ±1) |
-| move with the highest logit differs, excluding near-ties (< 0.5) | **0** |
+| first layer, states in which the reading (on/off and value of h0) is wrong | **0** |
+| logits, maximum difference | 0.315 (tanh never reaches exactly ±1) |
+| move with the highest logit differs, excluding near-ties < 0.5 | **0** |
 
 The near-ties are 49,550 states. Almost all of them are left versus right when there are no shells (1.08 versus
 1.10); there the network samples and so wanders.
 
-Which move has the highest logit, by situation:
+Which move has the highest logit, by situation (in the output of `check.py`, "incoming" is the rising tide and
+"outgoing" the falling tide):
 
 | tide | m | % of states | no-op | up | down | left | right |
 |---|---|---|---|---|---|---|---|
-| rising | 0 | 0.3% | | 100% | | | |
-| rising | 1 | 14.0% | | 100% | | | |
-| rising | 2 | 32.1% | | 2% | | 26% | 72% |
-| rising | ≥ 3 | 3.5% | | 3% | 44% | 27% | 26% |
-| falling | 0 | 32.9% | 1% | | | 36% | 64% |
-| falling | 1 | 15.8% | | | 93% | 2% | 5% |
-| falling | 2 | 1.0% | | | 92% | 1% | 7% |
-| falling | ≥ 3 | 0.3% | | | 90% | 1% | 9% |
+| incoming | 0 | 0.3% | | 100% | | | |
+| incoming | 1 | 14.0% | | 100% | | | |
+| incoming | 2 | 32.1% | | 2% | | 26% | 72% |
+| incoming | ≥ 3 | 3.5% | | 3% | 44% | 27% | 26% |
+| outgoing | 0 | 32.9% | 1% | | | 36% | 64% |
+| outgoing | 1 | 15.8% | | | 93% | 2% | 5% |
+| outgoing | 2 | 1.0% | | | 92% | 1% | 7% |
+| outgoing | ≥ 3 | 0.3% | | | 90% | 1% | 9% |
 
 The network spends two thirds of the time in two states: on the shoreline while the tide is falling (33%) and at
 m = 2 while it is rising (32%). The rest are the transitions between the two.

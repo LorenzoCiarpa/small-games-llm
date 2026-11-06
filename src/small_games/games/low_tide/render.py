@@ -142,8 +142,8 @@ class LowTideRenderer(Renderer):
     # -------------------------------------------------------------- panel
     def score_details(self):
         n_sh, n_st = self.env.shells_collected, self.env.stings
-        return [f"{n_sh} conchigli" + ("a" if n_sh == 1 else "e") + ", "
-                + f"{n_st} puntur" + ("a" if n_st == 1 else "e")]
+        return [f"{n_sh} shell" + ("" if n_sh == 1 else "s") + ", "
+                + f"{n_st} sting" + ("" if n_st == 1 else "s")]
 
     def panel_section(self, panel, y):
         env, s = self.env, panel.s
@@ -153,30 +153,30 @@ class LowTideRenderer(Renderer):
             pygame.draw.polygon(s, DANGER, [(ax, ay - 9), (ax - 8, ay + 6), (ax + 8, ay + 6)])
         else:
             pygame.draw.polygon(s, BAR_FILL, [(ax, ay + 9), (ax - 8, ay - 6), (ax + 8, ay - 6)])
-        panel.text(self.fonts.text, "la marea sale" if rising else "la marea scende", TEXT, 26, y + 2)
+        panel.text(self.fonts.text, "the tide is rising" if rising else "the tide is receding", TEXT, 26, y + 2)
         y += 30
-        panel.text(self.fonts.small, "prossimo cambio tra", MUTED, 0, y + 3)
+        panel.text(self.fonts.small, "next change in", MUTED, 0, y + 3)
         panel.pips(150, y, env.countdown, 5, DANGER if rising and env.countdown == 1 else BAR_FILL,
                    size=7, gap=5)
         y += 24
         if rising and env.countdown == 1:
-            panel.text(self.fonts.small, "la riga rossa sta per allagarsi", DANGER, 0, y)
+            panel.text(self.fonts.small, "the red row is about to flood", DANGER, 0, y)
         elif env.stun > 0:
-            panel.text(self.fonts.small, f"paralizzato: ancora {env.stun} passi", STARS, 0, y)
+            panel.text(self.fonts.small, f"stunned: {env.stun} more step" + ("" if env.stun == 1 else "s"), STARS, 0, y)
         return y + 22
 
     def step_message(self, last):
         if last.get("stunned"):
-            return "azione ignorata: paralizzato", STARS
+            return "action ignored: stunned", STARS
         if last["sticky"]:
             return None
         if last["reward"] > 0:
-            return "conchiglia raccolta", SHELL
+            return "shell collected", SHELL
         if last["reward"] < 0:
-            return f"medusa: paralizzato per {STUN_STEPS} passi", JELLY
+            return f"jellyfish: stunned for {STUN_STEPS} steps", JELLY
         return None
 
     def end_title(self, terminated):
         if terminated and self.env.drowned:
-            return f"Annegato al passo {self.env.t}"
+            return f"Drowned at step {self.env.t}"
         return super().end_title(terminated)

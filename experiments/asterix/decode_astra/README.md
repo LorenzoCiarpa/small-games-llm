@@ -22,8 +22,8 @@ network it gets the same score (see [Verification](#8-verification)):
 
 ```bash
 uv run python experiments/asterix/decode_astra/check.py                  # ~40 s
-uv run python experiments/asterix/decode_astra/check.py --regola 1000    # + the rule in place of the network
-uv run python experiments/asterix/decode_astra/check.py --varianti 1000  # + the network with one piece removed
+uv run python experiments/asterix/decode_astra/check.py --rule 1000      # + the rule in place of the network
+uv run python experiments/asterix/decode_astra/check.py --variants 1000  # + the network with one piece removed
 ```
 
 ## 1. The game in brief
@@ -414,18 +414,18 @@ and those of the rule of section 7. Then it compares them with the real forward 
 |---|---|
 | states visited | 171,311 |
 | states with the player outside column 5 | **0** |
-| first layer: states in which a pre-activation differs from the reading | **0** (maximum deviation 1.8·10⁻¹⁵) |
-| second layer: states in which the state of a neuron differs (g0-g2: off < −0.3, halfway, on > 0.3; g3-g31: sign) | **0** |
-| logits with the formulas of section 6: maximum difference | 1.0·10⁻¹³ |
+| first layer, states in which a pre-activation differs from the reading | **0** (maximum deviation 1.8·10⁻¹⁵) |
+| second layer, states in which the state of a neuron differs (g0-g2: off < −0.3, halfway, on > 0.3; g3-g31: sign) | **0** |
+| logits with the formulas of section 6, maximum difference | 1.0·10⁻¹³ |
 | rule of section 7: maximum difference of the logits | 9.1 (the 0.04 residuals added up, section 5) |
-| rule: mean distance between its softmax and that of the network | 0.007 |
-| rule: move with the highest logit is different, near-ties (< 1) excluded | **13** out of 133,412 |
+| rule of section 7: mean distance between the softmaxes | 0.007 |
+| rule of section 7: move with the highest logit differs, excluding near-ties < 1 | **13** out of 133,412 |
 
 The near-ties are 37,899 states: 29,820 are "nothing incoming" (61.9 vs 61.1 vs 60.9), 6,528 have incoming
 treasures in other rows, but with small or similar attractions on the two sides. There the network samples and
 wanders.
 
-Played in place of the network on the same 1000 seeds of `evaluate` (`--regola 1000`), the rule of section 7 scores
+Played in place of the network on the same 1000 seeds of `evaluate` (`--rule 1000`), the rule of section 7 scores
 **55.7 ± 1.1** points, against **54.8 ± 1.1** for the network.
 
 Mean probability of each move according to the network, by situation (the first one that applies counts, in this
@@ -434,14 +434,14 @@ order):
 | situation | % of states | no-op | up | down |
 |---|---|---|---|---|
 | no move without an alarm (all ≥ 0.5) | 0.8% | 22% | 42% | 36% |
-| incoming enemy in my row, d ≤ 3 | 4.8% | 7% | 46% | 46% |
-| incoming treasure in my row | 31.4% | 100% | | |
-| row 1 or 8 | 7.5% | 64% | 17% | 20% |
-| incoming treasure in another row | 21.2% | 33% | 33% | 34% |
+| enemy in my row (incoming, d ≤ 3) | 4.8% | 7% | 46% | 46% |
+| treasure in my row (incoming) | 31.4% | 100% | | |
+| edge row (1 or 8) | 7.5% | 64% | 17% | 20% |
+| treasure in another row (incoming) | 21.2% | 33% | 33% | 34% |
 | nothing incoming | 34.3% | 73% | 14% | 13% |
 
 - **Treasure in my row:** a third of the time the network waits for a treasure that is coming straight at it.
-- **Row 1 or 8:** "no-op" at 64% is the case in which the way toward the middle has an alarm. The edge costs 0.24,
+- **Edge row (1 or 8):** "no-op" at 64% is the case in which the way toward the middle has an alarm. The edge costs 0.24,
   less than any alarm, and the network waits there.
 - **Nothing incoming:** the 73% of "no-op" is more than the 56% of the empty case because in 58% of these states
   "up" or "down" has an alarm of at least 0.5, and the choice is left between no-op and the other move.
@@ -452,17 +452,17 @@ The player is in each of rows 2-7 between 13% and 15% of the time, in rows 1 and
 
 ### How much each piece counts
 
-`check.py --varianti 1000` plays the network with one piece removed at a time (1000 episodes, `evaluate` protocol):
+`check.py --variants 1000` plays the network with one piece removed at a time (1000 episodes, `evaluate` protocol):
 
 | variant | score | mean length |
 |---|---|---|
 | the network as it is | 54.8 ± 1.1 | 870 |
-| without alarms (g0-g2 fixed at the "off" value) | 2.7 ± 0.1 | 94 |
+| without alarms (g0-g2 as if they were off) | 2.7 ± 0.1 | 94 |
 | without the no-op alarm (g2) | 12.9 ± 0.3 | 354 |
 | above and below look only at the destination row (weights 3 on the player in h0-h15 removed) | 17.4 ± 0.6 | 398 |
-| without treasures (g3-g31 removed from the last layer) | 22.9 ± 0.6 | 873 |
-| without the attraction toward the treasures above and below | 34.3 ± 0.7 | 900 |
-| without the +32 to no-op for the treasure in my row | 46.3 ± 1.0 | 821 |
+| without treasures (g3-g31 do not reach the logits) | 22.9 ± 0.6 | 873 |
+| without attraction to treasures above and below | 34.3 ± 0.7 | 900 |
+| without the +32 to no-op for a treasure in my row | 46.3 ± 1.0 | 821 |
 
 - **Surviving counts more than seeking treasures.** Without any signal on the treasures the network still scores
   22.9: it stays alive as long as before (873 steps against 870) and takes the treasures that come at it by chance.
@@ -478,8 +478,8 @@ Rows 1 and 8 are 14.5% of the states but 63.5% of the deaths: 127 out of 200 in 
 
 | cause of death (200 episodes) | deaths | of which on the edge | of which entering a row with an enemy already in column 5 |
 |---|---|---|---|
-| no move without an alarm, but one of the three survived the step | 90 | 89 | 68 |
-| sticky: the environment repeated the previous move | 68 | 8 | 31 |
+| no move without an alarm, but one survived (one of the three moves survived the step) | 90 | 89 | 68 |
+| sticky: the environment repeats the previous move | 68 | 8 | 31 |
 | no move without an alarm, and none survived | 42 | 30 | 17 |
 
 A typical case: the player is in row 1, an enemy comes toward it in row 1 at d = 2, and in row 2 there is an enemy

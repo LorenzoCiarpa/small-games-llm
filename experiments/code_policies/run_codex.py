@@ -1,31 +1,30 @@
 """
-Manda un prompt di prompts/ a un modello con `codex exec`, senza tool, e salva la risposta.
+Sends a prompt from prompts/ to a model with `codex exec`, without tools, and saves the answer.
 
-Le condizioni sono quelle dell'articolo: una conversazione nuova, una sola risposta, nessun tool.
+The conditions are those of the article: a new conversation, a single answer, no tools.
 
-**Come si tolgono i tool (Codex 0.164).**
-1. **Configurazione.** config.toml = codex_no_tools.toml, in una CODEX_HOME temporanea. Contiene solo quello, le
-   istruzioni neutre dell'articolo ("Answer the user's request.") e un link alle credenziali di ~/.codex. Niente
-   server MCP, skill, plugin o AGENTS.md personali. Il modello lavora in una cartella temporanea vuota.
-2. **Catalogo dei modelli.** Code mode, agenti, apply_patch, shell, ricerca e orologio arrivano dal catalogo
-   (`codex debug models`). Se ne scrive una copia in cui, per il modello scelto:
+**How the tools are removed (Codex 0.164).**
+1. **Configuration.** config.toml = codex_no_tools.toml, in a temporary CODEX_HOME. It contains only that, the
+   article's neutral instructions ("Answer the user's request.") and a link to the credentials in ~/.codex. No
+   personal MCP servers, skills, plugins or AGENTS.md. The model works in an empty temporary folder.
+2. **Model catalog.** Code mode, agents, apply_patch, shell, search and clock come from the catalog
+   (`codex debug models`). A copy of it is written in which, for the chosen model:
    - tool_mode = "direct", shell_type = "disabled";
-   - tolti multi_agent_version, apply_patch_tool_type, web_search_tool_type, experimental_supported_tools e il
-     messaggio sulle "collaboration modes".
-3. **Controllo prima di mandare.** `codex debug prompt-input` mostra cosa vedrebbe il modello senza chiamarlo. Se
-   c'è anche un solo tool, o un messaggio diverso dalle istruzioni neutre e dal prompt, lo script si ferma.
-4. **Controllo dopo.** Si contano gli eventi della risposta: `tool_free` è true solo se non c'è nessuna chiamata
-   a un tool.
+   - multi_agent_version, apply_patch_tool_type, web_search_tool_type, experimental_supported_tools and the
+     message about "collaboration modes" are removed.
+3. **Check before sending.** `codex debug prompt-input` shows what the model would see, without calling it. If
+   there is even a single tool, or a message other than the neutral instructions and the prompt, the script stops.
+4. **Check afterwards.** The events of the answer are counted: `tool_free` is true only if there is no tool call.
 
-Salva in answers/<modello>/<gioco>/:
-- answer.md, l'ultimo messaggio del modello;
-- policy.py, l'ultimo blocco ```python della risposta;
-- events.jsonl, gli eventi grezzi di Codex;
-- run.json, il comando, il tempo, i token e i due controlli.
+Saves in answers/<model>/<game>/:
+- answer.md, the model's last message;
+- policy.py, the last ```python block of the answer;
+- events.jsonl, Codex's raw events;
+- run.json, the command, the time, the tokens and the two checks.
 
-    uv run python experiments/code_policies/run_codex.py low_tide --dry-run   # solo il controllo, nessuna chiamata
+    uv run python experiments/code_policies/run_codex.py low_tide --dry-run   # only the check, no model call
     uv run python experiments/code_policies/run_codex.py low_tide             # gpt-6-astra, xhigh
-    uv run python experiments/code_policies/run_codex.py --check              # chiamata breve: quali tool vede?
+    uv run python experiments/code_policies/run_codex.py --check              # short call: which tools does it see?
 """
 
 import argparse
@@ -43,7 +42,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 GAMES = ("low_tide", "breakout", "seaquest", "asterix")
 INSTRUCTIONS = "Answer the user's request."
-MESSAGE_ITEMS = {"reasoning", "agent_message", "error"}  # ogni altro tipo di evento è un tool
+MESSAGE_ITEMS = {"reasoning", "agent_message", "error"}  # every other event type is a tool
 CHECK_PROMPT = ("List the names of every tool or function you can call in this conversation, one per line. "
                 "If you cannot call any, answer exactly NONE. Do not call any tool.")
 
@@ -52,20 +51,20 @@ def find_codex():
     found = shutil.which("codex")
     if found:
         return found
-    # l'estensione di VS Code porta con sé il binario: la versione più recente
+    # the VS Code extension ships its own binary: take the most recent version
     found = sorted(glob.glob(os.path.expanduser("~/.vscode/extensions/openai.chatgpt-*/bin/*/codex")))
     if not found:
-        raise SystemExit("codex non trovato: installalo o passa --codex /percorso/codex")
+        raise SystemExit("codex not found: install it or pass --codex /path/to/codex")
     return found[-1]
 
 
 def no_tools_catalog(codex, model, path):
-    """Il catalogo dei modelli di Codex, con i tool del modello scelto tolti."""
+    """Codex's model catalog, with the tools of the chosen model removed."""
     raw = subprocess.run([codex, "debug", "models"], capture_output=True, text=True, check=True).stdout
     catalog = json.loads(raw)
     entry = next((m for m in catalog["models"] if m.get("slug") == model), None)
     if entry is None:
-        raise SystemExit(f"modello {model!r} non nel catalogo di Codex")
+        raise SystemExit(f"model {model!r} not in Codex's catalog")
     entry["tool_mode"] = "direct"
     entry["shell_type"] = "disabled"
     entry["experimental_supported_tools"] = []
@@ -77,11 +76,11 @@ def no_tools_catalog(codex, model, path):
 
 
 def visible_input(codex, env, work, config_args, prompt):
-    """Cosa vede il modello (codex debug prompt-input): nomi dei tool e messaggi."""
+    """What the model sees (codex debug prompt-input): tool names and messages."""
     p = subprocess.run([codex, "debug", "prompt-input", *config_args, prompt], capture_output=True, text=True,
                        env=env, cwd=work)
     if p.returncode != 0:
-        raise SystemExit(f"codex debug prompt-input non riesce:\n{p.stderr[-2000:]}")
+        raise SystemExit(f"codex debug prompt-input failed:\n{p.stderr[-2000:]}")
     tools, messages = [], []
 
     def walk(ts, prefix=""):
@@ -127,13 +126,13 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("game", nargs="?", choices=GAMES)
     ap.add_argument("--model", default="gpt-6-astra")
-    ap.add_argument("--effort", default="xhigh", help="model_reasoning_effort (l'articolo: xhigh)")
-    ap.add_argument("--codex", default=None, help="percorso del binario codex")
-    ap.add_argument("--dry-run", action="store_true", help="solo il controllo di cosa vede il modello")
-    ap.add_argument("--check", action="store_true", help="chiamata breve: chiede al modello quali tool vede")
+    ap.add_argument("--effort", default="xhigh", help="model_reasoning_effort (the article: xhigh)")
+    ap.add_argument("--codex", default=None, help="path of the codex binary")
+    ap.add_argument("--dry-run", action="store_true", help="only check what the model sees")
+    ap.add_argument("--check", action="store_true", help="short call: asks the model which tools it sees")
     args = ap.parse_args()
     if not args.check and not args.game:
-        ap.error("serve il gioco (o --check)")
+        ap.error("the game is required (or --check)")
 
     codex = args.codex or find_codex()
     if args.check:
@@ -155,21 +154,21 @@ def main():
                        "-c", f'model_catalog_json="{home / "catalog.json"}"',
                        "-c", 'model_reasoning_summary="detailed"']
 
-        # 1. prima di mandare: il modello non deve vedere nessun tool, e solo le istruzioni neutre e il prompt
+        # 1. before sending: the model must see no tools, and only the neutral instructions and the prompt
         tools, messages = visible_input(codex, env, work, config_args, prompt)
         expected = [{"role": "developer", "text": INSTRUCTIONS}, {"role": "user", "text": prompt}]
         clean = not tools and messages == expected
-        print(f"cosa vede il modello: {len(tools)} tool {tools if tools else ''}; "
-              f"messaggi {[m['role'] for m in messages]}; "
-              f"{'solo istruzioni neutre e prompt' if messages == expected else 'MESSAGGI IN PIÙ'}")
+        print(f"what the model sees: {len(tools)} tools {tools if tools else ''}; "
+              f"messages {[m['role'] for m in messages]}; "
+              f"{'only neutral instructions and prompt' if messages == expected else 'EXTRA MESSAGES'}")
         if not clean:
             for m in messages:
                 print(f"--- {m['role']}: {m['text'][:500]}")
-            raise SystemExit("fermato: il modello vedrebbe tool o messaggi in più")
+            raise SystemExit("stopped: the model would see tools or extra messages")
         if args.dry_run:
             return
 
-        # 2. la risposta
+        # 2. the answer
         out.mkdir(parents=True, exist_ok=True)
         cmd = [codex, "exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--json", "-C", work,
                *config_args, "-o", str(out / "answer.md"), "-"]
@@ -191,13 +190,13 @@ def main():
     json.dump(record, open(out / "run.json", "w"), indent=1)
 
     a = record["audit"]
-    print(f"{out.relative_to(HERE)}: rc {rc}, {wall:.0f} s, token {a['usage']}, tool_free {a['tool_free']}"
-          + (f", tool usati {a['tool_items']}" if a["tool_items"] else "")
-          + ("" if args.check else f", policy.py {'scritto' if code is not None else 'MANCANTE'}"))
+    print(f"{out.relative_to(HERE)}: rc {rc}, {wall:.0f} s, tokens {a['usage']}, tool_free {a['tool_free']}"
+          + (f", tools used {a['tool_items']}" if a["tool_items"] else "")
+          + ("" if args.check else f", policy.py {'written' if code is not None else 'MISSING'}"))
     if rc != 0:
         print((out / "stderr.log").read_text()[-2000:])
     if args.check:
-        print("risposta:", answer.strip())
+        print("answer:", answer.strip())
 
 
 if __name__ == "__main__":

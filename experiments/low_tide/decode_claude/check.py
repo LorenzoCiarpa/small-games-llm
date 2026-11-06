@@ -1,8 +1,9 @@
 """
-Verifica la lettura a mano di weights/low_tide/claude.json (vedi README.md).
+Checks the hand reading of weights/low_tide/claude.json (see README.md).
 
-Per ogni stato visitato giocando con la rete ricalcola, direttamente dallo stato del gioco e senza usare i pesi,
-i 46 neuroni del primo strato e i 5 logit come li descrive il README, e li confronta con il forward pass vero.
+For every state visited while playing with the network it recomputes, directly from the game state and without using
+the weights, the 46 neurons of the first layer and the 5 logits as the README describes them, and compares them with
+the real forward pass.
 
     uv run python experiments/low_tide/decode_claude/check.py [--episodes 200]
 """
@@ -18,7 +19,7 @@ from small_games.games.low_tide.env import LowTideEnv
 from small_games.weights import load_weights
 
 ROOT = Path(__file__).resolve().parents[3]
-ACTIONS = ("fermo", "su", "giu", "sx", "dx")
+ACTIONS = ("no-op", "up", "down", "left", "right")
 
 
 def forward(layers, obs):
@@ -34,16 +35,16 @@ def forward(layers, obs):
 
 
 def pm(b):
-    """[x] del README: +1 se vero, -1 se falso (un neurone tanh saturo)."""
+    """[x] of the README: +1 if true, -1 if false (a saturated tanh neuron)."""
     return 1.0 if b else -1.0
 
 
 def decode(env):
-    """Primo strato e logit ricostruiti dalle regole del README, a partire dallo stato del gioco."""
+    """First layer and logits rebuilt from the rules of the README, starting from the game state."""
     r, c, L = env.agent_r, env.agent_c, env.level
     rising = env.direction > 0
-    m = 9 - r - L                       # righe asciutte tra agente e acqua
-    shore = 9 - L                       # battigia: ultima riga asciutta
+    m = 9 - r - L                       # dry rows between the agent and the water
+    shore = 9 - L                       # shoreline: last dry row
     shell, jelly = env.shell, env.jelly
     shell_l, shell_r, shell_u = shell[r, :c].any(), shell[r, c + 1:].any(), shell[3:r, c].any()
     jelly_l = m == 0 and c >= 1 and jelly[shore, c - 1]
@@ -53,12 +54,12 @@ def decode(env):
     h = np.zeros(46)
     h[0] = m
     h[1] = rising
-    h[2 + c] = shell_u                  # 2..11  conchiglia sopra, nella mia colonna
+    h[2 + c] = shell_u                  # 2..11  shell above, in my column
     if 3 <= r <= 9:
-        h[12 + r - 3] = shell_l         # 12..18 conchiglia a sinistra, nella mia riga
-        h[19 + r - 3] = shell_r         # 19..25 conchiglia a destra, nella mia riga
-    h[26 + c] = 1                       # 26..35 colonna dell'agente
-    for k in range(10):                 # 36..45 medusa sulla battigia, colonna k
+        h[12 + r - 3] = shell_l         # 12..18 shell to the left, in my row
+        h[19 + r - 3] = shell_r         # 19..25 shell to the right, in my row
+    h[26 + c] = 1                       # 26..35 agent's column
+    for k in range(10):                 # 36..45 jellyfish on the shoreline, column k
         h[36 + k] = shore >= 3 and jelly[shore, k]
 
     logits = np.array([
@@ -102,24 +103,24 @@ def main():
             max_diff = max(max_diff, float(np.abs(logit_true - logit_mine).max()))
 
             m = 9 - env.agent_r - env.level
-            key = ("sale" if env.direction > 0 else "scende", "≥3" if m >= 3 else str(m))
+            key = ("incoming" if env.direction > 0 else "outgoing", "≥3" if m >= 3 else str(m))
             cases[key, ACTIONS[int(np.argmax(logit_true))]] += 1
 
             p = np.exp(logit_true - logit_true.max())
             obs, _, term, trunc, _ = env.step(rng.choice(5, p=p / p.sum()))
             done = term or trunc
 
-    print(f"stati visitati: {n} ({args.episodes} episodi)")
-    print(f"primo strato, stati in cui la lettura (acceso/spento e valore di h0) sbaglia: {bad_h}")
-    print(f"logit, differenza massima: {max_diff:.3f}")
-    print(f"azione (argmax) diversa, esclusi i quasi-pareggi < 0.5: {bad_arg}  (quasi-pareggi: {ties})")
-    print("\nargmax della rete per situazione (marea, m):")
+    print(f"states visited: {n} ({args.episodes} episodes)")
+    print(f"first layer, states in which the reading (on/off and value of h0) is wrong: {bad_h}")
+    print(f"logits, maximum difference: {max_diff:.3f}")
+    print(f"move with the highest logit differs, excluding near-ties < 0.5: {bad_arg}  (near-ties: {ties})")
+    print("\nargmax of the network by situation (tide, m):")
     totals = collections.Counter()
     for (key, _), v in cases.items():
         totals[key] += v
     for key in sorted(totals):
         row = " ".join(f"{a}:{cases[key, a] / totals[key]:4.0%}" for a in ACTIONS)
-        print(f"  {key[0]:6s} m={key[1]:2s} {totals[key] / n:5.1%} degli stati | {row}")
+        print(f"  {key[0]:6s} m={key[1]:2s} {totals[key] / n:5.1%} of states | {row}")
 
 
 if __name__ == "__main__":

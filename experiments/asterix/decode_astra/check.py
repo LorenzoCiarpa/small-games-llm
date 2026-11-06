@@ -1,20 +1,20 @@
 """
-Verifica la lettura a mano di weights/asterix/paper_astra.json (vedi README.md).
+Checks the hand reading of weights/asterix/paper_astra.json (see README.md).
 
-Gioca episodi con la rete come `evaluate` (softmax, sticky 0.1, stessi seed e stesso generatore). In ogni stato
-ricalcola, direttamente dallo stato del gioco e senza usare i pesi:
+Plays episodes with the network as `evaluate` does (softmax, sticky 0.1, same seeds and same generator). In every
+state it recomputes, directly from the game state and without using the weights:
 
-  - le pre-attivazioni dei 32 neuroni del primo strato (sezione 4 del README);
-  - lo stato dei 32 neuroni del secondo strato: spento, a metà, acceso (sezione 5);
-  - i 6 logit con le formule della sezione 6;
-  - i logit della regola semplificata della sezione 7;
+  - the pre-activations of the 32 neurons of the first layer (section 4 of the README);
+  - the state of the 32 neurons of the second layer: off, halfway, on (section 5);
+  - the 6 logits with the formulas of section 6;
+  - the logits of the simplified rule of section 7;
 
-e li confronta con il forward pass vero. Con --regola N gioca anche N episodi con la regola al posto della rete,
-con --varianti N gioca N episodi con ognuna delle varianti della rete della sezione 9 (un pezzo tolto).
+and compares them with the real forward pass. With --rule N it also plays N episodes with the rule in place of the
+network, with --variants N it plays N episodes with each of the network variants of section 9 (one piece removed).
 
     uv run python experiments/asterix/decode_astra/check.py                  # ~40 s
-    uv run python experiments/asterix/decode_astra/check.py --regola 1000    # + ~40 s
-    uv run python experiments/asterix/decode_astra/check.py --varianti 1000  # + ~3 min
+    uv run python experiments/asterix/decode_astra/check.py --rule 1000      # + ~40 s
+    uv run python experiments/asterix/decode_astra/check.py --variants 1000  # + ~3 min
 """
 
 import argparse
@@ -29,12 +29,12 @@ from small_games.policy import policy_rng, sample_action
 from small_games.weights import load_weights
 
 ROOT = Path(__file__).resolve().parents[3]
-FERMO, SU, GIU = 0, 2, 4
-MOSSE = {FERMO: "fermo", SU: "su", GIU: "giu"}
+NOOP, UP, DOWN = 0, 2, 4
+MOVES = {NOOP: "no-op", UP: "up", DOWN: "down"}
 
 
 def forward(layers, obs):
-    """Le pre-attivazioni di ogni strato (per l'ultimo, i logit)."""
+    """The pre-activations of every layer (for the last one, the logits)."""
     x, out = np.asarray(obs, dtype=np.float64), []
     for W, b, act in layers:
         z = W @ x + b
@@ -43,231 +43,231 @@ def forward(layers, obs):
     return out
 
 
-# ---------------------------------------------------------------- lo stato del gioco
+# ---------------------------------------------------------------- the game state
 
-def entita(g):
-    """riga -> (colonna, va a destra, è un tesoro). Al più un'entità per riga, nelle righe 1-8."""
+def entities_by_row(g):
+    """row -> (column, moving right, is a treasure). At most one entity per row, in rows 1-8."""
     return {e[1]: (e[0], e[2], e[3]) for e in g.entities if e is not None}
 
 
-def arrivo(x, destra):
-    """Celle che mancano alla colonna 5 a un'entità che ci sta andando incontro (0: è già nella colonna 5).
-    None se si allontana dalla colonna 5."""
+def arrival(x, right):
+    """Cells left to column 5 for an entity that is moving toward it (0: it is already in column 5).
+    None if it is moving away from column 5."""
     if x == 5:
         return 0
-    if (x < 5) == destra:
+    if (x < 5) == right:
         return abs(x - 5)
     return None
 
 
-def scia(x, destra):
-    """La colonna della scia: la cella da cui l'entità arriva."""
-    c = x - 1 if destra else x + 1
+def trail(x, right):
+    """The column of the trail: the cell the entity comes from."""
+    c = x - 1 if right else x + 1
     return c if 0 <= c <= 9 else None
 
 
-def in_arrivo(g):
-    """riga -> d, per i nemici e per i tesori che stanno andando verso la colonna 5."""
-    nemici, tesori = {}, {}
-    for k, (x, destra, oro) in entita(g).items():
-        d = arrivo(x, destra)
+def incoming(g):
+    """row -> d, for the enemies and for the treasures that are moving toward column 5."""
+    enemies, treasures = {}, {}
+    for k, (x, right, is_treasure) in entities_by_row(g).items():
+        d = arrival(x, right)
         if d is not None:
-            (tesori if oro else nemici)[k] = d
-    return nemici, tesori
+            (treasures if is_treasure else enemies)[k] = d
+    return enemies, treasures
 
 
-# ---------------------------------------------------------------- sezione 4: primo strato
+# ---------------------------------------------------------------- section 4: first layer
 
-NEMICO_VICINO = {0: 6, 1: 6, 2: 5}         # h0-h15, righe sopra e sotto: nemico in arrivo a d celle
-NEMICO_MIA = {0: 6, 1: 6, 2: 4, 3: 3}      # h16-h23, la mia riga
-# effetti collaterali della scia (sezione 4.5): la scia di un tesoro nei neuroni di pericolo,
-# quella di un nemico nei neuroni tesoro
-SCIA_VICINO = {4: -5, 5: -6, 6: -5}
-SCIA_MIA = {3: -3, 4: -4, 5: -9, 6: -4, 7: -3}
-SCIA_TESORO = {1: -8, 2: -8, 3: -16, 4: -16, 5: -24, 6: -16, 7: -16, 8: -8, 9: -8}
+ENEMY_NEAR = {0: 6, 1: 6, 2: 5}            # h0-h15, rows above and below: enemy incoming at d cells
+ENEMY_MINE = {0: 6, 1: 6, 2: 4, 3: 3}      # h16-h23, my row
+# side effects of the trail (section 4.5): the trail of a treasure in the danger neurons,
+# that of an enemy in the treasure neurons
+TRAIL_NEAR = {4: -5, 5: -6, 6: -5}
+TRAIL_MINE = {3: -3, 4: -4, 5: -9, 6: -4, 7: -3}
+TRAIL_TREASURE = {1: -8, 2: -8, 3: -16, 4: -16, 5: -24, 6: -16, 7: -16, 8: -8, 9: -8}
 
 
-def guardia_sopra(k, r):
-    """Peso del giocatore in riga r nel neurone 'pericolo in riga k, sopra di me'."""
+def guard_above(k, r):
+    """Weight of the player in row r in the neuron 'danger in row k, above me'."""
     if k == 1:
         return {1: 8, 2: 6, 3: 3}.get(r, 0)
     return {k + 1: 4, k + 2: 3}.get(r, 0)
 
 
-def guardia_sotto(k, r):
+def guard_below(k, r):
     if k == 8:
         return {8: 8, 7: 6, 6: 3}.get(r, 0)
     return {k - 1: 4, k - 2: 3}.get(r, 0)
 
 
-def guardia_mia(k, r):
+def guard_mine(k, r):
     return (7 if k in (1, 8) else 4) if r == k else 0
 
 
-def quota_tesoro(k, r):
-    """Il termine del giocatore nel neurone tesoro della riga k: + se il tesoro è sopra, − se è sotto."""
+def treasure_term(k, r):
+    """The player's term in the treasure neuron of row k: + if the treasure is above, − if it is below."""
     n = abs(r - k)
     t = 0.0 if n == 0 else 0.8 if n == 1 else 1.2 + 0.1 * n
     return t if r >= k else -t
 
 
-def primo_strato(g):
-    """Le 32 pre-attivazioni del primo strato, dallo stato del gioco."""
-    r, ent = g.player_y, entita(g)
+def first_layer(g):
+    """The 32 pre-activations of the first layer, from the game state."""
+    r, ent = g.player_y, entities_by_row(g)
     pre = np.full(32, -8.0)
     for k in range(1, 9):
-        vicino = mia = tesoro = 0.0
+        near = mine = treasure = 0.0
         if k in ent:
-            x, destra, oro = ent[k]
-            d, c = arrivo(x, destra), scia(x, destra)
-            if oro:
-                tesoro = 8.0 if d is not None else 0.0
-                vicino, mia = SCIA_VICINO.get(c, 0), SCIA_MIA.get(c, 0)
+            x, right, is_treasure = ent[k]
+            d, c = arrival(x, right), trail(x, right)
+            if is_treasure:
+                treasure = 8.0 if d is not None else 0.0
+                near, mine = TRAIL_NEAR.get(c, 0), TRAIL_MINE.get(c, 0)
             else:
                 if d is not None:
-                    vicino, mia = NEMICO_VICINO.get(d, 0), NEMICO_MIA.get(d, 0)
-                tesoro = SCIA_TESORO.get(c, 0)
-        pre[k - 1] += vicino + guardia_sopra(k, r)      # h0-h7:   pericolo sopra
-        pre[7 + k] += vicino + guardia_sotto(k, r)      # h8-h15:  pericolo sotto
-        pre[15 + k] += mia + guardia_mia(k, r)          # h16-h23: pericolo nella mia riga
-        pre[23 + k] += tesoro + quota_tesoro(k, r)      # h24-h31: tesoro
+                    near, mine = ENEMY_NEAR.get(d, 0), ENEMY_MINE.get(d, 0)
+                treasure = TRAIL_TREASURE.get(c, 0)
+        pre[k - 1] += near + guard_above(k, r)          # h0-h7:   danger above
+        pre[7 + k] += near + guard_below(k, r)          # h8-h15:  danger below
+        pre[15 + k] += mine + guard_mine(k, r)          # h16-h23: danger in my row
+        pre[23 + k] += treasure + treasure_term(k, r)   # h24-h31: treasure
     return pre
 
 
-# ---------------------------------------------------------------- sezione 6: le formule
+# ---------------------------------------------------------------- section 6: the formulas
 
-def logit_formule(pre):
-    """I logit della sezione 6, a partire dal primo strato."""
+def formula_logits(pre):
+    """The logits of section 6, from the first layer."""
     h = np.tanh(pre)
-    a_su, a_giu, a_fermo = (1 + h[0:8]).sum(), (1 + h[8:16]).sum(), (1 + h[16:24]).sum()
-    t = h[24:32]                                         # tesoro nelle righe 1..8
+    a_up, a_down, a_noop = (1 + h[0:8]).sum(), (1 + h[8:16]).sum(), (1 + h[16:24]).sum()
+    t = h[24:32]                                         # treasure in rows 1..8
     A, B = np.tanh(21.6 + 24 * t), np.tanh(8 + 20 * t)
     C, D = np.tanh(-8 + 20 * t), np.tanh(-21.6 + 24 * t)
     lo = np.full(6, -1000.0)
-    lo[FERMO] = 17 - 80 * np.tanh(a_fermo - 1) + 16 * (B[:7] - C[:7]).sum() + 16 * B[7]
-    lo[SU] = 0.15 - 80 * np.tanh(a_su - 1) + 6 * (C[:7] - D[:7]).sum()
-    lo[GIU] = -0.69 - 80 * np.tanh(a_giu - 1) + 6 * (A[1:] - B[1:]).sum()
+    lo[NOOP] = 17 - 80 * np.tanh(a_noop - 1) + 16 * (B[:7] - C[:7]).sum() + 16 * B[7]
+    lo[UP] = 0.15 - 80 * np.tanh(a_up - 1) + 6 * (C[:7] - D[:7]).sum()
+    lo[DOWN] = -0.69 - 80 * np.tanh(a_down - 1) + 6 * (A[1:] - B[1:]).sum()
     return lo
 
 
-# ---------------------------------------------------------------- sezione 7: la regola
+# ---------------------------------------------------------------- section 7: the rule
 
-ATTRAZIONE = {1: 12.0, 2: 8.0, 3: 5.3, 4: 3.1, 5: 1.8, 6: 1.1, 7: 0.8}   # tesoro in arrivo a n righe
-
-
-def colonna_scia_oro(g, r):
-    """Colonna della scia del tesoro nella mia riga (None se non c'è)."""
-    e = entita(g).get(r)
-    return scia(e[0], e[1]) if e is not None and e[2] else None
+ATTRACTION = {1: 12.0, 2: 8.0, 3: 5.3, 4: 3.1, 5: 1.8, 6: 1.1, 7: 0.8}   # treasure incoming n rows away
 
 
-def allarmi(g):
-    """Allarme di fermo, su e giù (tabella della sezione 5)."""
+def treasure_trail_column(g, r):
+    """Column of the trail of the treasure in my row (None if there is none)."""
+    e = entities_by_row(g).get(r)
+    return trail(e[0], e[1]) if e is not None and e[2] else None
+
+
+def alarms(g):
+    """Alarm of no-op, up and down (table of section 5)."""
     r = g.player_y
-    nemici, _ = in_arrivo(g)
-    c = colonna_scia_oro(g, r) if r in (1, 8) else None
+    enemies, _ = incoming(g)
+    c = treasure_trail_column(g, r) if r in (1, 8) else None
 
-    def spostamento(passo):
-        t1, t2 = r + passo, r + 2 * passo
-        if not 1 <= t1 <= 8:                             # contro il muro: la mossa ti lascia dove sei
-            if c is not None and 4 <= c <= 6:            # effetto di bordo della scia di un tesoro
+    def move_alarm(direction):
+        t1, t2 = r + direction, r + 2 * direction
+        if not 1 <= t1 <= 8:                             # against the wall: the move leaves you where you are
+            if c is not None and 4 <= c <= 6:            # edge effect of the trail of a treasure
                 return 0.0
-            d = nemici.get(r)
+            d = enemies.get(r)
             return 2.0 if d is not None and d <= 2 else 1.0
         a = 0.0
-        d = nemici.get(t1)
-        if t1 in (1, 8):                                 # verso una riga di bordo
+        d = enemies.get(t1)
+        if t1 in (1, 8):                                 # toward an edge row
             a += 2.0 if d is not None and d <= 2 else 0.036
         elif d is not None and d <= 2:
             a += 1.96 if d <= 1 else 1.76
-        d = nemici.get(t2) if 1 <= t2 <= 8 else None
+        d = enemies.get(t2) if 1 <= t2 <= 8 else None
         if d is not None and d <= 2:
             a += 1.76 if d <= 1 else 1.0
         return a
 
-    d = nemici.get(r)
+    d = enemies.get(r)
     if r in (1, 8):
         if d is not None and d <= 3:
-            fermo = 2.0 if d <= 2 else 1.96
+            noop = 2.0 if d <= 2 else 1.96
         else:
-            fermo = 0.0 if c is not None and 3 <= c <= 7 else 0.24
+            noop = 0.0 if c is not None and 3 <= c <= 7 else 0.24
     else:
-        fermo = {0: 1.96, 1: 1.96, 2: 1.0, 3: 0.24}.get(d, 0.0)
-    return fermo, spostamento(-1), spostamento(+1)
+        noop = {0: 1.96, 1: 1.96, 2: 1.0, 3: 0.24}.get(d, 0.0)
+    return noop, move_alarm(-1), move_alarm(+1)
 
 
-def regola(g):
-    """I logit della regola semplificata della sezione 7."""
+def rule(g):
+    """The logits of the simplified rule of section 7."""
     r = g.player_y
-    _, tesori = in_arrivo(g)
-    a_fermo, a_su, a_giu = allarmi(g)
+    _, treasures = incoming(g)
+    a_noop, a_up, a_down = alarms(g)
     lo = np.full(6, -1000.0)
-    lo[FERMO] = 1 - 80 * np.tanh(a_fermo - 1) + 32 * (r in tesori)
-    lo[SU] = 0.15 - 80 * np.tanh(a_su - 1) + sum(ATTRAZIONE[r - k] for k in tesori if k < r)
-    lo[GIU] = -80 * np.tanh(a_giu - 1) + sum(ATTRAZIONE[k - r] for k in tesori if k > r)
+    lo[NOOP] = 1 - 80 * np.tanh(a_noop - 1) + 32 * (r in treasures)
+    lo[UP] = 0.15 - 80 * np.tanh(a_up - 1) + sum(ATTRACTION[r - k] for k in treasures if k < r)
+    lo[DOWN] = -80 * np.tanh(a_down - 1) + sum(ATTRACTION[k - r] for k in treasures if k > r)
     return lo
 
 
-# ---------------------------------------------------------------- sezione 5: il secondo strato
+# ---------------------------------------------------------------- section 5: the second layer
 
-def stato_allarme(a):
-    """Lo stato atteso di g0, g1, g2 = tanh(allarme − 1): -1 spento, 0 a metà, +1 acceso."""
+def alarm_state(a):
+    """The expected state of g0, g1, g2 = tanh(alarm − 1): -1 off, 0 halfway, +1 on."""
     return -1 if a < 0.5 else (0 if a <= 1.5 else 1)
 
 
-def stato_reale(v):
+def real_state(v):
     return -1 if v < -0.3 else (0 if v <= 0.3 else 1)
 
 
-def secondo_strato(g):
-    """Stato atteso dei 32 neuroni del secondo strato (g3-g31 solo il segno: +1 acceso, -1 spento)."""
+def second_layer(g):
+    """Expected state of the 32 neurons of the second layer (g3-g31 only the sign: +1 on, -1 off)."""
     r = g.player_y
-    _, tesori = in_arrivo(g)
-    a_fermo, a_su, a_giu = allarmi(g)
+    _, treasures = incoming(g)
+    a_noop, a_up, a_down = alarms(g)
     st = np.full(32, -1)
-    st[0], st[1], st[2] = stato_allarme(a_su), stato_allarme(a_giu), stato_allarme(a_fermo)
+    st[0], st[1], st[2] = alarm_state(a_up), alarm_state(a_down), alarm_state(a_noop)
     for k in range(1, 9):
-        s = r - k if k in tesori else None               # + tesoro sopra, − tesoro sotto, 0 nella mia riga
-        on = lambda soglia: 1 if s is not None and s >= soglia else -1
+        s = r - k if k in treasures else None            # + treasure above, − treasure below, 0 in my row
+        on = lambda threshold: 1 if s is not None and s >= threshold else -1
         if k >= 2:
-            st[4 * k - 2] = on(-2)                       # A: tesoro sopra, nella mia riga o al più 2 sotto
-        st[4 * k - 1] = on(0)                            # B: tesoro sopra o nella mia riga
+            st[4 * k - 2] = on(-2)                       # A: treasure above, in my row or at most 2 below
+        st[4 * k - 1] = on(0)                            # B: treasure above or in my row
         if k <= 7:
-            st[4 * k] = on(1)                            # C: tesoro sopra
-            st[4 * k + 1] = on(3)                        # D: tesoro sopra, ad almeno 3 righe
+            st[4 * k] = on(1)                            # C: treasure above
+            st[4 * k + 1] = on(3)                        # D: treasure above, at least 3 rows away
     return st
 
 
-def stato_secondo_reale(g_true):
+def real_second_layer(g_true):
     st = np.where(g_true > 0, 1, -1)
-    st[:3] = [stato_reale(v) for v in g_true[:3]]
+    st[:3] = [real_state(v) for v in g_true[:3]]
     return st
 
 
-# ---------------------------------------------------------------- le situazioni
+# ---------------------------------------------------------------- the situations
 
-SITUAZIONI = ("nessuna mossa sicura", "nemico nella mia riga", "tesoro nella mia riga", "riga di bordo",
-              "tesoro in un'altra riga", "niente in arrivo")
+SITUATIONS = ("no move without an alarm", "enemy in my row", "treasure in my row", "edge row",
+              "treasure in another row", "nothing incoming")
 
 
-def situazione(g):
-    """La prima che vale, in quest'ordine."""
+def situation(g):
+    """The first one that applies, in this order."""
     r = g.player_y
-    nemici, tesori = in_arrivo(g)
-    if min(allarmi(g)) >= 0.5:
-        return SITUAZIONI[0]
-    if r in nemici and nemici[r] <= 3:
-        return SITUAZIONI[1]
-    if r in tesori:
-        return SITUAZIONI[2]
+    enemies, treasures = incoming(g)
+    if min(alarms(g)) >= 0.5:
+        return SITUATIONS[0]
+    if r in enemies and enemies[r] <= 3:
+        return SITUATIONS[1]
+    if r in treasures:
+        return SITUATIONS[2]
     if r in (1, 8):
-        return SITUAZIONI[3]
-    if tesori:
-        return SITUAZIONI[4]
-    return SITUAZIONI[5]
+        return SITUATIONS[3]
+    if treasures:
+        return SITUATIONS[4]
+    return SITUATIONS[5]
 
 
-def sopravvive(g, a):
+def survives(g, a):
     gg = copy.deepcopy(g)
     gg.act(a)
     return not gg.terminal
@@ -278,10 +278,10 @@ def softmax(lo):
     return p / p.sum()
 
 
-def gioca(game, logit, episodes, seed0):
-    """Punteggio medio, errore standard e durata media degli episodi di una politica, con il protocollo di
-    `evaluate`. logit(env, obs) -> i 6 logit."""
-    ret, durata = [], []
+def play(game, logit, episodes, seed0):
+    """Mean score, standard error and mean episode length of a policy, with the protocol of
+    `evaluate`. logit(env, obs) -> the 6 logits."""
+    ret, lengths = [], []
     for ep in range(episodes):
         seed = seed0 + ep
         env, rng = game.make_env(), policy_rng(seed)
@@ -292,46 +292,46 @@ def gioca(game, logit, episodes, seed0):
             tot += r
             done = term or trunc
         ret.append(tot)
-        durata.append(env.t)
+        lengths.append(env.t)
     ret = np.array(ret)
-    return ret.mean(), ret.std(ddof=1) / np.sqrt(len(ret)), np.mean(durata)
+    return ret.mean(), ret.std(ddof=1) / np.sqrt(len(ret)), np.mean(lengths)
 
 
-def varianti(layers):
-    """La rete con un pezzo tolto (sezione 9). Gli indici sono quelli delle sezioni 4-6."""
+def variants(layers):
+    """The network with one piece removed (section 9). The indices are those of sections 4-6."""
     (W1, b1, f1), (W2, b2, f2), (W3, b3, f3) = layers
-    QUIETE = 60.93                       # -80·tanh(-1): quanto vale un allarme spento
-    TESORO = slice(3, 32)                # g3-g31
+    ALARM_OFF = 60.93                    # -80·tanh(-1): what an alarm that is off is worth
+    TREASURE = slice(3, 32)              # g3-g31
 
-    def rete(W1n=W1, W3n=W3, b3n=b3):
+    def network(W1n=W1, W3n=W3, b3n=b3):
         return [(W1n, b1, f1), (W2, b2, f2), (W3n, b3n, f3)]
 
     out = {}
     W, b = W3.copy(), b3.copy()
-    W[:, TESORO] = 0
-    b[FERMO], b[GIU] = 1.0, 0.0          # i valori che le parti tolte davano senza tesori
-    out["senza tesori (g3-g31 non arrivano ai logit)"] = rete(W3n=W, b3n=b)
+    W[:, TREASURE] = 0
+    b[NOOP], b[DOWN] = 1.0, 0.0          # the values that the removed parts gave without treasures
+    out["without treasures (g3-g31 do not reach the logits)"] = network(W3n=W, b3n=b)
     W, b = W3.copy(), b3.copy()
-    W[FERMO, TESORO] = 0
-    b[FERMO] = 1.0
-    out["senza il +32 a fermo per il tesoro nella mia riga"] = rete(W3n=W, b3n=b)
+    W[NOOP, TREASURE] = 0
+    b[NOOP] = 1.0
+    out["without the +32 to no-op for a treasure in my row"] = network(W3n=W, b3n=b)
     W, b = W3.copy(), b3.copy()
-    W[[SU, GIU], TESORO] = 0
-    b[GIU] = 0.0
-    out["senza l'attrazione verso i tesori sopra e sotto"] = rete(W3n=W, b3n=b)
+    W[[UP, DOWN], TREASURE] = 0
+    b[DOWN] = 0.0
+    out["without attraction to treasures above and below"] = network(W3n=W, b3n=b)
     W = W1.copy()
-    player = np.arange(0, 600, 6)        # canale 0, il giocatore
-    for i in range(16):                  # h0-h15: tolgo il giocatore a 2 righe dalla riga guardata
+    player = np.arange(0, 600, 6)        # channel 0, the player
+    for i in range(16):                  # h0-h15: remove the player 2 rows from the row looked at
         W[i, player[W1[i, player] == 3]] = 0
-    out["sopra e sotto guardano solo la riga d'arrivo"] = rete(W1n=W)
+    out["above and below look only at the destination row"] = network(W1n=W)
     W, b = W3.copy(), b3.copy()
     W[:, 0:3] = 0
-    b[[FERMO, SU, GIU]] += QUIETE
-    out["senza allarmi (g0-g2 come se fossero spenti)"] = rete(W3n=W, b3n=b)
+    b[[NOOP, UP, DOWN]] += ALARM_OFF
+    out["without alarms (g0-g2 as if they were off)"] = network(W3n=W, b3n=b)
     W, b = W3.copy(), b3.copy()
-    W[FERMO, 2] = 0
-    b[FERMO] += QUIETE
-    out["senza l'allarme di fermo (g2)"] = rete(W3n=W, b3n=b)
+    W[NOOP, 2] = 0
+    b[NOOP] += ALARM_OFF
+    out["without the no-op alarm (g2)"] = network(W3n=W, b3n=b)
     return out
 
 
@@ -339,135 +339,138 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--episodes", type=int, default=200)
     ap.add_argument("--seed0", type=int, default=10000)
-    ap.add_argument("--regola", type=int, default=0, help="episodi da giocare con la regola della sezione 7")
-    ap.add_argument("--varianti", type=int, default=0, help="episodi da giocare con ogni variante della sezione 9")
+    ap.add_argument("--rule", type=int, default=0, help="episodes to play with the rule of section 7")
+    ap.add_argument("--variants", type=int, default=0, help="episodes to play with each variant of section 9")
     args = ap.parse_args()
 
     game = get_game("asterix")
     layers = load_weights(ROOT / "weights/asterix/paper_astra.json", game)
-    n = fuori_colonna = bad_h = bad_g = bad_arg = ties = bordo = 0
+    n = off_column = bad_h = bad_g = bad_arg = ties = edge_effect = 0
     max_h = max_f = max_r = tv = 0.0
-    bad_g_neuroni = collections.Counter()
-    casi = collections.Counter()
+    bad_g_neurons = collections.Counter()
+    cases = collections.Counter()
     ties_sit = collections.Counter()
-    niente_bloccato = 0
+    nothing_blocked = 0
     prob = collections.defaultdict(lambda: np.zeros(3))
-    righe = collections.Counter()
-    morti = collections.Counter()
-    addosso = collections.Counter()     # morti entrando in una riga con un nemico già nella colonna 5
-    righe_morte = collections.Counter()
-    ritorni = []
-    tesori_nati = 0
+    row_counts = collections.Counter()
+    deaths = collections.Counter()
+    into_enemy = collections.Counter()  # deaths entering a row with an enemy already in column 5
+    death_rows = collections.Counter()
+    returns = []
+    treasures_spawned = 0
 
     for ep in range(args.episodes):
         seed = args.seed0 + ep
         env, rng = game.make_env(), policy_rng(seed)
         obs, _ = env.reset(seed=seed)
         g = env.env.env
-        visti = list(g.entities)
+        seen = list(g.entities)
         done, tot = False, 0.0
         while not done:
             h_pre, g_pre, logit_true = forward(layers, obs)
             g_true = np.tanh(g_pre)
             n += 1
-            fuori_colonna += g.player_x != 5
-            righe[g.player_y] += 1
+            off_column += g.player_x != 5
+            row_counts[g.player_y] += 1
 
-            pre = primo_strato(g)
+            pre = first_layer(g)
             dh = float(np.abs(pre - h_pre).max())
             max_h = max(max_h, dh)
             bad_h += dh > 1e-9
 
-            diff = secondo_strato(g) != stato_secondo_reale(g_true)
+            diff = second_layer(g) != real_second_layer(g_true)
             bad_g += diff.any()
             for i in np.nonzero(diff)[0]:
-                bad_g_neuroni[i] += 1
+                bad_g_neurons[i] += 1
 
-            max_f = max(max_f, float(np.abs(logit_formule(pre) - logit_true).max()))
+            max_f = max(max_f, float(np.abs(formula_logits(pre) - logit_true).max()))
 
-            lo = regola(g)
+            lo = rule(g)
             max_r = max(max_r, float(np.abs(lo - logit_true).max()))
             tv += 0.5 * np.abs(softmax(lo) - softmax(logit_true)).sum()
             top2 = np.sort(lo)[-2:]
-            sit = situazione(g)
+            sit = situation(g)
             if top2[1] - top2[0] < 1.0:
                 ties += 1
                 ties_sit[sit] += 1
             elif np.argmax(lo) != np.argmax(logit_true):
                 bad_arg += 1
-            c = colonna_scia_oro(g, g.player_y)
+            c = treasure_trail_column(g, g.player_y)
             if g.player_y in (1, 8) and c is not None and 3 <= c <= 7:
-                bordo += arrivo(*entita(g)[g.player_y][:2]) is None      # tesoro che si allontana
+                edge_effect += arrival(*entities_by_row(g)[g.player_y][:2]) is None  # treasure moving away
 
-            casi[sit] += 1
-            if sit == SITUAZIONI[-1]:
-                niente_bloccato += max(allarmi(g)[1:]) >= 0.5
-            prob[sit] += softmax(logit_true)[[FERMO, SU, GIU]]
-            trappola = sit == SITUAZIONI[0]
-            esce = tuple(sopravvive(g, a) for a in (FERMO, SU, GIU)) if trappola else None
-            riga = g.player_y
-            nemici_prima = in_arrivo(g)[0]
+            cases[sit] += 1
+            if sit == SITUATIONS[-1]:
+                nothing_blocked += max(alarms(g)[1:]) >= 0.5
+            prob[sit] += softmax(logit_true)[[NOOP, UP, DOWN]]
+            trapped = sit == SITUATIONS[0]
+            survivals = tuple(survives(g, a) for a in (NOOP, UP, DOWN)) if trapped else None
+            player_row = g.player_y
+            enemies_before = incoming(g)[0]
 
             a = sample_action(logit_true, rng)
             obs, r, term, trunc, _ = env.step(a)
             tot += r
             done = term or trunc
-            tesori_nati += sum(1 for i, e in enumerate(g.entities)
-                               if e is not None and e[3] and e is not visti[i])
-            visti = list(g.entities)
+            treasures_spawned += sum(1 for i, e in enumerate(g.entities)
+                               if e is not None and e[3] and e is not seen[i])
+            seen = list(g.entities)
             if term:
-                righe_morte[riga] += 1
+                death_rows[player_row] += 1
                 if env.last_action != a:
-                    causa = "sticky: l'ambiente ripete la mossa precedente"
-                elif trappola and any(esce):
-                    causa = "nessuna mossa sicura, ma una sopravviveva"
-                elif trappola:
-                    causa = "nessuna mossa sicura, e nessuna sopravviveva"
+                    cause = "sticky: the environment repeats the previous move"
+                elif trapped and any(survivals):
+                    cause = "no move without an alarm, but one survived"
+                elif trapped:
+                    cause = "no move without an alarm, and none survived"
                 else:
-                    causa = "altro"
-                morti[causa, riga in (1, 8)] += 1
-                eseguita = env.last_action
-                dest = riga - 1 if eseguita == SU else riga + 1 if eseguita == GIU else riga
-                if dest != riga and 1 <= dest <= 8 and nemici_prima.get(dest) == 0:
-                    addosso[causa] += 1
-        ritorni.append(tot)
+                    cause = "other"
+                deaths[cause, player_row in (1, 8)] += 1
+                executed = env.last_action
+                dest = player_row - 1 if executed == UP else player_row + 1 if executed == DOWN else player_row
+                if dest != player_row and 1 <= dest <= 8 and enemies_before.get(dest) == 0:
+                    into_enemy[cause] += 1
+        returns.append(tot)
 
-    print(f"stati visitati: {n} ({args.episodes} episodi); punteggio della rete {np.mean(ritorni):.1f}")
-    print(f"stati con il giocatore fuori dalla colonna 5: {fuori_colonna}")
-    print(f"primo strato, stati con pre-attivazione diversa dalla lettura: {bad_h} (scarto massimo {max_h:.1e})")
-    print(f"secondo strato, stati in cui lo stato di un neurone è diverso: {bad_g} {dict(bad_g_neuroni)}")
-    print(f"logit con le formule della sezione 6, differenza massima: {max_f:.1e}")
-    print(f"regola della sezione 7: differenza massima dei logit {max_r:.2f}, distanza media tra le softmax {tv / n:.4f}")
-    print(f"  azione (argmax) diversa, esclusi i quasi-pareggi < 1: {bad_arg}  (quasi-pareggi: {ties})")
-    print("  quasi-pareggi per situazione:", dict(ties_sit.most_common()))
-    print(f"  stati con l'effetto di bordo della scia di un tesoro: {bordo}")
+    print(f"states visited: {n} ({args.episodes} episodes); network score {np.mean(returns):.1f}")
+    print(f"states with the player outside column 5: {off_column}")
+    print(f"first layer, states in which a pre-activation differs from the reading: {bad_h} "
+          f"(maximum deviation {max_h:.1e})")
+    print(f"second layer, states in which the state of a neuron differs: {bad_g} {dict(bad_g_neurons)}")
+    print(f"logits with the formulas of section 6, maximum difference: {max_f:.1e}")
+    print(f"rule of section 7: maximum difference of the logits {max_r:.2f}, "
+          f"mean distance between the softmaxes {tv / n:.4f}")
+    print(f"  move with the highest logit differs, excluding near-ties < 1: {bad_arg}  (near-ties: {ties})")
+    print("  near-ties by situation:", dict(ties_sit.most_common()))
+    print(f"  states with the edge effect of a treasure's trail: {edge_effect}")
 
-    print("\nprobabilità media delle mosse della rete, per situazione:")
-    for s in SITUAZIONI:
-        p = prob[s] / max(casi[s], 1)
-        row = " ".join(f"{MOSSE[a]}:{p[i]:4.0%}" for i, a in enumerate(MOSSE))
-        print(f"  {s:25s} {casi[s] / n:6.1%} degli stati | {row}")
-    print(f"  in '{SITUAZIONI[-1]}', stati in cui su o giù ha un allarme >= 0.5: "
-          f"{niente_bloccato / max(casi[SITUAZIONI[-1]], 1):.0%}")
+    print("\nmean probability of the network's moves, by situation:")
+    for s in SITUATIONS:
+        p = prob[s] / max(cases[s], 1)
+        row = " ".join(f"{MOVES[a]}:{p[i]:4.0%}" for i, a in enumerate(MOVES))
+        print(f"  {s:25s} {cases[s] / n:6.1%} of states | {row}")
+    print(f"  in '{SITUATIONS[-1]}', states in which up or down has an alarm >= 0.5: "
+          f"{nothing_blocked / max(cases[SITUATIONS[-1]], 1):.0%}")
 
-    print("\nriga del giocatore:", " ".join(f"{k}:{righe[k] / n:.1%}" for k in range(1, 9)))
-    print(f"tesori: raccolti {sum(ritorni):.0f} su {tesori_nati} comparsi ({sum(ritorni) / tesori_nati:.1%})")
-    print(f"morti ({sum(morti.values())}), nelle righe 1-8 e di cui nelle righe di bordo 1 e 8:")
-    for causa in sorted({c for c, _ in morti}, key=lambda c: -morti[c, False] - morti[c, True]):
-        print(f"  {causa}: {morti[causa, False] + morti[causa, True]} (bordo {morti[causa, True]}; "
-              f"entrando in una riga con un nemico già nella colonna 5: {addosso[causa]})")
-    print("  riga della morte:", " ".join(f"{k}:{righe_morte[k]}" for k in range(1, 9)))
+    print("\nplayer's row:", " ".join(f"{k}:{row_counts[k] / n:.1%}" for k in range(1, 9)))
+    print(f"treasures: collected {sum(returns):.0f} out of {treasures_spawned} that appeared "
+          f"({sum(returns) / treasures_spawned:.1%})")
+    print(f"deaths ({sum(deaths.values())}), in rows 1-8 and of these in the edge rows 1 and 8:")
+    for cause in sorted({c for c, _ in deaths}, key=lambda c: -deaths[c, False] - deaths[c, True]):
+        print(f"  {cause}: {deaths[cause, False] + deaths[cause, True]} (edge {deaths[cause, True]}; "
+              f"entering a row with an enemy already in column 5: {into_enemy[cause]})")
+    print("  row of death:", " ".join(f"{k}:{death_rows[k]}" for k in range(1, 9)))
 
-    if args.regola:
-        m, se, t = gioca(game, lambda env, obs: regola(env.env.env), args.regola, args.seed0)
-        print(f"\nla regola della sezione 7 al posto della rete, {args.regola} episodi: {m:.1f} ± {se:.1f}"
-              f" (durata media {t:.0f} passi)")
-    if args.varianti:
-        print(f"\nvarianti della rete, {args.varianti} episodi:")
-        tutte = {"la rete com'è": layers, **varianti(layers)}
-        for nome, var in tutte.items():
-            m, se, t = gioca(game, lambda env, obs: forward(var, obs)[-1], args.varianti, args.seed0)
-            print(f"  {nome:50s} {m:5.1f} ± {se:.1f}   durata media {t:4.0f} passi")
+    if args.rule:
+        m, se, t = play(game, lambda env, obs: rule(env.env.env), args.rule, args.seed0)
+        print(f"\nthe rule of section 7 in place of the network, {args.rule} episodes: {m:.1f} ± {se:.1f}"
+              f" (mean length {t:.0f} steps)")
+    if args.variants:
+        print(f"\nvariants of the network, {args.variants} episodes:")
+        networks = {"the network as it is": layers, **variants(layers)}
+        for name, var in networks.items():
+            m, se, t = play(game, lambda env, obs: forward(var, obs)[-1], args.variants, args.seed0)
+            print(f"  {name:50s} {m:5.1f} ± {se:.1f}   mean length {t:4.0f} steps")
 
 
 if __name__ == "__main__":

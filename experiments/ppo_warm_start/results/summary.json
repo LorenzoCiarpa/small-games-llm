@@ -30,7 +30,7 @@
   {
    "game": "low_tide",
    "model": "claude",
-   "kind": "scritta a mano",
+   "kind": "hand-written",
    "config": "",
    "mean": 132.272,
    "stderr": 0.8699365558605093,
@@ -39,7 +39,7 @@
   {
    "game": "low_tide",
    "model": "gpt",
-   "kind": "scritta a mano",
+   "kind": "hand-written",
    "config": "",
    "mean": 79.914,
    "stderr": 0.9496319337613064,
@@ -48,8 +48,8 @@
   {
    "game": "low_tide",
    "model": "ppo",
-   "kind": "PPO da zero",
-   "config": "64-64 tanh, ent 0.01, lr 0.0005, 20M passi",
+   "kind": "PPO from scratch",
+   "config": "64-64 tanh, ent 0.01, lr 0.0005, 20M steps",
    "mean": 125.728,
    "stderr": 1.874446887556043,
    "episodes": 500
@@ -57,8 +57,8 @@
   {
    "game": "low_tide",
    "model": "ppo_100m",
-   "kind": "PPO da zero",
-   "config": "64-64 tanh, ent 0.01, lr 0.0005, 100M passi",
+   "kind": "PPO from scratch",
+   "config": "64-64 tanh, ent 0.01, lr 0.0005, 100M steps",
    "mean": 162.72,
    "stderr": 2.6185210530011056,
    "episodes": 500
@@ -66,8 +66,8 @@
   {
    "game": "low_tide",
    "model": "ppo_arch_claude",
-   "kind": "PPO da zero",
-   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M passi",
+   "kind": "PPO from scratch",
+   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M steps",
    "mean": 158.366,
    "stderr": 2.8610871583114887,
    "episodes": 500
@@ -75,8 +75,8 @@
   {
    "game": "low_tide",
    "model": "ppo_arch_gpt",
-   "kind": "PPO da zero",
-   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M passi",
+   "kind": "PPO from scratch",
+   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M steps",
    "mean": 166.856,
    "stderr": 2.6674611949291607,
    "episodes": 500
@@ -84,8 +84,8 @@
   {
    "game": "low_tide",
    "model": "ppo_from_claude",
-   "kind": "PPO dai pesi a mano",
-   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M passi",
+   "kind": "PPO from the hand-written weights",
+   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M steps",
    "mean": 31.026,
    "stderr": 0.349764661790288,
    "episodes": 500
@@ -93,8 +93,8 @@
   {
    "game": "low_tide",
    "model": "ppo_from_claude_cw",
-   "kind": "PPO dai pesi a mano",
-   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M passi, 2M passi di solo critico",
+   "kind": "PPO from the hand-written weights",
+   "config": "46-36 relu/tanh, ent 0.01, lr 0.0005, 100M steps, 2M critic-only steps",
    "mean": 66.582,
    "stderr": 0.5767702140016586,
    "episodes": 500
@@ -102,8 +102,8 @@
   {
    "game": "low_tide",
    "model": "ppo_from_gpt",
-   "kind": "PPO dai pesi a mano",
-   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M passi",
+   "kind": "PPO from the hand-written weights",
+   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M steps",
    "mean": 147.26,
    "stderr": 2.903043941840446,
    "episodes": 500
@@ -111,8 +111,8 @@
   {
    "game": "low_tide",
    "model": "ppo_from_gpt_cw",
-   "kind": "PPO dai pesi a mano",
-   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M passi, 2M passi di solo critico",
+   "kind": "PPO from the hand-written weights",
+   "config": "43-61-53 relu, ent 0.01, lr 0.0005, 100M steps, 2M critic-only steps",
    "mean": 0.0,
    "stderr": 0.0,
    "episodes": 500
@@ -129,7 +129,7 @@
   {
    "game": "breakout",
    "model": "paper_astra",
-   "kind": "scritta a mano",
+   "kind": "hand-written",
    "config": "",
    "mean": 512.545,
    "stderr": 7.5718440817146915,
@@ -138,8 +138,8 @@
   {
    "game": "breakout",
    "model": "ppo_ent01",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M steps",
    "mean": 34.657,
    "stderr": 0.5383020714432745,
    "episodes": 1000
@@ -147,8 +147,8 @@
   {
    "game": "breakout",
    "model": "ppo_ent05",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M steps",
    "mean": 63.238,
    "stderr": 1.0178218494988784,
    "episodes": 1000
@@ -156,8 +156,8 @@
   {
    "game": "breakout",
    "model": "ppo_ent10",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M steps",
    "mean": 52.203,
    "stderr": 1.4017448696819548,
    "episodes": 1000
@@ -165,8 +165,8 @@
   {
    "game": "breakout",
    "model": "ppo_from_astra",
-   "kind": "PPO dai pesi a mano",
-   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "kind": "PPO from the hand-written weights",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M steps",
    "mean": 512.545,
    "stderr": 7.5718440817146915,
    "episodes": 1000
@@ -174,8 +174,8 @@
   {
    "game": "breakout",
    "model": "ppo_v1",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M steps",
    "mean": 5.809,
    "stderr": 0.030585199925036527,
    "episodes": 1000
@@ -192,7 +192,7 @@
   {
    "game": "seaquest",
    "model": "paper_astra",
-   "kind": "scritta a mano",
+   "kind": "hand-written",
    "config": "",
    "mean": 51.417,
    "stderr": 1.3752681460258847,
@@ -201,8 +201,8 @@
   {
    "game": "seaquest",
    "model": "ppo_ent01",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M steps",
    "mean": 4.431,
    "stderr": 0.048389880972994556,
    "episodes": 1000
@@ -210,8 +210,8 @@
   {
    "game": "seaquest",
    "model": "ppo_ent05",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M steps",
    "mean": 55.874,
    "stderr": 1.3325959387360957,
    "episodes": 1000
@@ -219,8 +219,8 @@
   {
    "game": "seaquest",
    "model": "ppo_ent10",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M steps",
    "mean": 34.41,
    "stderr": 0.9854303491231499,
    "episodes": 1000
@@ -228,8 +228,8 @@
   {
    "game": "seaquest",
    "model": "ppo_from_astra",
-   "kind": "PPO dai pesi a mano",
-   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "kind": "PPO from the hand-written weights",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M steps",
    "mean": 82.451,
    "stderr": 2.1015018222473443,
    "episodes": 1000
@@ -237,8 +237,8 @@
   {
    "game": "seaquest",
    "model": "ppo_v1",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M steps",
    "mean": 5.368,
    "stderr": 0.05326737663348378,
    "episodes": 1000
@@ -255,7 +255,7 @@
   {
    "game": "asterix",
    "model": "paper_astra",
-   "kind": "scritta a mano",
+   "kind": "hand-written",
    "config": "",
    "mean": 54.843,
    "stderr": 1.053794493169249,
@@ -264,8 +264,8 @@
   {
    "game": "asterix",
    "model": "ppo_ent01",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 200M steps",
    "mean": 19.397,
    "stderr": 0.4057610541107082,
    "episodes": 1000
@@ -273,8 +273,8 @@
   {
    "game": "asterix",
    "model": "ppo_ent05",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M steps",
    "mean": 24.613,
    "stderr": 0.5254782187287674,
    "episodes": 1000
@@ -282,8 +282,8 @@
   {
    "game": "asterix",
    "model": "ppo_ent10",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.1, lr 0.0005, 200M steps",
    "mean": 15.455,
    "stderr": 0.37685805948260814,
    "episodes": 1000
@@ -291,8 +291,8 @@
   {
    "game": "asterix",
    "model": "ppo_from_astra",
-   "kind": "PPO dai pesi a mano",
-   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M passi",
+   "kind": "PPO from the hand-written weights",
+   "config": "32-32 tanh, ent 0.05, lr 0.0005, 200M steps",
    "mean": 50.818,
    "stderr": 1.005755646477026,
    "episodes": 1000
@@ -300,8 +300,8 @@
   {
    "game": "asterix",
    "model": "ppo_v1",
-   "kind": "PPO da zero",
-   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M passi",
+   "kind": "PPO from scratch",
+   "config": "32-32 tanh, ent 0.01, lr 0.0005, 30M steps",
    "mean": 9.076,
    "stderr": 0.23806910950583426,
    "episodes": 1000

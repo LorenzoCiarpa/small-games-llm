@@ -710,7 +710,7 @@
    ],
    "seconds": 424.4,
    "key_quantities": {
-    "ossigeno basso (< 60)": [
+    "low oxygen (< 60)": [
      {
       "layer": 0,
       "best_unit": 24,
@@ -724,7 +724,7 @@
       "linear_r2": 0.20905411491244796
      }
     ],
-    "almeno un sub a bordo": [
+    "at least one diver on board": [
      {
       "layer": 0,
       "best_unit": 24,
@@ -738,7 +738,7 @@
       "linear_r2": 0.0007192959758191009
      }
     ],
-    "ora di emergere (ossigeno < 60 e almeno un sub)": [
+    "time to surface (oxygen < 60 and at least one diver)": [
      {
       "layer": 0,
       "best_unit": 24,
@@ -752,7 +752,7 @@
       "linear_r2": 0.22888762236111593
      }
     ],
-    "nemico vicino nella mia riga (\u2264 2)": [
+    "enemy near in my row (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 27,
@@ -766,7 +766,7 @@
       "linear_r2": 0.01760509811978861
      }
     ],
-    "sub da salvare nella mia riga": [
+    "diver to rescue in my row": [
      {
       "layer": 0,
       "best_unit": 11,
@@ -1494,7 +1494,7 @@
    ],
    "seconds": 178.1,
    "key_quantities": {
-    "ossigeno basso (< 60)": [
+    "low oxygen (< 60)": [
      {
       "layer": 0,
       "best_unit": 22,
@@ -1508,7 +1508,7 @@
       "linear_r2": 0.23826400707841155
      }
     ],
-    "almeno un sub a bordo": [
+    "at least one diver on board": [
      {
       "layer": 0,
       "best_unit": 4,
@@ -1522,7 +1522,7 @@
       "linear_r2": 0.05272983402190512
      }
     ],
-    "ora di emergere (ossigeno < 60 e almeno un sub)": [
+    "time to surface (oxygen < 60 and at least one diver)": [
      {
       "layer": 0,
       "best_unit": 22,
@@ -1536,7 +1536,7 @@
       "linear_r2": 0.1997651383259157
      }
     ],
-    "nemico vicino nella mia riga (\u2264 2)": [
+    "enemy near in my row (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 9,
@@ -1550,7 +1550,7 @@
       "linear_r2": 0.0008314636554760391
      }
     ],
-    "sub da salvare nella mia riga": [
+    "diver to rescue in my row": [
      {
       "layer": 0,
       "best_unit": 0,
@@ -2278,7 +2278,7 @@
    ],
    "seconds": 92.7,
    "key_quantities": {
-    "ossigeno basso (< 60)": [
+    "low oxygen (< 60)": [
      {
       "layer": 0,
       "best_unit": 17,
@@ -2292,7 +2292,7 @@
       "linear_r2": 0.08424508771064887
      }
     ],
-    "almeno un sub a bordo": [
+    "at least one diver on board": [
      {
       "layer": 0,
       "best_unit": 17,
@@ -2306,7 +2306,7 @@
       "linear_r2": 0.03471006582954517
      }
     ],
-    "ora di emergere (ossigeno < 60 e almeno un sub)": [
+    "time to surface (oxygen < 60 and at least one diver)": [
      {
       "layer": 0,
       "best_unit": 17,
@@ -2320,7 +2320,7 @@
       "linear_r2": 0.08427789570226951
      }
     ],
-    "nemico vicino nella mia riga (\u2264 2)": [
+    "enemy near in my row (\u2264 2)": [
      {
       "layer": 0,
       "best_unit": 28,
@@ -2334,7 +2334,7 @@
       "linear_r2": 0.218019975866672
      }
     ],
-    "sub da salvare nella mia riga": [
+    "diver to rescue in my row": [
      {
       "layer": 0,
       "best_unit": 8,

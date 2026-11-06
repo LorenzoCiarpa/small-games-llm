@@ -38,32 +38,32 @@ MAX_STEPS = 10_000
 # the channel shows in that game (None: always empty)
 SOURCES = {
     "breakout": {
-        "player": (["paddle"], "la racchetta"),
+        "player": (["paddle"], "the paddle"),
         "danger": ([], None),
-        "reward": (["brick"], "i mattoni"),
-        "projectile": (["ball"], "la palla"),
-        "trail": (["trail"], "la cella precedente della palla"),
+        "reward": (["brick"], "the bricks"),
+        "projectile": (["ball"], "the ball"),
+        "trail": (["trail"], "the ball's previous cell"),
         "gauge": ([], None),
     },
     "seaquest": {
-        "player": (["sub_front", "sub_back"], "il sottomarino (prua e poppa)"),
-        "danger": (["enemy_fish", "enemy_sub", "enemy_bullet"], "pesci, sottomarini e siluri nemici"),
-        "reward": (["enemy_fish", "enemy_sub", "diver"], "pesci, sottomarini nemici e sub"),
-        "projectile": (["friendly_bullet"], "i tuoi siluri"),
-        "trail": (["trail", "sub_back"], "dietro a nemici, sub e sottomarino"),
-        "gauge": (["oxygen_guage", "diver_guage"], "ossigeno e sub a bordo (in basso)"),
+        "player": (["sub_front", "sub_back"], "the submarine (front and back)"),
+        "danger": (["enemy_fish", "enemy_sub", "enemy_bullet"], "enemy fish, subs and torpedoes"),
+        "reward": (["enemy_fish", "enemy_sub", "diver"], "enemy fish, enemy subs and divers"),
+        "projectile": (["friendly_bullet"], "your torpedoes"),
+        "trail": (["trail", "sub_back"], "behind enemies, divers and the submarine"),
+        "gauge": (["oxygen_guage", "diver_guage"], "oxygen and divers on board (bottom row)"),
     },
     "asterix": {
-        "player": (["player"], "il giocatore"),
-        "danger": (["enemy"], "i nemici"),
-        "reward": (["gold"], "i tesori"),
+        "player": (["player"], "the player"),
+        "danger": (["enemy"], "the enemies"),
+        "reward": (["gold"], "the treasures"),
         "projectile": ([], None),
-        "trail": (["trail"], "la cella dietro a nemici e tesori"),
+        "trail": (["trail"], "the cell behind enemies and treasures"),
         "gauge": ([], None),
     },
 }
 
-ACTION_NAMES = ("fermo", "sinistra", "su", "destra", "giù", "fuoco")
+ACTION_NAMES = ("no-op", "left", "up", "right", "down", "fire")
 
 
 class MinAtarEnv:
@@ -128,9 +128,9 @@ SUMMARIES = {
     "asterix": "pick up treasure and dodge the enemies crossing the screen",
 }
 HELP = {
-    "breakout": "frecce sinistra/destra, spazio per restare fermo",
-    "seaquest": "frecce per muoverti, F spara, spazio fermo",
-    "asterix": "frecce per muoverti, spazio per restare fermo",
+    "breakout": "left/right arrows, space to stay still",
+    "seaquest": "arrows to move, F to fire, space to stay still",
+    "asterix": "arrows to move, space to stay still",
 }
 
 

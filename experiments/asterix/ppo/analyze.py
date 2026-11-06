@@ -1,15 +1,15 @@
 """
-Si riesce a leggere un algoritmo nei pesi della rete PPO di asterix? Le stesse misure sulla rete PPO
-(weights/asterix/ppo.json, da train.py) e sulle reti scritte a mano (paper_astra.json (GPT-6 Astra, dall'articolo)):
-pesi (anche solo sugli ingressi che non sono sempre zero), pruning, ablazione di ogni unità, correlazione delle
-unità con quantità del gioco, distillazione in alberi di decisione, immagini del primo strato, e se le quantità
-usate dall'algoritmo scritto a mano si ritrovano nei neuroni (quantità chiave). Gli strumenti sono in
+Can an algorithm be read in the weights of asterix's PPO network? The same measurements on the PPO network
+(weights/asterix/ppo.json, from train.py) and on the hand-written networks (paper_astra.json (GPT-6 Astra, from the
+article)): weights (also restricted to the inputs that are not always zero), pruning, ablation of each unit,
+correlation of the units with game quantities, distillation into decision trees, images of the first layer, and
+whether the quantities used by the hand-written algorithm are found in the neurons (key quantities). The tools are in
 src/small_games/analysis.py.
 
     uv run --group analysis python experiments/asterix/ppo/analyze.py              # ~10-30 min
-    uv run --group analysis python experiments/asterix/ppo/analyze.py --quick      # pochi episodi, per provare
+    uv run --group analysis python experiments/asterix/ppo/analyze.py --quick      # few episodes, to try it out
 
-Scrive results/analysis/: analysis.json (tutti i numeri), trees_<rete>.txt, fields_<rete>.png.
+Writes results/analysis/: analysis.json (all the numbers), trees_<net>.txt, fields_<net>.png.
 """
 
 import argparse
@@ -28,8 +28,8 @@ if __name__ == "__main__":
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--only-key", action="store_true",
-                    help="solo quantità chiave e ingressi vivi (aggiunti ad analysis.json), senza rifare il resto")
-    ap.add_argument("--nets", help=f"solo queste reti, separate da virgole (default: {', '.join(NETS)})")
+                    help="only key quantities and live inputs (added to analysis.json), without redoing the rest")
+    ap.add_argument("--nets", help=f"only these networks, comma-separated (default: {', '.join(NETS)})")
     args = ap.parse_args()
     kw = dict(score_episodes=10, ablation_episodes=5, collect_episodes=5) if args.quick else {}
     nets = {k: NETS[k] for k in args.nets.split(",")} if args.nets else NETS

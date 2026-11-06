@@ -1,21 +1,21 @@
 """
-PPO su Asterix (MinAtar): addestra la policy 600-32-32-6 tanh (la stessa architettura delle reti scritte a mano),
-la salva in weights/asterix/ppo.json e la valuta con il protocollo del gioco.
+PPO on Asterix (MinAtar): trains the 600-32-32-6 tanh policy (the same architecture as the hand-written networks),
+saves it to weights/asterix/ppo.json and scores it with the game's protocol.
 
-    uv run --group ppo python experiments/asterix/ppo/train.py                     # configurazione sotto
+    uv run --group ppo python experiments/asterix/ppo/train.py                     # configuration below
     uv run --group ppo python experiments/asterix/ppo/train.py --total-steps 2000000
 
-weights/asterix/ppo.json viene dalla corsa ppo_ent05 di experiments/ppo_runs.py, che ha questa stessa configurazione
-(e lo stesso seed): la sua curva, i checkpoint e la valutazione sono in results/ppo_ent05/. Le corse con ent_coef
-0.01 e 0.1 sono in results/ppo_ent01/ e results/ppo_ent10/, il primo tentativo (tutte e 6 le azioni, ent_coef 0.01,
-30M passi) in results/ppo_v1/; vedi README.md. L'algoritmo è in src/small_games/ppo.py.
+weights/asterix/ppo.json comes from the ppo_ent05 run of experiments/ppo_runs.py, which has this same configuration
+(and the same seed): its curve, checkpoints and evaluation are in results/ppo_ent05/. The runs with ent_coef 0.01 and
+0.1 are in results/ppo_ent01/ and results/ppo_ent10/, the first attempt (all 6 actions, ent_coef 0.01, 30M steps) in
+results/ppo_v1/; see README.md. The algorithm is in src/small_games/ppo.py.
 """
 
 from pathlib import Path
 
 from small_games.ppo import PPOConfig, main
 
-# il minimal action set di MinAtar: tutte tranne fuoco, che in Asterix non fa niente
+# MinAtar's minimal action set: all actions except fire, which does nothing in Asterix
 CONFIG = PPOConfig(game="asterix", hidden=(32, 32), activation="tanh", actions=(0, 1, 2, 3, 4),
                    ent_coef=0.05, total_steps=200_000_000)
 

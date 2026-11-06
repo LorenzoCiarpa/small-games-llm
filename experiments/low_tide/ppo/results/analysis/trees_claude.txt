@@ -1,90 +1,90 @@
-=== profondità 1: accordo 55.1%, 2 foglie
+=== depth 1: agreement 55.1%, 2 leaves
 |--- shells_left <= 0.5
-|   |--- azione: 4 destra
+|   |--- action: 4 right
 |--- shells_left >  0.5
-|   |--- azione: 3 sinistra
+|   |--- action: 3 left
 
-=== profondità 2: accordo 63.9%, 4 foglie, punteggio 0.00
+=== depth 2: agreement 63.9%, 4 leaves, score 0.00
 |--- shells_left <= 0.5
 |   |--- margin <= 1.5
-|   |   |--- azione: 4 destra
+|   |   |--- action: 4 right
 |   |--- margin >  1.5
-|   |   |--- azione: 4 destra
+|   |   |--- action: 4 right
 |--- shells_left >  0.5
 |   |--- shells_right <= 0.5
-|   |   |--- azione: 3 sinistra
+|   |   |--- action: 3 left
 |   |--- shells_right >  0.5
-|   |   |--- azione: 4 destra
+|   |   |--- action: 4 right
 
-=== profondità 3: accordo 73.5%, 8 foglie
+=== depth 3: agreement 73.5%, 8 leaves
 |--- shells_left <= 0.5
 |   |--- margin <= 1.5
 |   |   |--- margin <= 0.5
-|   |   |   |--- azione: 4 destra
+|   |   |   |--- action: 4 right
 |   |   |--- margin >  0.5
-|   |   |   |--- azione: 2 giù
+|   |   |   |--- action: 2 down
 |   |--- margin >  1.5
 |   |   |--- margin <= 2.5
-|   |   |   |--- azione: 4 destra
+|   |   |   |--- action: 4 right
 |   |   |--- margin >  2.5
-|   |   |   |--- azione: 2 giù
+|   |   |   |--- action: 2 down
 |--- shells_left >  0.5
 |   |--- shells_right <= 0.5
 |   |   |--- margin <= 1.5
-|   |   |   |--- azione: 3 sinistra
+|   |   |   |--- action: 3 left
 |   |   |--- margin >  1.5
-|   |   |   |--- azione: 3 sinistra
+|   |   |   |--- action: 3 left
 |   |--- shells_right >  0.5
 |   |   |--- margin <= 0.5
-|   |   |   |--- azione: 4 destra
+|   |   |   |--- action: 4 right
 |   |   |--- margin >  0.5
-|   |   |   |--- azione: 4 destra
+|   |   |   |--- action: 4 right
 
-=== profondità 4: accordo 90.4%, 16 foglie, punteggio 15.57
+=== depth 4: agreement 90.4%, 16 leaves, score 15.57
 |--- shells_left <= 0.5
 |   |--- margin <= 1.5
 |   |   |--- margin <= 0.5
 |   |   |   |--- jelly_right <= 0.5
-|   |   |   |   |--- azione: 4 destra
+|   |   |   |   |--- action: 4 right
 |   |   |   |--- jelly_right >  0.5
-|   |   |   |   |--- azione: 3 sinistra
+|   |   |   |   |--- action: 3 left
 |   |   |--- margin >  0.5
 |   |   |   |--- rising <= 0.5
-|   |   |   |   |--- azione: 2 giù
+|   |   |   |   |--- action: 2 down
 |   |   |   |--- rising >  0.5
-|   |   |   |   |--- azione: 1 su
+|   |   |   |   |--- action: 1 up
 |   |--- margin >  1.5
 |   |   |--- margin <= 2.5
 |   |   |   |--- shells_up <= 0.5
-|   |   |   |   |--- azione: 4 destra
+|   |   |   |   |--- action: 4 right
 |   |   |   |--- shells_up >  0.5
-|   |   |   |   |--- azione: 1 su
+|   |   |   |   |--- action: 1 up
 |   |   |--- margin >  2.5
 |   |   |   |--- shells_right <= 0.5
-|   |   |   |   |--- azione: 2 giù
+|   |   |   |   |--- action: 2 down
 |   |   |   |--- shells_right >  0.5
-|   |   |   |   |--- azione: 4 destra
+|   |   |   |   |--- action: 4 right
 |--- shells_left >  0.5
 |   |--- shells_right <= 0.5
 |   |   |--- margin <= 1.5
 |   |   |   |--- margin <= 0.5
-|   |   |   |   |--- azione: 3 sinistra
+|   |   |   |   |--- action: 3 left
 |   |   |   |--- margin >  0.5
-|   |   |   |   |--- azione: 1 su
+|   |   |   |   |--- action: 1 up
 |   |   |--- margin >  1.5
 |   |   |   |--- rising <= 0.5
-|   |   |   |   |--- azione: 2 giù
+|   |   |   |   |--- action: 2 down
 |   |   |   |--- rising >  0.5
-|   |   |   |   |--- azione: 3 sinistra
+|   |   |   |   |--- action: 3 left
 |   |--- shells_right >  0.5
 |   |   |--- margin <= 0.5
 |   |   |   |--- jelly_right <= 0.5
-|   |   |   |   |--- azione: 4 destra
+|   |   |   |   |--- action: 4 right
 |   |   |   |--- jelly_right >  0.5
-|   |   |   |   |--- azione: 3 sinistra
+|   |   |   |   |--- action: 3 left
 |   |   |--- margin >  0.5
 |   |   |   |--- margin <= 1.5
-|   |   |   |   |--- azione: 2 giù
+|   |   |   |   |--- action: 2 down
 |   |   |   |--- margin >  1.5
-|   |   |   |   |--- azione: 4 destra
+|   |   |   |   |--- action: 4 right
 

@@ -1,90 +1,90 @@
-=== profondità 1: accordo 34.2%, 2 foglie
+=== depth 1: agreement 34.2%, 2 leaves
 |--- player_x <= 6.5
-|   |--- azione: 3 destra
+|   |--- action: 3 right
 |--- player_x >  6.5
-|   |--- azione: 0 fermo
+|   |--- action: 0 no-op
 
-=== profondità 2: accordo 40.3%, 4 foglie, punteggio 0.70
+=== depth 2: agreement 40.3%, 4 leaves, score 0.70
 |--- player_x <= 6.5
 |   |--- gold_dx <= 0.5
-|   |   |--- azione: 1 sinistra
+|   |   |--- action: 1 left
 |   |--- gold_dx >  0.5
-|   |   |--- azione: 3 destra
+|   |   |--- action: 3 right
 |--- player_x >  6.5
 |   |--- gold_dx <= 0.5
-|   |   |--- azione: 2 su
+|   |   |--- action: 2 up
 |   |--- gold_dx >  0.5
-|   |   |--- azione: 0 fermo
+|   |   |--- action: 0 no-op
 
-=== profondità 3: accordo 43.7%, 8 foglie
+=== depth 3: agreement 43.7%, 8 leaves
 |--- player_x <= 6.5
 |   |--- gold_dx <= 0.5
 |   |   |--- player_x <= 2.5
-|   |   |   |--- azione: 2 su
+|   |   |   |--- action: 2 up
 |   |   |--- player_x >  2.5
-|   |   |   |--- azione: 1 sinistra
+|   |   |   |--- action: 1 left
 |   |--- gold_dx >  0.5
 |   |   |--- player_y <= 5.5
-|   |   |   |--- azione: 4 giù
+|   |   |   |--- action: 4 down
 |   |   |--- player_y >  5.5
-|   |   |   |--- azione: 3 destra
+|   |   |   |--- action: 3 right
 |--- player_x >  6.5
 |   |--- gold_dx <= 0.5
 |   |   |--- gold_dx <= -0.5
-|   |   |   |--- azione: 1 sinistra
+|   |   |   |--- action: 1 left
 |   |   |--- gold_dx >  -0.5
-|   |   |   |--- azione: 2 su
+|   |   |   |--- action: 2 up
 |   |--- gold_dx >  0.5
 |   |   |--- player_y <= 4.5
-|   |   |   |--- azione: 1 sinistra
+|   |   |   |--- action: 1 left
 |   |   |--- player_y >  4.5
-|   |   |   |--- azione: 0 fermo
+|   |   |   |--- action: 0 no-op
 
-=== profondità 4: accordo 49.9%, 16 foglie, punteggio 2.76
+=== depth 4: agreement 49.9%, 16 leaves, score 2.76
 |--- player_x <= 6.5
 |   |--- gold_dx <= 0.5
 |   |   |--- player_x <= 2.5
 |   |   |   |--- gold_dx <= -0.5
-|   |   |   |   |--- azione: 2 su
+|   |   |   |   |--- action: 2 up
 |   |   |   |--- gold_dx >  -0.5
-|   |   |   |   |--- azione: 2 su
+|   |   |   |   |--- action: 2 up
 |   |   |--- player_x >  2.5
 |   |   |   |--- gold_dy <= 0.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 |   |   |   |--- gold_dy >  0.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |--- gold_dx >  0.5
 |   |   |--- player_y <= 5.5
 |   |   |   |--- player_x <= 4.5
-|   |   |   |   |--- azione: 3 destra
+|   |   |   |   |--- action: 3 right
 |   |   |   |--- player_x >  4.5
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |   |--- player_y >  5.5
 |   |   |   |--- gold_dy <= 0.5
-|   |   |   |   |--- azione: 3 destra
+|   |   |   |   |--- action: 3 right
 |   |   |   |--- gold_dy >  0.5
-|   |   |   |   |--- azione: 3 destra
+|   |   |   |   |--- action: 3 right
 |--- player_x >  6.5
 |   |--- gold_dx <= 0.5
 |   |   |--- gold_dx <= -0.5
 |   |   |   |--- enemy_eta_same <= 5.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- enemy_eta_same >  5.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 |   |   |--- gold_dx >  -0.5
 |   |   |   |--- gold_dy <= 0.0
-|   |   |   |   |--- azione: 2 su
+|   |   |   |   |--- action: 2 up
 |   |   |   |--- gold_dy >  0.0
-|   |   |   |   |--- azione: 4 giù
+|   |   |   |   |--- action: 4 down
 |   |--- gold_dx >  0.5
 |   |   |--- player_y <= 4.5
 |   |   |   |--- player_y <= 2.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 |   |   |   |--- player_y >  2.5
-|   |   |   |   |--- azione: 2 su
+|   |   |   |   |--- action: 2 up
 |   |   |--- player_y >  4.5
 |   |   |   |--- player_x <= 7.5
-|   |   |   |   |--- azione: 0 fermo
+|   |   |   |   |--- action: 0 no-op
 |   |   |   |--- player_x >  7.5
-|   |   |   |   |--- azione: 1 sinistra
+|   |   |   |   |--- action: 1 left
 

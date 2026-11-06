@@ -20,7 +20,7 @@ The reading is checked against the real network on 263,355 game states (see [Ver
 
 ```bash
 uv run python experiments/seaquest/decode_astra/check.py               # ~1.5 min
-uv run python experiments/seaquest/decode_astra/check.py --esempi      # the situations of section 6
+uv run python experiments/seaquest/decode_astra/check.py --examples    # the situations of section 6
 uv run python experiments/seaquest/decode_astra/check.py --ablations   # families of neurons switched off (section 9)
 ```
 
@@ -313,23 +313,23 @@ value wins**. Staying has 1.8 extra and wins ties. The exceptions are at the edg
 - **row 8:** it cannot go down.
 
 The scale 30 makes the choice almost deterministic when the values differ, and a lottery when they are equal.
-Here are the logits of the real network in some hand-built situations (`check.py --esempi`; submarine in row 5 unless
+Here are the logits of the real network in some hand-built situations (`check.py --examples`; submarine in row 5 unless
 stated, objects as (row, column)):
 
 | situation | up | down | fire | p(up, down, fire) |
 |---|---|---|---|---|
-| empty sea | 11.7 | 11.7 | 13.5 | 0.12, 0.12, **0.75** |
+| empty sea, row 5 | 11.7 | 11.7 | 13.5 | 0.12, 0.12, **0.75** |
 | diver in my row, (5, 1) | 35.6 | 35.6 | 45.4 | 0, 0, **1** |
 | diver one row below, (6, 1) | 29.1 | 43.6 | 37.4 | 0, **1**, 0 |
 | diver three rows below, (8, 1) | 20.4 | 29.1 | 25.9 | 0, **0.96**, 0.04 |
-| target in my row, (5, 2) | 16.8 | 16.8 | 31.2 | 0, 0, **1** |
-| target one row above, (4, 2) | 29.4 | 13.2 | 18.6 | **1**, 0, 0 |
-| enemy on the stern, (5, 6) | 11.7 | 11.7 | 1.8 | **0.5, 0.5**, 0 |
+| left target in my row, (5, 2) | 16.8 | 16.8 | 31.2 | 0, 0, **1** |
+| left target one row above, (4, 2) | 29.4 | 13.2 | 18.6 | **1**, 0, 0 |
+| enemy at (5, 6), on the stern | 11.7 | 11.7 | 1.8 | **0.5, 0.5**, 0 |
 | enemy at (5, 7), half on | 11.7 | 11.7 | 5.2 | **0.5, 0.5**, 0 |
 | enemy torpedo at (5, 3) | 16.8 | 16.8 | 1.8 | **0.5, 0.5**, 0 |
-| enemy one row below, (6, 5) | 11.7 | 0.0 | 13.5 | 0.14, 0, **0.86** |
-| enemy two rows below, (7, 5) | 11.7 | 4.1 | 13.5 | 0.14, 0, **0.86** |
-| enemy (6, 6) "covered" by divers at (6, 3) and (6, 8) | 29.1 | **42.8** | 37.4 | 0, **1**, 0 |
+| enemy at (6, 5), one row below | 11.7 | 0.0 | 13.5 | 0.14, 0, **0.86** |
+| enemy at (7, 5), two rows below | 11.7 | 4.1 | 13.5 | 0.14, 0, **0.86** |
+| enemy at (6, 6) and divers at (6, 3), (6, 8): the enemy is "covered" | 29.1 | **42.8** | 37.4 | 0, **1**, 0 |
 | diver (7, 1), target (4, 2), enemy (6, 6) | **43.6** | 0.0 | 38.0 | **1**, 0, 0 |
 | oxygen 50, 2 divers on board | **49.7** | 11.7 | 13.5 | **1**, 0, 0 |
 | oxygen 50, no divers on board | 11.7 | 11.7 | 13.5 | 0.12, 0.12, **0.75** |
@@ -337,7 +337,7 @@ stated, objects as (row, column)):
 | row 2 | −23.9 | 11.7 | 13.5 | 0, 0.14, **0.86** |
 | row 1 | −23.9 | **19.6** | 13.4 | 0, **1**, 0 |
 | row 1, oxygen 50, 2 divers | **79.9** | 11.7 | 13.4 | **1**, 0, 0 |
-| row 0 | −0.1 | **11.6** | 1.8 | 0, **1**, 0 |
+| row 0 (surface) | −0.1 | **11.6** | 1.8 | 0, **1**, 0 |
 | row 0, enemy at (1, 5) | −0.1 | 0.0 | 1.8 | **0.12, 0.13**, 0.75 |
 
 The formulas, with the real values of the first-layer neurons, reproduce the logits of the network within 0.063
@@ -393,10 +393,10 @@ and compares them with the real forward pass.
 |---|---|
 | states visited | 263,355 (score 48.3 ± 2.9, the same as `evaluate`) |
 | submarine in column 5, facing left | **100%** of states |
-| first layer: states where the reconstruction differs by more than 10⁻⁹ | **0** |
-| logits: maximum difference | 0.063 (some second-layer neurons are taken as exactly ±1) |
-| different move with the highest logit, near-ties (< 0.5) excluded | **0** (near-ties: 4,238) |
-| simplified rule of section 7: same move as the network | **97.4%** of states; **99.1%** where the network has a margin > 3 (76% of states) |
+| first layer, states where the reconstruction differs (> 1e-9) | **0** |
+| logits, maximum difference | 0.063 (some second-layer neurons are taken as exactly ±1) |
+| move with the highest logit differs, excluding near-ties < 0.5 | **0** (near-ties: 4,238) |
+| simplified rule, same move as the network | **97.4%** of states; **99.1%** where the network has a margin > 3 (76% of states) |
 
 The differences of the simplified rule come from two simplifications: the nearby danger treated as on,
 half on or off (in the network the contributions add up, divers included), and the comparison between values instead
@@ -427,14 +427,14 @@ after 1,317 steps. `check.py` classifies the 200 deaths as follows:
 
 | how it dies | deaths | |
 |---|---|---|
-| **sticky:** a repetition of up or down took it into a row whose danger was already on one step before | 115 | 57% |
-| **dive from the surface:** in row 0, with a danger in row 1, the softmax chooses "down" | 23 | 12% |
-| **trapped:** danger in the row where it ends up and no safe move (no logit above 10) | 16 | 8% |
-| **sticky:** moved into a row whose danger was not yet on (12 are enemy torpedoes from the left) | 15 | 8% |
+| **sticky: moved, danger already on:** a repetition of up or down took it into a row whose danger was already on one step before | 115 | 57% |
+| **dive from the surface (softmax):** in row 0, with a danger in row 1, the softmax chooses "down" | 23 | 12% |
+| **trapped: no safe move:** danger in the row where it ends up and no logit above 10 | 16 | 8% |
+| **sticky: moved, danger not on:** moved into a row whose danger was not yet on (12 are enemy torpedoes from the left) | 15 | 8% |
 | oxygen ran out | 11 | 6% |
-| **sticky:** held still while the network wanted to escape | 8 | 4% |
-| **danger not on because there was a diver in the same row** | 6 | 3% |
-| **sticky:** repeated "up" up to the surface, with no divers on board | 6 | 3% |
+| **sticky: held still** while the network wanted to escape | 8 | 4% |
+| **danger not on, diver in the row:** the danger was not on because of the diver | 6 | 3% |
+| **sticky: surfaced with no divers on board:** a repeated "up" took it to the surface | 6 | 3% |
 
 - **Danger is a veto only for the arrival row.** Moving towards a row *next to* a danger costs
   only 0.6 of value, less than a diver two rows away (0.68). So the network does not avoid placing itself one row from
@@ -476,10 +476,10 @@ as if that thing were never on the screen:
 | variant | score | steps per episode | deaths from oxygen |
 |---|---|---|---|
 | full network | 48.3 ± 2.9 | 1,317 | 6% |
-| without divers to rescue (h9-h15) | 39.3 ± 2.7 | 1,011 | 49% |
-| without targets in the line of fire (h25-h31) | 24.8 ± 1.6 | 1,432 | 4% |
+| without divers (h9-h15) | 39.3 ± 2.7 | 1,011 | 49% |
+| without left targets (h25-h31) | 24.8 ± 1.6 | 1,432 | 4% |
 | without nearby danger (h16-h23) | 3.2 ± 0.3 | 147 | 0% |
-| without [surface] (h24) | 4.3 ± 0.1 | 199 | 96% |
+| without surfacing (h24) | 4.3 ± 0.1 | 199 | 96% |
 | without divers, targets and danger | 1.3 ± 0.1 | 123 | 2% |
 
 - **Danger and surfacing are indispensable.** Without the first the network dies on average after 147 steps; without

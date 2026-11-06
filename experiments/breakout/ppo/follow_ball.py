@@ -1,11 +1,11 @@
 """
-Termine di paragone per la rete PPO di Breakout: la policy "segui la palla", che sposta la racchetta verso la colonna
-in cui la palla è adesso, senza prevedere dove arriverà. Basterebbe un solo neurone lineare per scriverla.
+Reference point for Breakout's PPO network: the "follow the ball" policy, which moves the paddle toward the column
+where the ball is now, without predicting where it will land. A single linear neuron would be enough to write it.
 
-    uv run python experiments/breakout/ppo/follow_ball.py               # 1000 episodi, protocollo del gioco
+    uv run python experiments/breakout/ppo/follow_ball.py               # 1000 episodes, the game's protocol
 
-Fa 8.4 ± 0.3 punti su 1000 episodi: poco più di PPO (5.8-6.8), molto meno della rete di Astra (512), che prevede
-la colonna d'arrivo.
+It scores 8.4 ± 0.3 points over 1000 episodes: a little more than PPO (5.8-6.8), much less than Astra's network
+(512), which predicts the landing column.
 """
 
 import argparse
@@ -16,7 +16,7 @@ from small_games.features import breakout
 
 
 class FollowBall:
-    """Sinistra se la palla è a sinistra della racchetta, destra se è a destra, altrimenti ferma."""
+    """Left if the ball is to the left of the paddle, right if it is to the right, otherwise no-op."""
 
     def __call__(self, obs, rng):
         paddle, ball_x = breakout(obs)[:2]
@@ -29,4 +29,4 @@ if __name__ == "__main__":
     ap.add_argument("--workers", type=int, default=2)
     args = ap.parse_args()
     s = evaluate(get_game("breakout"), FollowBall(), episodes=args.episodes, workers=args.workers)
-    print(f"segui la palla: {s['mean_return']:.2f} ± {s['stderr']:.2f} ({s['protocol']['episodes']} episodi)")
+    print(f"follow the ball: {s['mean_return']:.2f} ± {s['stderr']:.2f} ({s['protocol']['episodes']} episodes)")

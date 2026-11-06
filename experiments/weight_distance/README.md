@@ -200,4 +200,4 @@ The behaviour converges, the weights do not.
   same game, requires training a 600-32-32-6 with PPO on MinAtar, because the checkpoints of the article are not
   public.
 - **CKA has a high floor** (up to 0.4 with random networks, on the MinAtar games) on these sparse, binary inputs. It
-  must always be read against the "rete casuale" (random network) column.
+  must always be read against the "A vs random network" column.

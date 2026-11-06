@@ -1,9 +1,9 @@
 ### low_tide
 
-| rete | punteggio | massa nel 10% dei pesi | ingressi vivi per il 90% (primo strato) | pruning 50% | primo strato al 25% | quantità chiave: miglior \|r\| | quantità chiave: R² | albero prof. 6: accordo |
+| network | score | mass in 10% of the weights | live inputs for 90% (first layer) | pruning 50% | first layer at 25% | key quantities: best \|r\| | key quantities: R² | depth-6 tree: agreement |
 |---|---|---|---|---|---|---|---|---|
-| `claude` (a mano) | 133.0 | 100% | 3% | 100% | 100% | 0.97 | 1.00 | 98% |
-| `gpt` (a mano) | 81.9 | 100% | 1% | 100% | 100% | 0.66 | 0.76 | 91% |
+| `claude` (hand-written) | 133.0 | 100% | 3% | 100% | 100% | 0.97 | 1.00 | 98% |
+| `gpt` (hand-written) | 81.9 | 100% | 1% | 100% | 100% | 0.66 | 0.76 | 91% |
 | `ppo_100m` 5M | 77.4 | 32% | 61% | 83% | 75% | 0.45 | 0.40 | 66% |
 | `ppo_100m` 10M | 87.4 | 33% | 60% | 86% | 22% | 0.49 | 0.44 | 69% |
 | `ppo_100m` 25M | 122.3 | 34% | 58% | 53% | 5% | 0.49 | 0.48 | 68% |
@@ -13,9 +13,9 @@
 
 ### breakout
 
-| rete | punteggio | massa nel 10% dei pesi | ingressi vivi per il 90% (primo strato) | pruning 50% | primo strato al 25% | quantità chiave: miglior \|r\| | quantità chiave: R² | albero prof. 6: accordo |
+| network | score | mass in 10% of the weights | live inputs for 90% (first layer) | pruning 50% | first layer at 25% | key quantities: best \|r\| | key quantities: R² | depth-6 tree: agreement |
 |---|---|---|---|---|---|---|---|---|
-| `paper_astra` (a mano) | 518.5 | 100% | 35% | 100% | 100% | 0.73 | 0.65 | 89% |
+| `paper_astra` (hand-written) | 518.5 | 100% | 35% | 100% | 100% | 0.73 | 0.65 | 89% |
 | `ppo_ent01` 5M | 6.4 | 41% | 61% | 100% | 43% | 0.30 | 0.42 | 65% |
 | `ppo_ent01` 10M | 6.7 | 40% | 59% | 86% | 64% | 0.25 | 0.28 | 79% |
 | `ppo_ent01` 25M | 15.2 | 36% | 59% | 77% | 31% | 0.34 | 0.28 | 76% |
@@ -40,9 +40,9 @@
 
 ### seaquest
 
-| rete | punteggio | massa nel 10% dei pesi | ingressi vivi per il 90% (primo strato) | pruning 50% | primo strato al 25% | quantità chiave: miglior \|r\| | quantità chiave: R² | albero prof. 6: accordo |
+| network | score | mass in 10% of the weights | live inputs for 90% (first layer) | pruning 50% | first layer at 25% | key quantities: best \|r\| | key quantities: R² | depth-6 tree: agreement |
 |---|---|---|---|---|---|---|---|---|
-| `paper_astra` (a mano) | 45.7 | 100% | 2% | 100% | 100% | 0.47 | 0.47 | 87% |
+| `paper_astra` (hand-written) | 45.7 | 100% | 2% | 100% | 100% | 0.47 | 0.47 | 87% |
 | `ppo_ent01` 5M | 4.3 | 36% | 62% | 99% | 99% | 0.22 | 0.19 | 61% |
 | `ppo_ent01` 10M | 4.3 | 36% | 62% | 101% | 99% | 0.22 | 0.20 | 45% |
 | `ppo_ent01` 25M | 4.3 | 36% | 60% | 95% | 100% | 0.18 | 0.13 | 40% |
@@ -67,9 +67,9 @@
 
 ### asterix
 
-| rete | punteggio | massa nel 10% dei pesi | ingressi vivi per il 90% (primo strato) | pruning 50% | primo strato al 25% | quantità chiave: miglior \|r\| | quantità chiave: R² | albero prof. 6: accordo |
+| network | score | mass in 10% of the weights | live inputs for 90% (first layer) | pruning 50% | first layer at 25% | key quantities: best \|r\| | key quantities: R² | depth-6 tree: agreement |
 |---|---|---|---|---|---|---|---|---|
-| `paper_astra` (a mano) | 55.0 | 100% | 3% | 100% | 100% | 0.56 | 0.62 | 94% |
+| `paper_astra` (hand-written) | 55.0 | 100% | 3% | 100% | 100% | 0.56 | 0.62 | 94% |
 | `ppo_ent01` 5M | 3.9 | 36% | 61% | 86% | 78% | 0.18 | 0.01 | 45% |
 | `ppo_ent01` 10M | 5.1 | 36% | 60% | 89% | 73% | 0.16 | 0.01 | 51% |
 | `ppo_ent01` 25M | 7.0 | 36% | 57% | 89% | 50% | 0.15 | 0.00 | 58% |

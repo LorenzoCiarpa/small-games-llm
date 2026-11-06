@@ -77,7 +77,7 @@ So the network keeps from the BFS what can be written in 3 layers:
   - The tie preferences are those of the BFS (up, down, left, right), as factors 1.06, 1.04, 1.02 and 1.
 - **Jellyfish.** The direction that leads into a jellyfish is forbidden, and the next one wins.
 - **Tide:**
-  - the last allowed row is `9 − L − margine`, with margin 0 if the tide is falling, 1 if it is rising and 2 if it is
+  - the last allowed row is `9 − L − margin`, with margin 0 if the tide is falling, 1 if it is rising and 2 if it is
     rising and changes within 2 steps. These are the rules of `heuristic_policy`;
   - below that row the agent moves up, and it does not go down below it;
   - with no shells it waits one row above.
@@ -145,7 +145,7 @@ The other 4 neurons:
 | r | agent's row (weights 0..9 on its cells) |
 | c | agent's column |
 | m | `9 − r − L`, the dry rows below the agent (like h0 of `claude.json`) |
-| v | `relu(2·sale − countdown/5)` (`sale`: the tide is rising) |
+| v | `relu(2·rising − countdown/5)` (`rising`: the tide is rising) |
 
 v is 1.8 or 1.6 when the margin is 2, from 1.4 to 1.0 when it is 1, 0 when the tide is falling. It approximates the
 margin within 0.4, which is enough for the thresholds of the second layer.
@@ -218,7 +218,7 @@ right = Λ·Σ right      − W_veto·(jellyfish on the right)
 no-op = 30·[σ = 1]
 ```
 
-with Λ = 1.4·10¹⁶, W_veto = 10³·Λ and W_forza = 10⁶·Λ.
+with Λ = 1.4·10¹⁶, W_veto = 10³·Λ and W_force = 10⁶·Λ.
 - **Λ:** it is chosen so that even at distance 17 a tie is broken by ~100 logits. The softmax therefore samples the
   specification's move with probability ~1.
 - **Waiting:** it is worth 30, below the potential of any shell (≥ ~5000 logits, at distance 17), so it matters
